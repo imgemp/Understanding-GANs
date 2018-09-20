@@ -8,7 +8,7 @@ class SimGD(Map):
     def __init__(self,manager):
         super(SimGD, self).__init__(manager)
 
-    def map(self, real_data, fake_data, data_att, atts, V=None, norm_d=None, norm_g=None):
+    def map(self, real_data, fake_data, data_att, atts):
         # 1. Get model outputs: (latents, attributes, d_dis_preds, d_probs)
         real_outputs, fake_outputs = self.m.get_outputs([real_data, fake_data])
 
@@ -30,7 +30,9 @@ class SimGD(Map):
         map_lat = torch.autograd.grad(V_d - 0.1*dis_error, self.m.F_lat.parameters(), create_graph=True)
         map_d = torch.autograd.grad(V_d, self.m.D.parameters(), create_graph=True)
         map_dis = torch.autograd.grad(dis_error, self.m.D_dis.parameters(), create_graph=True)
-        norm_d = sum([torch.sum(g**2.) for g in map_d])
-        norm_g = sum([torch.sum(g**2.) for g in map_g])
 
-        return [map_g, map_att, map_lat, map_d, map_dis, Vsum, norm_d, norm_g]
+        mps = [map_g, map_att, map_lat, map_d, map_dis]
+        losses = [Vsum, att_error, dis_error]
+        norms = [sum([torch.sum(g**2.) for g in mp]) for mp in mps]
+
+        return [mps, losses, norms]

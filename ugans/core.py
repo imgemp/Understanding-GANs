@@ -191,7 +191,10 @@ class Train(object):
         data_att, atts = self.m.get_data_with_atts(self.m.params['batch_size'])
 
         # 2. Evaluate Map
-        map_g, map_att, map_lat, map_d, map_dis, V, norm_d, norm_g = detach_all(self.cmap([real_data, self.m.G(fake_z), data_att, atts]))
+        mps, losses, norms = detach_all(self.cmap([real_data, self.m.G(fake_z), data_att, atts]))
+        map_g, map_att, map_lat, map_d, map_dis = mps
+        losses = [loss.item() for loss in losses]
+        norms = [norm.item() for norm in norms]
 
         # 3. Accumulate F(x_k)
         self.m.G.accumulate_gradient(map_g) # compute/store map, but don't change params
@@ -204,7 +207,7 @@ class Train(object):
         for optimizer in self.optimizers:
             optimizer.step()
 
-        return norm_d.item(), norm_g.item(), V.item()
+        return losses, norms
 
     @staticmethod
     def compose(*functions):

@@ -163,9 +163,12 @@ def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discrim
     fs = []
     frames = []
     np_samples = []
-    ds = []
-    gs = []
-    ls = []
+    loss_names = ['V','Latt','Ldis']
+    losses = [[], [], []]
+    norm_names_raw = ['g','att','lat','d','dis']
+    # norm_names = ['||F_{}||^2'.format(s) for s in norm_names_raw]
+    norm_names = ['N{}'.format(s) for s in norm_names_raw]
+    norms = [[], [], [], [], []]
     viz_every = params['viz_every']
 
     iterations = range(params['max_iter'])
@@ -174,14 +177,16 @@ def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discrim
 
     for i in iterations:
         
-        d, g, f = train.train_op(i)
+        losses_i, norms_i = train.train_op(i)
+        tqdm_outputs = dict(zip(loss_names+norm_names+['Mem'],losses_i+norms_i+[process.memory_info().rss]))
         
         if params['verbose']:
-            iterations.set_postfix({'||F_D||^2':d,'||F_G||^2':g,'V':f, 'Mem': process.memory_info().rss})
+            iterations.set_postfix(tqdm_outputs)
 
-        fs.append(f)
-        ds.append(d)
-        gs.append(g)
+        for loss, loss_i in zip(losses, losses_i):
+            loss.append(loss_i)
+        for norm, norm_i in zip(norms, norms_i):
+            norm.append(norm_i)
 
         if viz_every > 0 and i % viz_every == 0:
             if params['n_viz'] > 0:
@@ -192,36 +197,30 @@ def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discrim
             save_weights(m.D,params['saveto']+'D_'+str(i)+'.pkl')
             save_weights(m.G,params['saveto']+'G_'+str(i)+'.pkl')
                  
+    for name, loss in zip(loss_names, losses):
+        np.savetxt(params['saveto']+name+'.out',np.array(loss))
+    for name, norm in zip(norm_names_raw, norms):
+        np.savetxt(params['saveto']+name+'_norm.out',np.array(norm))
 
-    np.savetxt(params['saveto']+'d_norm.out',np.array(ds))
-    np.savetxt(params['saveto']+'g_norm.out',np.array(gs))
-    np.savetxt(params['saveto']+'loss.out',np.array(fs))
+    print('Plotting losses...')
+    for name, loss in zip(loss_names, losses):
+        fig = plt.figure()
+        ax = plt.subplot(111)
+        plt.plot(range(len(loss)),np.array(loss))
+        ax.set_ylabel(name)
+        ax.set_xlabel('Iteration')
+        plt.title('final '+name+'='+str(loss[-1]))
+        fig.savefig(params['saveto']+name+'.pdf')
 
     print('Plotting gradient norms...')
-    fig = plt.figure()
-    ax = plt.subplot(111)
-    plt.plot(range(len(ds)), ds)
-    ax.set_ylabel('Discriminator Gradient L2 Norm')
-    ax.set_xlabel('Iteration')
-    plt.title('final loss='+str(ds[-1]))
-    fig.savefig(params['saveto']+'d_norm.pdf')
-
-    fig = plt.figure()
-    ax = plt.subplot(111)
-    plt.plot(range(len(gs)), gs)
-    ax.set_ylabel('Generator Gradient L2 Norm')
-    ax.set_xlabel('Iteration')
-    plt.title('final loss='+str(gs[-1]))
-    fig.savefig(params['saveto']+'g_norm.pdf')
-
-    print('Plotting loss...')
-    fig = plt.figure()
-    ax = plt.subplot(111)
-    plt.plot(range(len(fs)),np.array(fs))
-    ax.set_ylabel('Loss')
-    ax.set_xlabel('Iteration')
-    plt.title('final loss='+str(fs[-1]))
-    fig.savefig(params['saveto']+'loss.pdf')
+    for name_raw, name, norm in zip(norm_names_raw, norm_names, norms):
+        fig = plt.figure()
+        ax = plt.subplot(111)
+        plt.plot(range(len(norm)),np.array(norm))
+        ax.set_ylabel(name)
+        ax.set_xlabel('Iteration')
+        plt.title('final '+name+'='+str(loss[-1]))
+        fig.savefig(params['saveto']+name_raw+'_norm.pdf')
 
     print('Plotting sample series over epochs...')
     if params['n_viz'] > 0:
