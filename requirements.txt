@@ -8,6 +8,5 @@ torchvision
 tqdm>=4.19.8
 seaborn>=0.8.1
 scikit-image>=0.14.0
-torchvision>=0.2.1
 pillow==5.0.0
 psutil
