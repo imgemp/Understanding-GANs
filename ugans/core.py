@@ -192,9 +192,12 @@ class Train(object):
 
         # 2. Evaluate Map
         mps, losses, norms = detach_all(self.cmap([real_data, self.m.G(fake_z), data_att, atts]))
-        map_g, map_att, map_lat, map_d, map_dis = mps
+        map_g, map_att, map_lat_gan, map_lat_dis, map_d, map_dis = mps
+        map_lat = [a+b for a, b in zip(map_lat_gan, map_lat_dis)]
         losses = [loss.item() for loss in losses]
-        norms = [norm.item() for norm in norms]
+        norm_g, norm_att, norm_lat_gan, norm_lat_dis, norm_d, norm_dis = norms
+        norm_lat = norm_lat_gan + norm_lat_dis
+        norms = [norm.item() for norm in (norm_g, norm_att, norm_lat, norm_d, norm_dis)]
 
         # 3. Accumulate F(x_k)
         self.m.G.accumulate_gradient(map_g) # compute/store map, but don't change params

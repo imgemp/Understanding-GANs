@@ -51,6 +51,7 @@ def parse_params():
     parser.add_argument('-lat_nh','--lat_n_hidden', type=int, default=128, help='# of hidden units for latent extractor', required=False)
     parser.add_argument('-lat_nl','--lat_n_layer', type=int, default=1, help='# of hidden layers for latent extractor', required=False)
     parser.add_argument('-lat_nonlin','--lat_nonlinearity', type=str, default='relu', help='type of nonlinearity for latent extractor', required=False)
+    parser.add_argument('-lat_dis_reg','--lat_dis_reg', type=float, default=0.1, help='latent extractor regularizer for disentangler game', required=False)
 
     parser.add_argument('-d_opt','--disc_optim', type=str, default='RMSProp', help='discriminator training algorithm', required=False)
     parser.add_argument('-d_lr','--disc_learning_rate', type=float, default=1e-4, help='discriminator learning rate', required=False)
@@ -105,7 +106,11 @@ def parse_params():
     args['maps'] += [SimGD]
 
     if args['saveto'] == '':
-        args['saveto'] = 'examples/results/' + args['domain'] + '/'*(len(args['map_strings'])>0) + '-'.join(args['map_strings']) + '/' + args['description']
+        if len(args['map_strings']) == 0:
+            mp_str = 'simgd'
+        else:
+            mp_str = args['map_strings']
+        args['saveto'] = 'examples/results/' + args['domain'] + '/' + '-'.join(mp_str) + '/' + args['description']
 
     if args['description'] == '':
         args['description'] = args['domain'] + '-'*(len(args['map_strings'])>0) + '-'.join(args['map_strings'])

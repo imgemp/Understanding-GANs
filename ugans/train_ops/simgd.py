@@ -27,11 +27,12 @@ class SimGD(Map):
         # 5. Compute gradients
         map_g = torch.autograd.grad(V_g, self.m.G.parameters(), create_graph=True)
         map_att = torch.autograd.grad(att_error, self.m.F_att.parameters(), create_graph=True)
-        map_lat = torch.autograd.grad(V_d - 0.1*dis_error, self.m.F_lat.parameters(), create_graph=True)
+        map_lat_gan = torch.autograd.grad(V_d, self.m.F_lat.parameters(), create_graph=True)
+        map_lat_dis = torch.autograd.grad(-self.m.params['lat_dis_reg']*dis_error, self.m.F_lat.parameters(), create_graph=True)
         map_d = torch.autograd.grad(V_d, self.m.D.parameters(), create_graph=True)
         map_dis = torch.autograd.grad(dis_error, self.m.D_dis.parameters(), create_graph=True)
 
-        mps = [map_g, map_att, map_lat, map_d, map_dis]
+        mps = [map_g, map_att, map_lat_gan, map_lat_dis, map_d, map_dis]
         losses = [Vsum, att_error, dis_error]
         norms = [sum([torch.sum(g**2.) for g in mp]) for mp in mps]
 
