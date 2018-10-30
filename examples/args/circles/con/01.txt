@@ -1,6 +1,6 @@
 -dom circles
 -bs 8
--div JS
+-div Wasserstein
 -g_opt RMSProp
 -g_lr 0.0001
 -g_l2 0.0
