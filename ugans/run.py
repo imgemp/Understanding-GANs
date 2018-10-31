@@ -82,7 +82,8 @@ def parse_params():
     parser.add_argument('-attdim','--att_dim', type=int, default=2, help='dimensionality of attribute feature extractor', required=False)
     
     parser.add_argument('-maps','--map_strings', type=str, nargs='+', default=[], help='string names of optimizers to use for generator and discriminator', required=False)
-    parser.add_argument('-gam','--gamma', type=float, default=1., help='gamma parameter for consensus, reg, reg_alt, and cc', required=False)
+    parser.add_argument('-gam_v','--gamma_v', type=float, default=1., help='gamma parameter for consensus applied to V(G,D)', required=False)
+    parser.add_argument('-gam_dis','--gamma_dis', type=float, default=1., help='gamma parameter for consensus applied to Dis(T,Flat,Fatt)', required=False)
     parser.add_argument('-saveto','--saveto', type=str, default='', help='path prefix for saving results', required=False)
     parser.add_argument('-gpu','--gpu', type=int, default=-2, help='if/which gpu to use (-1: all, -2: None)', required=False)
     parser.add_argument('-verb','--verbose', type=lambda x: (str(x).lower() == 'true'), default=False, help='whether to print progress to stdout', required=False)
