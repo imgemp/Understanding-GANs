@@ -6,6 +6,7 @@ export OMP_NUM_THREADS=3
 
 set -exu
 
-input=$1
+argfile=$1
+xtraargs=${2:-""}  # if 2nd input is unset or null, xtraargs is set to ""
 
-PYTHONPATH=./ python ugans/run.py $(cat $input)
+PYTHONPATH=./ python ugans/run.py $(cat $argfile) $xtraargs
