@@ -225,7 +225,7 @@ def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discrim
         plt.plot(range(len(norm)),np.array(norm))
         ax.set_ylabel(name)
         ax.set_xlabel('Iteration')
-        plt.title('final '+name+'='+str(loss[-1]))
+        plt.title('final '+name+'='+str(norm[-1]))
         fig.savefig(params['saveto']+name_raw+'_norm.pdf')
 
     print('Plotting sample series over epochs...')
