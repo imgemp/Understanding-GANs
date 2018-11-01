@@ -235,7 +235,7 @@ def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discrim
             np_samples.append(np.load(params['saveto']+'samples/'+str(viz_i)+'.npy'))
         data.plot_series(np_samples, params)
 
-    print('Complete.')
+    print('Complete. Saved to '+params['saveto'])
 
 
 if __name__ == '__main__':
