@@ -21,7 +21,7 @@ class Consensus(Map):
         else:
             norm_dis = 0.5*(norm_lat_dis+norm_dis)
         norm_dis_grad = torch.autograd.grad(norm_dis, self.m.D_dis.parameters(), retain_graph=True, allow_unused=True)
-        norm_lat_grad_dis = torch.autograd.grad(norm_dis, self.m.F_lat.parameters())
+        norm_lat_grad_dis = torch.autograd.grad(norm_dis, self.m.F_lat.parameters(), retain_graph=True)
         norm_gan = 0.5*(norm_g+norm_d+norm_lat_gan)
         norm_d_grad = torch.autograd.grad(norm_gan, self.m.D.parameters(), retain_graph=True, allow_unused=True)
         norm_g_grad = torch.autograd.grad(norm_gan, self.m.G.parameters(), retain_graph=True)
