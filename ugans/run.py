@@ -177,6 +177,8 @@ def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discrim
     norm_names = ['N{}'.format(s) for s in norm_names_raw]
     norms = [[], [], [], [], []]
 
+    print('Saving to '+params['saveto'])
+
     iterations = range(params['max_iter'])
     if params['verbose']:
         iterations = tqdm(iterations,desc=params['description'])
@@ -201,9 +203,9 @@ def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discrim
 
         if params['plot_every'] > 0 and i % params['plot_every'] == 0:
             for name, loss in zip(loss_names, losses):
-                simple_plot(data_1d=loss, xlabel='Iteration', ylabel=name, title='final '+name+'='+str(loss[-1]), filename=name+'.pdf')
+                simple_plot(data_1d=loss, xlabel='Iteration', ylabel=name, title='final '+name+'='+str(loss[-1]), filepath=params['saveto']+name+'.pdf')
             for name_raw, name, norm in zip(norm_names_raw, norm_names, norms):
-                simple_plot(data_1d=norm, xlabel='Iteration', ylabel=name, title='final '+name+'='+str(norm[-1]), filename=name_raw+'_norm.pdf')
+                simple_plot(data_1d=norm, xlabel='Iteration', ylabel=name, title='final '+name+'='+str(norm[-1]), filepath=params['saveto']+name_raw+'_norm.pdf')
 
         if params['weights_every'] > 0 and i % params['weights_every'] == 0:
             save_weights(m.D,params['saveto']+'D_'+str(i)+'.pkl')

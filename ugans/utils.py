@@ -38,11 +38,11 @@ def detach_all(a):
             detached += [ai.detach()]
     return detached
 
-def simple_plot(data_1d, xlabel, ylabel, title, filename):
+def simple_plot(data_1d, xlabel, ylabel, title, filepath):
     fig = plt.figure()
     ax = plt.subplot(111)
     plt.plot(range(len(data_1d)),np.array(data_1d))
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
     plt.title(title)
-    fig.savefig(params['saveto']+filename)
+    fig.savefig(filepath)
