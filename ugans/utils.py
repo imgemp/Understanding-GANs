@@ -46,3 +46,4 @@ def simple_plot(data_1d, xlabel, ylabel, title, filepath):
     ax.set_ylabel(ylabel)
     plt.title(title)
     fig.savefig(filepath)
+    plt.close(fig)
