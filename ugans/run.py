@@ -111,7 +111,7 @@ def parse_params():
             mp_str = 'simgd'
         else:
             mp_str = args['map_strings']
-        args['saveto'] = 'examples/results/' + args['domain'] + '/' + '-'.join(mp_str) + '/' + args['description']
+        args['saveto'] = 'examples/results/' + args['domain'] + '/' + '-'.join(mp_str) + '/'*(args['description']!='') + args['description']
 
     if args['description'] == '':
         args['description'] = args['domain'] + '-'*(len(args['map_strings'])>0) + '-'.join(args['map_strings'])
@@ -145,7 +145,7 @@ def parse_params():
 
 
 def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discriminator, Disentangler, params):
-    print('Saving to '+params['saveto'])
+    print('\n'+'Saving to '+params['saveto']+'\n',flush=True)
 
     to_gpu = gpu_helper(params['gpu'])
 
