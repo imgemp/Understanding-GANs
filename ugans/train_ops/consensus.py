@@ -21,11 +21,11 @@ class Consensus(Map):
         else:
             norm_dis = 0.5*(norm_lat_dis+norm_dis)
         norm_dis_grad = torch.autograd.grad(norm_dis, self.m.D_dis.parameters(), retain_graph=True, allow_unused=True)
-        norm_lat_grad_dis = torch.autograd.grad(norm_dis, self.m.F_lat.parameters(), retain_graph=True)
+        norm_lat_grad_dis = torch.autograd.grad(norm_dis, self.m.F_lat.parameters())
         norm_gan = 0.5*(norm_g+norm_d+norm_lat_gan)
         norm_d_grad = torch.autograd.grad(norm_gan, self.m.D.parameters(), retain_graph=True, allow_unused=True)
         norm_g_grad = torch.autograd.grad(norm_gan, self.m.G.parameters(), retain_graph=True)
-        norm_lat_grad_gan = torch.autograd.grad(norm_gan, self.m.F_lat.parameters(), retain_graph=True)
+        norm_lat_grad_gan = torch.autograd.grad(norm_gan, self.m.F_lat.parameters())
 
         gammaJTF_dis = [self.m.params['gamma_dis']*g for g in norm_dis_grad]
         gammaJTF_lat_dis = [self.m.params['lat_dis_reg']*self.m.params['gamma_dis']*g for g in norm_lat_grad_dis]
