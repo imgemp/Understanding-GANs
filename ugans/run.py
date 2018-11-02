@@ -176,7 +176,6 @@ def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discrim
     # norm_names = ['||F_{}||^2'.format(s) for s in norm_names_raw]
     norm_names = ['N{}'.format(s) for s in norm_names_raw]
     norms = [[], [], [], [], []]
-    viz_every = params['viz_every']
 
     iterations = range(params['max_iter'])
     if params['verbose']:
@@ -195,12 +194,12 @@ def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discrim
         for norm, norm_i in zip(norms, norms_i):
             norm.append(norm_i)
 
-        if viz_every > 0 and i % viz_every == 0:
+        if params['viz_every'] > 0 and i % params['viz_every'] == 0:
             if params['n_viz'] > 0:
                 np.save(params['saveto']+'samples/'+str(i), train.m.get_fake(params['n_viz'], params['z_dim']).cpu().data.numpy())
             data.plot_current(train, params, i)
 
-        if plot_every > 0 and i % plot_every == 0:
+        if params['plot_every'] > 0 and i % params['plot_every'] == 0:
             for name, loss in zip(loss_names, losses):
                 simple_plot(data_1d=loss, xlabel='Iteration', ylabel=name, title='final '+name+'='+str(loss[-1]), filename=name+'.pdf')
             for name_raw, name, norm in zip(norm_names_raw, norm_names, norms):
@@ -238,7 +237,7 @@ def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discrim
     print('Plotting sample series over epochs...')
     if params['n_viz'] > 0:
         np_samples = []
-        for viz_i in range(0,params['max_iter'],viz_every):
+        for viz_i in range(0,params['max_iter'],params['viz_every']):
             np_samples.append(np.load(params['saveto']+'samples/'+str(viz_i)+'.npy'))
         data.plot_series(np_samples, params)
 
