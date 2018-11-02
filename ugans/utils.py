@@ -1,6 +1,9 @@
 import pickle
 import numpy as np
 import torch
+import matplotlib as mpl
+mpl.use('Agg')
+import matplotlib.pyplot as plt
 
 
 def gpu_helper(gpu):
@@ -34,3 +37,12 @@ def detach_all(a):
         else:
             detached += [ai.detach()]
     return detached
+
+def simple_plot(data_1d, xlabel, ylabel, title, filename):
+    fig = plt.figure()
+    ax = plt.subplot(111)
+    plt.plot(range(len(data_1d)),np.array(data_1d))
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    plt.title(title)
+    fig.savefig(params['saveto']+filename)

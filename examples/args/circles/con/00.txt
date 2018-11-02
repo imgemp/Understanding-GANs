@@ -36,7 +36,7 @@
 -eps 1e-08
 -mx_it 1000
 -viz_every 100
--series_every 500
+-plot_every 100
 -w_every 100
 -n_viz 8
 -zdim 10

@@ -15,7 +15,7 @@ import sys
 sys.path.append('../')
 
 from ugans.core import Manager
-from ugans.utils import gpu_helper, save_weights
+from ugans.utils import gpu_helper, save_weights, simple_plot
 
 from tqdm import tqdm
 
@@ -72,8 +72,8 @@ def parse_params():
     parser.add_argument('-eps','--epsilon', type=float, default=1e-8, help='epsilon param for Adam', required=False)
     parser.add_argument('-mx_it','--max_iter', type=int, default=100001, help='max # of training iterations', required=False)
     parser.add_argument('-viz_every','--viz_every', type=int, default=1000, help='skip viz_every iterations between plotting current results', required=False)
-    parser.add_argument('-series_every','--series_every', type=int, default=25000, help='skip series_every iterations between plotting series plot', required=False)
-    parser.add_argument('-w_every','--weights_every', type=int, default=25000, help='skip weights_every iterations between saving weights', required=False)
+    parser.add_argument('-plot_every','--plot_every', type=int, default=100, help='skip plot_every iterations between plotting losses and norms', required=False)
+    parser.add_argument('-w_every','--weights_every', type=int, default=5000, help='skip weights_every iterations between saving weights', required=False)
     parser.add_argument('-n_viz','--n_viz', type=int, default=8, help='number of samples for series plot', required=False)
     
     parser.add_argument('-zdim','--z_dim', type=int, default=256, help='dimensionality of p(z) - unit normal', required=False)
@@ -199,6 +199,12 @@ def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discrim
             if params['n_viz'] > 0:
                 np.save(params['saveto']+'samples/'+str(i), train.m.get_fake(params['n_viz'], params['z_dim']).cpu().data.numpy())
             data.plot_current(train, params, i)
+
+        if plot_every > 0 and i % plot_every == 0:
+            for name, loss in zip(loss_names, losses):
+                simple_plot(data_1d=loss, xlabel='Iteration', ylabel=name, title='final '+name+'='+str(loss[-1]), filename=name+'.pdf')
+            for name_raw, name, norm in zip(norm_names_raw, norm_names, norms):
+                simple_plot(data_1d=norm, xlabel='Iteration', ylabel=name, title='final '+name+'='+str(norm[-1]), filename=name_raw+'_norm.pdf')
 
         if params['weights_every'] > 0 and i % params['weights_every'] == 0:
             save_weights(m.D,params['saveto']+'D_'+str(i)+'.pkl')
