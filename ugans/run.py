@@ -145,6 +145,8 @@ def parse_params():
 
 
 def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discriminator, Disentangler, params):
+    print('Saving to '+params['saveto'])
+
     to_gpu = gpu_helper(params['gpu'])
 
     data = Domain()
@@ -176,8 +178,6 @@ def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discrim
     # norm_names = ['||F_{}||^2'.format(s) for s in norm_names_raw]
     norm_names = ['N{}'.format(s) for s in norm_names_raw]
     norms = [[], [], [], [], []]
-
-    print('Saving to '+params['saveto'])
 
     iterations = range(params['max_iter'])
     if params['verbose']:
