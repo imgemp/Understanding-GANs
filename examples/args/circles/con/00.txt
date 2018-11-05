@@ -43,7 +43,7 @@
 -xdim 64
 -latdim 3
 -attdim 3
--map consensus
+-maps consensus
 -gam_v 1.0
 -gam_dis 1.0
 -gpu 0

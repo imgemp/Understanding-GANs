@@ -171,7 +171,6 @@ def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discrim
 
     fs = []
     frames = []
-    np_samples = []
     loss_names = ['V','Latt','Ldis']
     losses = [[], [], []]
     norm_names_raw = ['g','att','lat','d','dis']
