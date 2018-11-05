@@ -63,11 +63,11 @@ class Circles(Data):
             samples += [((255-image)/255.).astype('float32').flatten()]
         return torch.from_numpy(np.vstack(samples))
 
-    def sample_att(self, batch_size, dim=64):
+    def sample_att(self, batch_size, dim=64, min_size=20, max_size=30):
         samples = []
         for b in range(batch_size):
-            result = random_shapes_distr((dim, dim), max_shapes=1, shape='circle', min_size=20,
-                                         max_size=30,multichannel=False)
+            result = random_shapes_distr((dim, dim), max_shapes=1, shape='circle', min_size=min_size,
+                                         max_size=max_size, multichannel=False)
             image, label = result  # label = ('circle', (px, py, radius))
             image = (255-image)/255.
             px, py, radius = np.array(label[0][1])
