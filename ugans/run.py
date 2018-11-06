@@ -17,6 +17,8 @@ sys.path.append('../')
 from ugans.core import Manager
 from ugans.utils import gpu_helper, save_weights, simple_plot
 
+from logger import Logger
+
 from tqdm import tqdm
 
 from IPython import embed
@@ -147,6 +149,8 @@ def parse_params():
 def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discriminator, Disentangler, params):
     print('\n'+'Saving to '+params['saveto']+'\n',flush=True)
 
+    logger = Logger(params['saveto']+'logs/')
+
     to_gpu = gpu_helper(params['gpu'])
 
     data = Domain()
@@ -165,7 +169,7 @@ def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discrim
         mod.init_weights()
     G, F_att, F_lat, D, D_dis = [to_gpu(mod) for mod in [G, F_att, F_lat, D, D_dis]]
 
-    m = Manager(data, G, F_att, F_lat, D, D_dis, params, to_gpu)
+    m = Manager(data, G, F_att, F_lat, D, D_dis, params, to_gpu, logger)
 
     train = Train(manager=m)
 
@@ -190,14 +194,18 @@ def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discrim
         if params['verbose']:
             iterations.set_postfix(tqdm_outputs)
 
-        for loss, loss_i in zip(losses, losses_i):
+        for name, loss, loss_i in zip(loss_names, losses, losses_i):
             loss.append(loss_i)
-        for norm, norm_i in zip(norms, norms_i):
+            logger.scalar_summary(name, loss_i, i)
+        for name, norm, norm_i in zip(norm_names, norms, norms_i):
             norm.append(norm_i)
+            logger.scalar_summary(name, norm_i, i)
 
         if params['viz_every'] > 0 and i % params['viz_every'] == 0:
             if params['n_viz'] > 0:
-                np.save(params['saveto']+'samples/'+str(i), train.m.get_fake(params['n_viz'], params['z_dim']).cpu().data.numpy())
+                samples = train.m.get_fake(params['n_viz'], params['z_dim']).cpu().data.numpy()
+                np.save(params['saveto']+'samples/'+str(i), samples)
+                logger.image_summary('images', samples, i)
             data.plot_current(train, params, i)
 
         if params['plot_every'] > 0 and i % params['plot_every'] == 0:

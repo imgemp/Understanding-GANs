@@ -82,7 +82,7 @@ class Net(nn.Module):
 
 
 class Manager(object):
-    def __init__(self, data, G, F_att, F_lat, D, D_dis, params, to_gpu):
+    def __init__(self, data, G, F_att, F_lat, D, D_dis, params, to_gpu, logger=None):
         self.data = data
         self.G = G
         self.F_att = F_att
@@ -99,6 +99,7 @@ class Manager(object):
         elif params['divergence'] == 'Wasserstein':
             self.criterion = lambda dec, label: torch.mean(dec*(2.*label-1.))  #loss(dec, label) #torch.sum(dec)  #torch.sum(dec*(2.*label-1.))
         self.att_loss = lambda pred, true: torch.mean((pred-true)**2.)
+        self.logger = logger
 
     def get_real(self, batch_size):
         return self.to_gpu(self.data.sample(batch_size))
@@ -191,7 +192,7 @@ class Train(object):
         data_att, atts = self.m.get_data_with_atts(self.m.params['batch_size'])
 
         # 2. Evaluate Map
-        mps, losses, norms = detach_all(self.cmap([real_data, self.m.G(fake_z), data_att, atts]))
+        mps, losses, norms = detach_all(self.cmap([real_data, self.m.G(fake_z), data_att, atts, it]))
         map_g, map_att, map_lat_gan, map_lat_dis, map_d, map_dis = mps
         map_lat = [a+b for a, b in zip(map_lat_gan, map_lat_dis)]
         losses = [loss.item() for loss in losses]
