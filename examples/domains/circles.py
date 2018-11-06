@@ -39,7 +39,7 @@ class Circles(Data):
             else:
                 plt.subplot(1,cols,i+1, sharex=ax, sharey=ax)
             thissamp = samps.reshape((params['n_viz'],1,64,64)).transpose((0,2,3,1))
-            ax2 = plt.imshow(thissamp.reshape(-1, 64))
+            ax2 = plt.imshow(thissamp.reshape(-1, 64), cmap='gray')
             plt.xticks([]); plt.yticks([])
             plt.title('step %d'%(i*params['viz_every']))
         plt.gcf().tight_layout()
