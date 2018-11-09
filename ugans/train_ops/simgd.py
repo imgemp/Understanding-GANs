@@ -12,6 +12,7 @@ class SimGD(Map):
         # 1. Get model outputs: (latents, attributes, d_dis_preds, d_probs)
         real_outputs, fake_outputs = self.m.get_outputs([real_data, fake_data])
         if self.m.logger is not None and it is not None:
+            self.m.logger.histo_summary('attributes_actual', atts.cpu().data.numpy(), it)
             self.m.logger.histo_summary('latents_real', real_outputs[0].cpu().data.numpy(), it)
             self.m.logger.histo_summary('attributes_real', real_outputs[1].cpu().data.numpy(), it)
             self.m.logger.histo_summary('latents_fake', fake_outputs[0].cpu().data.numpy(), it)

@@ -208,9 +208,9 @@ class Train(object):
         self.m.D_dis.accumulate_gradient(map_dis)
 
         # 4. Update network parameters
-        # for optimizer in self.optimizers:
-        #     optimizer.step()
-        self.optimizers[1].step()
+        for optimizer in self.optimizers:
+            optimizer.step()
+        # self.optimizers[1].step()
 
         return losses, norms
 
