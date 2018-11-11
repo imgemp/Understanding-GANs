@@ -247,11 +247,13 @@ def random_shapes_distr(image_shape,
             # mu1 = 0.65*image_shape[1]
             # loc1 = -0.43*image_shape[1]
             mu0 = 0.10*image_shape[0]
-            loc0 = 0.50*image_shape[0]
+            loc0 = 0.20*image_shape[0]
             mu1 = 0.10*image_shape[1]
-            loc1 = 0.50*image_shape[1]
-            row = poisson.rvs(mu0, loc=loc0)
-            column = poisson.rvs(mu1, loc=loc1)
+            loc1 = 0.20*image_shape[1]
+            # row = poisson.rvs(mu0, loc=loc0)
+            # column = poisson.rvs(mu1, loc=loc1)
+            row = loc0 + mu0*poisson.rvs(1)
+            column = loc1 + mu1*poisson.rvs(1)
             #column = random.randint(image_shape[1])
             #row = random.randint(image_shape[0])
             point = (row, column)
