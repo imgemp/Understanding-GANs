@@ -247,9 +247,9 @@ def random_shapes_distr(image_shape,
             # mu1 = 0.65*image_shape[1]
             # loc1 = -0.43*image_shape[1]
             mu0 = 0.25*image_shape[0]
-            loc0 = 0.15*image_shape[0]
+            loc0 = 0.50*image_shape[0]
             mu1 = 0.25*image_shape[1]
-            loc1 = 0.15*image_shape[1]
+            loc1 = 0.50*image_shape[1]
             row = poisson.rvs(mu0,loc0)
             column = poisson.rvs(mu1,loc1)
             #column = random.randint(image_shape[1])
