@@ -329,6 +329,7 @@ class Generator(Net):
     def forward(self, x):
         output = x.view(-1, self.input_dim, 1, 1)
         output = self.main(output)
+        temp = output.view(-1, self.output_dim**2)
         return output.view(-1, self.output_dim**2)
 
     def init_weights(self):
@@ -374,8 +375,10 @@ class AttExtractor(Net):
     def forward(self, x):
         x = x.view(-1, 1, self.image_dim, self.image_dim)
         output = self.main(x)
+        output = output.view(-1, self.image_dim*8*4*4)
         output = self.output(output)
-        return out.view(-1, self.output_dim)
+        temp = output.view(-1, self.output_dim)
+        return output.view(-1, self.output_dim)
 
     def init_weights(self):
         self.apply(weights_init)
@@ -420,8 +423,9 @@ class LatExtractor(Net):
     def forward(self, x):
         x = x.view(-1, 1, self.image_dim, self.image_dim)
         output = self.main(x)
+        output = output.view(-1, self.image_dim*8*4*4)
         output = self.output(output)
-        return out.view(-1, self.output_dim)
+        return output.view(-1, self.output_dim)
 
     def init_weights(self):
         self.apply(weights_init)
