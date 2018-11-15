@@ -327,7 +327,7 @@ class Generator(Net):
         self.first_forward = True
 
     def forward(self, x):
-        output = x.view(-1, 1, 1, 1)
+        output = x.view(-1, self.input_dim, 1, 1)
         output = self.main(output)
         return output.view(-1, self.output_dim**2)
 
