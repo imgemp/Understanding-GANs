@@ -316,6 +316,8 @@ class Generator(Net):
         else:
             self.nonlin = lambda x: x
 
+        self.tanh = nn.Tanh()
+
         self.first_forward = True
 
     def forward(self, x):
@@ -325,7 +327,7 @@ class Generator(Net):
             h = self.nonlin(hfc(h))
             if self.first_forward: print(h.shape)
         self.first_forward = False
-        return self.final_fc(h)
+        return self.tanh(self.final_fc(h))
 
     def init_weights(self):
         self.apply(weights_init)
