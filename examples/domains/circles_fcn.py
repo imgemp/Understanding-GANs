@@ -336,7 +336,7 @@ class AttExtractor(Net):
     def __init__(self, input_dim, output_dim, image_dim=64, n_hidden=128, n_layer=None, nonlin=None, quad=False):
         super(AttExtractor, self).__init__()
         hidden_fcs = []
-        in_dim = input_dim
+        in_dim = input_dim**2
         for l in range(n_layer):
             hidden_fcs += [nn.Linear(in_dim, n_hidden)]
             in_dim = n_hidden
@@ -375,7 +375,7 @@ class LatExtractor(Net):
     def __init__(self, input_dim, output_dim, image_dim=64, n_hidden=128, n_layer=None, nonlin=None, quad=False):
         super(LatExtractor, self).__init__()
         hidden_fcs = []
-        in_dim = input_dim
+        in_dim = input_dim**2
         for l in range(n_layer):
             hidden_fcs += [nn.Linear(in_dim, n_hidden)]
             in_dim = n_hidden
