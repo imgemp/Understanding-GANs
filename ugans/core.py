@@ -175,7 +175,7 @@ class Train(object):
             if self.m.params[net+'_optim'] == 'RMSProp':
                 optimizers += [optim.RMSprop(ps, lr=self.m.params[net+'_learning_rate'], weight_decay=self.m.params[net+'_weight_decay'], eps=1e-10, alpha=0.9)]
             if self.m.params[net+'_optim'] == 'SGD':
-                optimizers += [optim.SGD(ps, lr=self.m.params[net+'_learning_rate'], momentum=0., weight_decay=self.m.params[net+'_weight_decay'])]
+                optimizers += [optim.SGD(ps, lr=self.m.params[net+'_learning_rate'], momentum=self.m.params[net+'_momentum'], weight_decay=self.m.params[net+'_weight_decay'])]
         self.optimizers = optimizers
 
         # Note: SimgGD should always be last in maps list

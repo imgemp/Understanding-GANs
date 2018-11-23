@@ -43,6 +43,7 @@ def parse_params():
     parser.add_argument('-att_opt','--att_optim', type=str, default='RMSProp', help='attribute extractor training algorithm', required=False)
     parser.add_argument('-att_lr','--att_learning_rate', type=float, default=1e-4, help='attribute extractor learning rate', required=False)
     parser.add_argument('-att_l2','--att_weight_decay', type=float, default=0., help='attribute extractor weight decay', required=False)
+    parser.add_argument('-att_mom','--att_momentum', type=float, default=0., help='attribute extractor momentum', required=False)
     parser.add_argument('-att_nh','--att_n_hidden', type=int, default=128, help='# of hidden units for attribute extractor', required=False)
     parser.add_argument('-att_nl','--att_n_layer', type=int, default=1, help='# of hidden layers for attribute extractor', required=False)
     parser.add_argument('-att_nonlin','--att_nonlinearity', type=str, default='relu', help='type of nonlinearity for attribute extractor', required=False)
@@ -97,6 +98,9 @@ def parse_params():
     elif args['domain'] == 'circles_small':
         from examples.domains.circles_small import Circles as Domain
         from examples.domains.circles_small import Generator, AttExtractor, LatExtractor, Discriminator, Disentangler
+    elif args['domain'] == 'circles_fcn':
+        from examples.domains.circles_fcn import Circles as Domain
+        from examples.domains.circles_fcn import Generator, AttExtractor, LatExtractor, Discriminator, Disentangler
     else:
         raise NotImplementedError(args['domain'])
 
