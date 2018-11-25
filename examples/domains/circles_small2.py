@@ -298,34 +298,35 @@ class Generator(Net):
         super(Generator, self).__init__()
 
         self.main = nn.Sequential(
-            # input is Z, going into a convolution
+            # input is Z, going into a convolution: (c*hin - kernel)/stride + 1, c=4,stride=kernel=2 --> 2*hin
+            # or (2*hin + 2*padding - kernel)/stride + 1, 2*hin + 2*padding-kernel+1, padding=1, kernel=3
             nn.Upsample(scale_factor = 2, mode='bilinear'),
-            nn.ReflectionPad2d(1),
-            nn.Conv2d(input_dim, output_dim * 8, kernel_size=4, stride=1, padding=0),
+            # nn.ReflectionPad2d(1),
+            nn.Conv2d(input_dim, output_dim * 8, kernel_size=3, stride=1, padding=1),
             nn.BatchNorm2d(output_dim * 8),
             nn.ReLU(True),
             # state size. (output_dim*8) x 4 x 4
             nn.Upsample(scale_factor = 2, mode='bilinear'),
-            nn.ReflectionPad2d(1),
-            nn.Conv2d(output_dim * 8, output_dim * 4, 4, 2, 1, bias=False),
+            # nn.ReflectionPad2d(1),
+            nn.Conv2d(output_dim * 8, output_dim * 4, kernel_size=3, stride=1, padding=1, bias=False),
             nn.BatchNorm2d(output_dim * 4),
-            nn.ReLU(True),
+            nn.ReLU(True), # hin - kernel + 1 + 2*padding (assumes stride=1)   3*hin - 2 + 1 + 2 = 
             # state size. (output_dim*4) x 8 x 8
             nn.Upsample(scale_factor = 2, mode='bilinear'),
-            nn.ReflectionPad2d(1),
-            nn.Conv2d(output_dim * 4, output_dim * 2, 4, 2, 1, bias=False),
+            # nn.ReflectionPad2d(1),
+            nn.Conv2d(output_dim * 4, output_dim * 2, kernel_size=3, stride=1, padding=1, bias=False),
             nn.BatchNorm2d(output_dim * 2),
             nn.ReLU(True),
             # state size. (output_dim*2) x 16 x 16
             nn.Upsample(scale_factor = 2, mode='bilinear'),
-            nn.ReflectionPad2d(1),
-            nn.Conv2d(output_dim * 2,     output_dim, 4, 2, 1, bias=False),
+            # nn.ReflectionPad2d(1),
+            nn.Conv2d(output_dim * 2,     output_dim, kernel_size=3, stride=1, padding=1, bias=False),
             nn.BatchNorm2d(output_dim),
             nn.ReLU(True),
             # state size. (output_dim) x 32 x 32
             nn.Upsample(scale_factor = 2, mode='bilinear'),
-            nn.ReflectionPad2d(1),
-            nn.Conv2d(    output_dim,      1, 4, 2, 1, bias=False),
+            # nn.ReflectionPad2d(1),
+            nn.Conv2d(    output_dim,      1, kernel_size=3, stride=1, padding=1, bias=False),
             nn.Tanh()
             # state size. (1 channel) x 64 x 64
         )
@@ -339,7 +340,6 @@ class Generator(Net):
     def forward(self, x):
         output = x.view(-1, self.input_dim, 1, 1)
         output = self.main(output)
-        temp = output.view(-1, self.output_dim**2)
         return output.view(-1, self.output_dim**2)
 
     def init_weights(self):
