@@ -23,7 +23,7 @@ class Circles(Data):
     def plot_current(self, train, params, i):
         images = train.m.get_fake(64, params['z_dim']).detach().view(-1, 1, 64, 64)
         img = torchvision.utils.make_grid(images)
-        img = img / 2 + 0.5     # unnormalize
+        # img = img / 2 + 0.5     # unnormalize
         plt.imshow(np.transpose(img.cpu().numpy(), (1, 2, 0)))
         plt.xticks([]); plt.yticks([])
         plt.savefig(params['saveto']+'samples_{}.png'.format(i))
@@ -49,7 +49,7 @@ class Circles(Data):
     def plot_real(self, params):
         images = self.sample(batch_size=64).view(-1, 1, 64, 64)
         img = torchvision.utils.make_grid(images)
-        img = img / 2 + 0.5     # unnormalize
+        # img = img / 2 + 0.5     # unnormalize
         plt.imshow(np.transpose(img.cpu().numpy(), (1, 2, 0)))
         plt.xticks([]); plt.yticks([])
         plt.savefig(params['saveto']+'samples_real.png')
@@ -344,7 +344,7 @@ class Generator(Net):
         output = self.convt_4(self.lrelu(output))
 
         if self.first_forward: print(output.shape)
-        output = self.tanh(output)
+        output = self.tanh(output) / 2. + 0.5
         self.first_forward = False
         return output.view(-1, self.output_dim**2)
 
