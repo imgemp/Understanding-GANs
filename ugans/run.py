@@ -101,6 +101,9 @@ def parse_params():
     elif args['domain'] == 'circles_fcn':
         from examples.domains.circles_fcn import Circles as Domain
         from examples.domains.circles_fcn import Generator, AttExtractor, LatExtractor, Discriminator, Disentangler
+    elif args['domain'] == 'circles_small2':
+        from examples.domains.circles_small2 import Circles as Domain
+        from examples.domains.circles_small2 import Generator, AttExtractor, LatExtractor, Discriminator, Disentangler
     else:
         raise NotImplementedError(args['domain'])
 
