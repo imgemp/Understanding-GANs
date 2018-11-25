@@ -300,9 +300,9 @@ class Generator(Net):
         self.main = nn.Sequential(
             # input is Z, going into a convolution: (c*hin - kernel)/stride + 1, c=4,stride=kernel=2 --> 2*hin
             # or (2*hin + 2*padding - kernel)/stride + 1, 2*hin + 2*padding-kernel+1, padding=1, kernel=3
-            nn.Upsample(scale_factor = 2, mode='bilinear'),
+            nn.Upsample(scale_factor = 3, mode='bilinear'),
             # nn.ReflectionPad2d(1),
-            nn.Conv2d(input_dim, output_dim * 8, kernel_size=3, stride=1, padding=1),
+            nn.Conv2d(input_dim, output_dim * 8, kernel_size=2, stride=1, padding=1),
             nn.BatchNorm2d(output_dim * 8),
             nn.ReLU(True),
             # state size. (output_dim*8) x 4 x 4
