@@ -15,7 +15,7 @@ from scipy.stats import poisson
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-
+# Taken from CIFAR Generator
 class Circles(Data):
     def __init__(self):
         super(Circles, self).__init__()
