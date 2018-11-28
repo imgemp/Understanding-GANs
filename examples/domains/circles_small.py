@@ -7,7 +7,7 @@ import torchvision
 
 from ugans.core import Data, Net
 
-from skimage.draw import polygon as draw_polygon, circle as draw_circle
+from skimage.draw import polygon as draw_polygon, circle as draw_circle, rectangle as draw_rectangle
 from skimage._shared.utils import warn
 from skimage.draw._random_shapes import _generate_rectangle_mask, _generate_triangle_mask, _generate_random_colors
 from scipy.stats import poisson
@@ -58,7 +58,7 @@ class Circles(Data):
     def sample(self, batch_size, dim=64):
         samples = []
         for b in range(batch_size):
-            image = random_shapes_distr((dim, dim), max_shapes=1, shape='circle', min_size=20,
+            image = random_shapes_distr((dim, dim), max_shapes=1, shape='square', min_size=20,
                                         max_size=30,multichannel=False)[0]
             samples += [((255-image)/255.).astype('float32').flatten()]
         return torch.from_numpy(np.vstack(samples))
@@ -66,7 +66,7 @@ class Circles(Data):
     def sample_att(self, batch_size, dim=64, min_size=20, max_size=30):
         samples = []
         for b in range(batch_size):
-            result = random_shapes_distr((dim, dim), max_shapes=1, shape='circle', min_size=min_size,
+            result = random_shapes_distr((dim, dim), max_shapes=1, shape='square', min_size=min_size,
                                          max_size=max_size, multichannel=False)
             image, label = result  # label = ('circle', (px, py, radius))
             image = (255-image)/255.
@@ -125,6 +125,53 @@ def _generate_circle_mask_new(point, image, shape, random):
     label = ('circle', (point[0], point[1], radius))
     
     return circle, label
+
+def _generate_square_mask_new(point, image, shape, random):
+    """Generate a mask for a filled square shape.
+    The size of the circle is generated randomly.
+    Parameters
+    ----------
+    point : tuple
+        The row and column of the top left corner of the rectangle.
+    image : tuple
+        The height, width and depth of the image into which the shape is placed.
+    shape : tuple
+        The minimum and maximum size and color of the shape to fit.
+    random : np.random.RandomState
+        The random state to use for random sampling.
+    Raises
+    ------
+    ArithmeticError
+        When a shape cannot be fit into the image with the given starting
+        coordinates. This usually means the image dimensions are too small or
+        shape dimensions too large.
+    Returns
+    -------
+    label : tuple
+        A (category, ((r0, r1), (c0, c1))) tuple specifying the category and
+        bounding box coordinates of the shape.
+    indices : 2-D array
+        A mask of indices that the shape fills.
+    """
+    if shape[0] == 1 or shape[1] == 1:
+        raise ValueError('size must be > 1 for squares')
+    min_radius = shape[0] / 2.0
+    max_radius = shape[1] / 2.0
+    left = point[1]
+    right = image[1] - point[1]
+    top = point[0]
+    bottom = image[0] - point[0]
+    available_radius = min(left, right, top, bottom, max_radius)
+    if available_radius < min_radius:
+        raise ArithmeticError('cannot fit shape to image')
+    radius = random.randint(min_radius, available_radius + 1)
+    square = draw_rectangle(start=(point[0]-radius, point[1]-radius), extent=(2*radius, 2*radius))
+    
+    #label = ('circle', ((point[0] - radius + 1, point[0] + radius),
+    #                    (point[1] - radius + 1, point[1] + radius)))
+    label = ('square', (point[0], point[1], radius))
+    
+    return square, label
 
 def random_shapes_distr(image_shape,
                   max_shapes,
@@ -283,7 +330,7 @@ def random_shapes_distr(image_shape,
     return image, labels
 
 SHAPE_GENERATORS = dict(
-    rectangle=_generate_rectangle_mask,
+    rectangle=_generate_square_mask_new,
     circle=_generate_circle_mask_new,
     triangle=_generate_triangle_mask)
 SHAPE_CHOICES = list(SHAPE_GENERATORS.values())
