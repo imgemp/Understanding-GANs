@@ -309,7 +309,7 @@ def random_shapes_distr(image_shape,
             scale1 = 0.30*image_shape[1]
             row = np.random.normal(loc0, scale0)
             column = np.random.normal(loc1, scale1)
-            point = (row, column)
+            point = (int(row), int(column))
             try:
                 indices, label = shape_generator(point, image_shape, shape, random)
             except ArithmeticError:
