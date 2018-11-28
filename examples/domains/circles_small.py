@@ -59,7 +59,7 @@ class Circles(Data):
         samples = []
         for b in range(batch_size):
             image = random_shapes_distr((dim, dim), max_shapes=1, shape='square', min_size=20,
-                                        max_size=30,multichannel=False)[0]
+                                        max_size=30, multichannel=False, intensity_range=(0,0))[0]
             samples += [((255-image)/255.).astype('float32').flatten()]
         return torch.from_numpy(np.vstack(samples))
 
@@ -67,7 +67,7 @@ class Circles(Data):
         samples = []
         for b in range(batch_size):
             result = random_shapes_distr((dim, dim), max_shapes=1, shape='square', min_size=min_size,
-                                         max_size=max_size, multichannel=False)
+                                         max_size=max_size, multichannel=False, intensity_range=(0,0))
             image, label = result  # label = ('circle', (px, py, radius))
             image = (255-image)/255.
             px, py, radius = np.array(label[0][1])
@@ -316,6 +316,7 @@ def random_shapes_distr(image_shape,
                 # Couldn't fit the shape, skip it.
                 continue
             # Check if there is an overlap where the mask is nonzero.
+            indices = tuple(indices)
             if allow_overlap or not filled[indices].any():
                 image[indices] = colors[shape_idx]
                 filled[indices] = True
