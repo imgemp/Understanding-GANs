@@ -330,7 +330,8 @@ def random_shapes_distr(image_shape,
     return image, labels
 
 SHAPE_GENERATORS = dict(
-    rectangle=_generate_square_mask_new,
+    rectangle=_generate_rectangle_mask,
+    square=_generate_square_mask_new,
     circle=_generate_circle_mask_new,
     triangle=_generate_triangle_mask)
 SHAPE_CHOICES = list(SHAPE_GENERATORS.values())
