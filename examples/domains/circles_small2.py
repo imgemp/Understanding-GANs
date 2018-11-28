@@ -333,7 +333,7 @@ class Generator(Net):
             # state size. (output_dim) x 32 x 32
             nn.Upsample(scale_factor = 2, mode='bilinear'),
             # nn.ReflectionPad2d(1),
-            nn.Conv2d(    output_dim,      1, kernel_size=3, stride=1, padding=1, bias=False),
+            nn.Conv2d(    output_dim,      1, kernel_size=3, stride=1, padding=1, bias=True),
             nn.Tanh()
             # state size. (1 channel) x 64 x 64
         )
