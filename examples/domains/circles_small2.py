@@ -59,17 +59,17 @@ class Circles(Data):
         samples = []
         for b in range(batch_size):
             image = random_shapes_distr((dim, dim), max_shapes=1, shape='circle', min_size=min_size,
-                                        max_size=max_size, multichannel=False, intensity_range=(0,0))[0]
-            samples += [((255-image)/255.).astype('float32').flatten()]
+                                        max_size=max_size, multichannel=False, intensity_range=(255,255))[0]
+            samples += [(image/255.).astype('float32').flatten()]
         return torch.from_numpy(np.vstack(samples))
 
     def sample_att(self, batch_size, dim=64, min_size=10, max_size=40):
         samples = []
         for b in range(batch_size):
             result = random_shapes_distr((dim, dim), max_shapes=1, shape='circle', min_size=min_size,
-                                         max_size=max_size, multichannel=False, intensity_range=(0,0))
+                                         max_size=max_size, multichannel=False, intensity_range=(255,255))
             image, label = result  # label = ('circle', (px, py, radius))
-            image = (255-image)/255.
+            image = image/255.
             px, py, radius = np.array(label[0][1])
             px = (px-dim-1)/float(dim)
             py = (py-dim-1)/float(dim)
@@ -315,19 +315,19 @@ class Generator(Net):
             # state size. (output_dim*8) x 4 x 4
             nn.Upsample(scale_factor = 2, mode='bilinear'),
             # nn.ReflectionPad2d(1),
-            nn.Conv2d(output_dim * 8, output_dim * 4, kernel_size=3, stride=1, padding=1, bias=False),
+            nn.Conv2d(output_dim * 8, output_dim * 4, kernel_size=3, stride=1, padding=1, bias=True),
             nn.BatchNorm2d(output_dim * 4),
             nn.ReLU(True), # hin - kernel + 1 + 2*padding (assumes stride=1)   3*hin - 2 + 1 + 2 = 
             # state size. (output_dim*4) x 8 x 8
             nn.Upsample(scale_factor = 2, mode='bilinear'),
             # nn.ReflectionPad2d(1),
-            nn.Conv2d(output_dim * 4, output_dim * 2, kernel_size=3, stride=1, padding=1, bias=False),
+            nn.Conv2d(output_dim * 4, output_dim * 2, kernel_size=3, stride=1, padding=1, bias=True),
             nn.BatchNorm2d(output_dim * 2),
             nn.ReLU(True),
             # state size. (output_dim*2) x 16 x 16
             nn.Upsample(scale_factor = 2, mode='bilinear'),
             # nn.ReflectionPad2d(1),
-            nn.Conv2d(output_dim * 2,     output_dim, kernel_size=3, stride=1, padding=1, bias=False),
+            nn.Conv2d(output_dim * 2,     output_dim, kernel_size=3, stride=1, padding=1, bias=True),
             nn.BatchNorm2d(output_dim),
             nn.ReLU(True),
             # state size. (output_dim) x 32 x 32
