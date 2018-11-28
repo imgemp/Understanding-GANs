@@ -55,19 +55,19 @@ class Circles(Data):
         plt.savefig(params['saveto']+'samples_real.png')
         plt.close()
 
-    def sample(self, batch_size, dim=64):
+    def sample(self, batch_size, dim=64, min_size=10, max_size=40):
         samples = []
         for b in range(batch_size):
-            image = random_shapes_distr((dim, dim), max_shapes=1, shape='circle', min_size=20,
-                                        max_size=30,multichannel=False)[0]
+            image = random_shapes_distr((dim, dim), max_shapes=1, shape='circle', min_size=min_size,
+                                        max_size=max_size, multichannel=False, intensity_range=(0,0))[0]
             samples += [((255-image)/255.).astype('float32').flatten()]
         return torch.from_numpy(np.vstack(samples))
 
-    def sample_att(self, batch_size, dim=64, min_size=20, max_size=30):
+    def sample_att(self, batch_size, dim=64, min_size=10, max_size=40):
         samples = []
         for b in range(batch_size):
             result = random_shapes_distr((dim, dim), max_shapes=1, shape='circle', min_size=min_size,
-                                         max_size=max_size, multichannel=False)
+                                         max_size=max_size, multichannel=False, intensity_range=(0,0))
             image, label = result  # label = ('circle', (px, py, radius))
             image = (255-image)/255.
             px, py, radius = np.array(label[0][1])
@@ -262,7 +262,7 @@ def random_shapes_distr(image_shape,
             scale1 = 0.30*image_shape[1]
             row = np.random.normal(loc0, scale0)
             column = np.random.normal(loc1, scale1)
-            point = (row, column)
+            point = (int(row), int(column))
             try:
                 indices, label = shape_generator(point, image_shape, shape,
                                                  random)
@@ -270,6 +270,7 @@ def random_shapes_distr(image_shape,
                 # Couldn't fit the shape, skip it.
                 continue
             # Check if there is an overlap where the mask is nonzero.
+            indices = tuple(indices)
             if allow_overlap or not filled[indices].any():
                 image[indices] = colors[shape_idx]
                 filled[indices] = True
