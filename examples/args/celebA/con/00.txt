@@ -1,14 +1,14 @@
 -dom celebA
 -bs 128
--div JS
+-div Wasserstein
 -g_opt RMSProp
 -g_lr 0.0001
 -g_l2 0.0
 -g_nh 128
 -g_nl 2
 -g_nonlin relu
--att_opt RMSProp
--att_lr 0.0001
+-att_opt SGD
+-att_lr 1e-6
 -att_l2 0.0
 -att_nh 128
 -att_nl 1
@@ -34,7 +34,7 @@
 -dis_nonlin relu
 -betas 0.5 0.999
 -eps 1e-08
--mx_it 1000
+-mx_it 10000
 -viz_every 100
 -plot_every 100
 -w_every 100
