@@ -52,7 +52,7 @@ class CelebA(Data):
             return
         # url = 'https://www.dropbox.com/sh/8oqt9vytwxb3s4r/AADIKlz8PR9zr6Y20qbkunrba/Img/img_align_celeba.zip?dl=1&pv=1'
         # url_img = 'https://drive.google.com/file/d/0B7EVK8r0v71pblRyaVFSWGxPY0U/view?usp=sharing'
-        filepath = download_file_from_google_drive(id='0B7EVK8r0v71pblRyaVFSWGxPY0U', destination=os.path.join(dirpath, 'img_align_celeba.zip'))
+        filepath = download_file_from_google_drive(id='0B7EVK8r0v71pZjFTYXZWM3FlRnM', destination=os.path.join(dirpath, 'img_align_celeba.zip'))
         zip_dir = ''
         with zipfile.ZipFile(filepath) as zf:
             zip_dir = zf.namelist()[0]
@@ -66,7 +66,7 @@ class CelebA(Data):
             os.mkdir(file_folder)
             os.rename(os.path.join(dirpath, file), os.path.join(file_folder, file))
         # url_att = 'https://drive.google.com/file/d/0B7EVK8r0v71pZjFTYXZWM3FlRnM/view?usp=sharing'
-        filepath = download_file_from_google_drive(id='0B7EVK8r0v71pZjFTYXZWM3FlRnM', destination=os.path.join(dirpath, 'celebA_att.txt'))
+        filepath = download_file_from_google_drive(id='0B7EVK8r0v71pblRyaVFSWGxPY0U', destination=os.path.join(dirpath, 'celebA_att.txt'))
         newfilepath = os.path.join(dirpath, 'celebA_att.txt')
         os.rename(os.path.join(dirpath, os.path.basename(filepath)), newfilepath)
         with open(newfilepath) as file:

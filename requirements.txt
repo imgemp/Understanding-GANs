@@ -11,3 +11,4 @@ seaborn>=0.8.1
 scikit-image>=0.14.0
 pillow==5.0.0
 psutil
+requests
