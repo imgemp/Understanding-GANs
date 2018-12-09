@@ -107,6 +107,9 @@ def parse_params():
     elif args['domain'] == 'circles_small3':
         from examples.domains.circles_small3 import Circles as Domain
         from examples.domains.circles_small3 import Generator, AttExtractor, LatExtractor, Discriminator, Disentangler
+    elif args['domain'] == 'circles_small4':
+        from examples.domains.circles_small4 import Circles as Domain
+        from examples.domains.circles_small4 import Generator, AttExtractor, LatExtractor, Discriminator, Disentangler
     else:
         raise NotImplementedError(args['domain'])
 
