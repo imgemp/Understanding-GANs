@@ -11,7 +11,7 @@ import torchvision.datasets as dset
 import torchvision.transforms as transforms
 
 from ugans.core import Data, Net
-from ugans.utils import download
+from ugans.utils import download_file_from_google_drive
 
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -51,8 +51,8 @@ class CelebA(Data):
             print('Found Celeb-A - skip')
             return
         # url = 'https://www.dropbox.com/sh/8oqt9vytwxb3s4r/AADIKlz8PR9zr6Y20qbkunrba/Img/img_align_celeba.zip?dl=1&pv=1'
-        url_img = 'https://drive.google.com/file/d/0B7EVK8r0v71pblRyaVFSWGxPY0U/view?usp=sharing'
-        filepath = download(url_img, dirpath)
+        # url_img = 'https://drive.google.com/file/d/0B7EVK8r0v71pblRyaVFSWGxPY0U/view?usp=sharing'
+        filepath = download_file_from_google_drive(id='0B7EVK8r0v71pblRyaVFSWGxPY0U', destination=os.path.join(dirpath, 'img_align_celeba.zip'))
         zip_dir = ''
         with zipfile.ZipFile(filepath) as zf:
             zip_dir = zf.namelist()[0]
@@ -65,8 +65,8 @@ class CelebA(Data):
             file_folder = os.path.join(img_dir, file.strip('.jpg'))
             os.mkdir(file_folder)
             os.rename(os.path.join(dirpath, file), os.path.join(file_folder, file))
-        url_att = 'https://drive.google.com/file/d/0B7EVK8r0v71pZjFTYXZWM3FlRnM/view?usp=sharing'
-        filepath = download(url_att, dirpath)
+        # url_att = 'https://drive.google.com/file/d/0B7EVK8r0v71pZjFTYXZWM3FlRnM/view?usp=sharing'
+        filepath = download_file_from_google_drive(id='0B7EVK8r0v71pZjFTYXZWM3FlRnM', destination=os.path.join(dirpath, 'celebA_att.txt'))
         newfilepath = os.path.join(dirpath, 'celebA_att.txt')
         os.rename(os.path.join(dirpath, os.path.basename(filepath)), newfilepath)
         with open(newfilepath) as file:
