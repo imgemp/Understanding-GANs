@@ -1,3 +1,8 @@
+import os
+import sys
+import zipfile
+from six.moves import urllib
+
 import pickle
 import numpy as np
 import torch
@@ -47,3 +52,37 @@ def simple_plot(data_1d, xlabel, ylabel, title, filepath):
     plt.title(title)
     fig.savefig(filepath)
     plt.close(fig)
+
+def download(url, dirpath):
+    filename = url.split('/')[-1]
+    filepath = os.path.join(dirpath, filename)
+    u = urllib.request.urlopen(url)
+    f = open(filepath, 'wb')
+    filesize = int(u.headers["Content-Length"])
+    print("Downloading: %s Bytes: %s" % (filename, filesize))
+
+    downloaded = 0
+    block_sz = 8192
+    status_width = 70
+    while True:
+        buf = u.read(block_sz)
+        if not buf:
+            print('')
+            break
+        else:
+            print('', end='\r')
+        downloaded += len(buf)
+        f.write(buf)
+        status = (("[%-" + str(status_width + 1) + "s] %3.2f%%") %
+            ('=' * int(float(downloaded) / filesize * status_width) + '>', downloaded * 100. / filesize))
+        print(status, end='')
+        sys.stdout.flush()
+    f.close()
+    return filepath
+
+def unzip(filepath):
+    print("Extracting: " + filepath)
+    dirpath = os.path.dirname(filepath)
+    with zipfile.ZipFile(filepath) as zf:
+        zf.extractall(dirpath)
+    os.remove(filepath)

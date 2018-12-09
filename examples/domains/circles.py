@@ -17,7 +17,7 @@ import seaborn as sns
 
 # Taken from CIFAR Generator
 class Circles(Data):
-    def __init__(self):
+    def __init__(self, **kwargs):
         super(Circles, self).__init__()
 
     def plot_current(self, train, params, i):

@@ -110,6 +110,9 @@ def parse_params():
     elif args['domain'] == 'circles_small4':
         from examples.domains.circles_small4 import Circles as Domain
         from examples.domains.circles_small4 import Generator, AttExtractor, LatExtractor, Discriminator, Disentangler
+    elif args['domain'] == 'celebA':
+        from examples.domains.celeba import CelebA as Domain
+        from examples.domains.celeba import Generator, AttExtractor, LatExtractor, Discriminator, Disentangler
     else:
         raise NotImplementedError(args['domain'])
 
@@ -169,7 +172,7 @@ def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discrim
 
     to_gpu = gpu_helper(params['gpu'])
 
-    data = Domain()
+    data = Domain(batch_size=params['batch_size'])
     data.plot_real(params)
     G = Generator(input_dim=params['z_dim'],output_dim=params['x_dim'],n_hidden=params['gen_n_hidden'],
                   n_layer=params['gen_n_layer'],nonlin=params['gen_nonlinearity'])
