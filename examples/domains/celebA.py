@@ -20,6 +20,7 @@ import seaborn as sns
 class CelebA(Data):
     def __init__(self, batch_size=128):
         super(CelebA, self).__init__()
+        print('downloading data...')
         self.download_celeb_a()
         # Root directory for dataset
         dataroot = './examples/domains/data/celebA_img'
@@ -30,6 +31,7 @@ class CelebA(Data):
         # Spatial size of training images. All images will be resized to this
         #   size using a transformer.
         image_size = 64
+        print('forming image folder...')
         dataset = dset.ImageFolder(root=dataroot,
                            transform=transforms.Compose([
                                transforms.Resize(image_size),
@@ -38,9 +40,11 @@ class CelebA(Data):
                                transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
                            ]))
         # Create the dataloader
+        print('forming data loader...')
         self.dataloader = torch.utils.data.DataLoader(dataset, batch_size=batch_size,
                                                       shuffle=True, num_workers=workers)
         self.dataiterator = iter(self.dataloader)
+        print('loading attributes...')
         atts = np.load('./examples/domains/data/celebA_att.npz')
         self.attribute_names = atts['names']
         self.attributes = atts['attributes']
