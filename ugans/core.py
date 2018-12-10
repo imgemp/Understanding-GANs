@@ -151,7 +151,7 @@ class Manager(object):
         return res
 
     def get_data_with_atts(self, batch_size):
-        data, atts = torch.split(self.data.sample_att(batch_size), [self.params['x_dim']**2,self.params['att_dim']], dim=1)
+        data, atts = torch.split(self.data.sample_att(batch_size), [self.params['c_dim']*self.params['x_dim']**2, self.params['att_dim']], dim=1)
         return self.to_gpu(data), self.to_gpu(atts)
 
     def get_predictions(self, data):

@@ -20,18 +20,14 @@ import seaborn as sns
 class CelebA(Data):
     def __init__(self, batch_size=128):
         super(CelebA, self).__init__()
-        print('downloading data...')
         self.download_celeb_a()
         # Root directory for dataset
         dataroot = './examples/domains/data/celebA_img'
         # Number of workers for dataloader
         workers = 2
-        # Batch size during training
-        # batch_size = 128
         # Spatial size of training images. All images will be resized to this
         #   size using a transformer.
         image_size = 64
-        print('forming image folder...')
         dataset = dset.ImageFolder(root=dataroot,
                            transform=transforms.Compose([
                                transforms.Resize(image_size),
@@ -40,11 +36,9 @@ class CelebA(Data):
                                transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
                            ]))
         # Create the dataloader
-        print('forming data loader...')
         self.dataloader = torch.utils.data.DataLoader(dataset, batch_size=batch_size,
                                                       shuffle=True, num_workers=workers)
         self.dataiterator = iter(self.dataloader)
-        print('loading attributes...')
         atts = np.load('./examples/domains/data/celebA_att.npz')
         self.attribute_names = atts['names']
         self.attributes = atts['attributes']
@@ -73,7 +67,6 @@ class CelebA(Data):
         # url_att = 'https://drive.google.com/file/d/0B7EVK8r0v71pZjFTYXZWM3FlRnM/view?usp=sharing'
         newfilepath = os.path.join(dirpath, 'celebA_att.txt')
         download_file_from_google_drive(id='0B7EVK8r0v71pblRyaVFSWGxPY0U', destination=newfilepath)
-        # os.rename(os.path.join(dirpath, os.path.basename(filepath)), newfilepath)
         with open(newfilepath) as file:
             num_labels = file.readline()
             attribute_names = file.readline()
@@ -181,7 +174,7 @@ class Generator(Net):
     def forward(self, x):
         output = x.view(-1, self.input_dim, 1, 1)
         output = self.main(output) / 2. + 0.5
-        return output.view(-1, self.output_dim**2)
+        return output.view(-1, 3*self.output_dim**2)
 
     def init_weights(self):
         self.apply(weights_init)
@@ -194,7 +187,7 @@ class AttExtractor(Net):
         
         self.main = nn.Sequential(
             # input is (nc) x 64 x 64
-            nn.Conv2d(1, image_dim, 4, 2, 1, bias=False),
+            nn.Conv2d(3, image_dim, 4, 2, 1, bias=False),
             nn.LeakyReLU(0.2, inplace=True),
             # state size. (image_dim) x 32 x 32
             nn.Conv2d(image_dim, image_dim * 2, 4, 2, 1, bias=False),
@@ -224,7 +217,7 @@ class AttExtractor(Net):
         self.first_forward = True
 
     def forward(self, x):
-        x = x.view(-1, 1, self.image_dim, self.image_dim)
+        x = x.view(-1, 3, self.image_dim, self.image_dim)
         output = self.main(x)
         output = output.view(-1, self.image_dim*8*4*4)
         output = self.output(output)

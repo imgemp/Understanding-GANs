@@ -81,6 +81,7 @@ def parse_params():
     
     parser.add_argument('-zdim','--z_dim', type=int, default=256, help='dimensionality of p(z) - unit normal', required=False)
     parser.add_argument('-xdim','--x_dim', type=int, default=2, help='dimensionality of p(x) - data distribution', required=False)
+    parser.add_argument('-cdim','--c_dim', type=int, default=1, help='number of channels in data distribution', required=False)
     parser.add_argument('-latdim','--lat_dim', type=int, default=2, help='dimensionality of latent feature extractor', required=False)
     parser.add_argument('-attdim','--att_dim', type=int, default=2, help='dimensionality of attribute feature extractor', required=False)
     
@@ -167,12 +168,11 @@ def parse_params():
 
 def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discriminator, Disentangler, params):
     print('\n'+'Saving to '+params['saveto']+'\n',flush=True)
-    embed()
+
     logger = Logger(params['saveto']+'logs/')
-    print('logger and now gpu_helper...')
+
     to_gpu = gpu_helper(params['gpu'])
-    print('initializing domain...')
-    embed()
+
     data = Domain(batch_size=params['batch_size'])
     data.plot_real(params)
     G = Generator(input_dim=params['z_dim'],output_dim=params['x_dim'],n_hidden=params['gen_n_hidden'],

@@ -41,6 +41,7 @@
 -n_viz 8
 -zdim 10
 -xdim 64
+-cdim 3
 -latdim 20
 -attdim 40
 -maps consensus
