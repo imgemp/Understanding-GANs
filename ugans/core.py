@@ -9,7 +9,7 @@ import torch.optim as optim
 from torch.autograd import Variable
 from torch.distributions import Uniform
 
-from utils import detach_all
+from ugans.utils import detach_all
 
 from IPython import embed
 
