@@ -89,7 +89,8 @@ def unzip(filepath):
     os.remove(filepath)
 
 def download_file_from_google_drive(id, destination):
-    URL = "https://docs.google.com/uc?export=download"
+    # URL = "https://docs.google.com/uc?export=download"
+    URL = "https://drive.google.com/uc?export=download"
 
     session = requests.Session()
 
