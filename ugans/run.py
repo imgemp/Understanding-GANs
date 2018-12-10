@@ -171,7 +171,7 @@ def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discrim
     logger = Logger(params['saveto']+'logs/')
 
     to_gpu = gpu_helper(params['gpu'])
-
+    print('initializing domain...')
     data = Domain(batch_size=params['batch_size'])
     data.plot_real(params)
     G = Generator(input_dim=params['z_dim'],output_dim=params['x_dim'],n_hidden=params['gen_n_hidden'],
