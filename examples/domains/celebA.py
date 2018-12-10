@@ -74,7 +74,7 @@ class CelebA(Data):
         np.savez_compressed(os.path.join(dirpath, 'celebA_att.npz'), names=attribute_names,attributes=attributes)
         
     def plot_current(self, train, params, i):
-        images = train.m.get_fake(64, params['z_dim']).detach().view(-1, 1, 64, 64)
+        images = train.m.get_fake(64, params['z_dim']).detach().view(-1, 3, 64, 64)
         img = torchvision.utils.make_grid(images)
         # img = img / 2 + 0.5     # unnormalize
         plt.imshow(np.transpose(img.cpu().numpy(), (1, 2, 0)))
@@ -91,8 +91,8 @@ class CelebA(Data):
                 ax = plt.subplot(1,cols,1)
             else:
                 plt.subplot(1,cols,i+1, sharex=ax, sharey=ax)
-            thissamp = samps.reshape((params['n_viz'],1,64,64)).transpose((0,2,3,1))
-            ax2 = plt.imshow(thissamp.reshape(-1, 64), cmap='gray')
+            thissamp = samps.reshape((params['n_viz'],3,64,64)).transpose((0,2,3,1))
+            ax2 = plt.imshow(thissamp.reshape(-1, 64, 3))
             plt.xticks([]); plt.yticks([])
             plt.title('step %d'%(i*params['viz_every']))
         plt.gcf().tight_layout()
@@ -100,7 +100,7 @@ class CelebA(Data):
         plt.close()
 
     def plot_real(self, params):
-        images = self.sample(batch_size=64).view(-1, 1, 64, 64)
+        images = self.sample(batch_size=64).view(-1, 3, 64, 64)
         img = torchvision.utils.make_grid(images)
         # img = img / 2 + 0.5     # unnormalize
         plt.imshow(np.transpose(img.cpu().numpy(), (1, 2, 0)))
