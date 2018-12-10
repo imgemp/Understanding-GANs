@@ -1,6 +1,6 @@
 ertain Directories
 examples/results
-domains/data
+domains/data/
 swarm2/
 swarm2.zip
 *.pkl.gz
