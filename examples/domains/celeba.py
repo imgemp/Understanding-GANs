@@ -22,7 +22,7 @@ class CelebA(Data):
         super(CelebA, self).__init__()
         self.download_celeb_a()
         # Root directory for dataset
-        dataroot = './examples/domains/data/celebA_img'
+        dataroot = 'examples/domains/data/celebA_img'
         # Number of workers for dataloader
         workers = 2
         # Batch size during training
@@ -41,11 +41,11 @@ class CelebA(Data):
         self.dataloader = torch.utils.data.DataLoader(dataset, batch_size=batch_size,
                                                       shuffle=True, num_workers=workers)
         self.dataiterator = iter(self.dataloader)
-        atts = np.load('./examples/domains/data/celebA_att.npz')
+        atts = np.load('examples/domains/data/celebA_att.npz')
         self.attribute_names = atts['names']
         self.attributes = atts['attributes']
 
-    def download_celeb_a(self, dirpath='./examples/domains/data'):
+    def download_celeb_a(self, dirpath='examples/domains/data'):
         data_dir = 'celebA_img'
         if os.path.exists(os.path.join(dirpath, data_dir)):
             print('Found Celeb-A - skip')
