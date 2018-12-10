@@ -160,9 +160,9 @@ class Generator(Net):
             nn.BatchNorm2d(output_dim),
             nn.ReLU(True),
             # state size. (output_dim) x 32 x 32
-            nn.ConvTranspose2d(    output_dim,      1, 4, 2, 1, bias=False),
+            nn.ConvTranspose2d(    output_dim,      3, 4, 2, 1, bias=False),
             nn.Tanh()
-            # state size. (1 channel) x 64 x 64
+            # state size. (3 channel) x 64 x 64
         )
         
         self.input_dim = input_dim
