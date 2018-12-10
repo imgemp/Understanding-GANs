@@ -127,6 +127,8 @@ class CelebA(Data):
             self.dataiterator = iter(self.dataloader)
             images, ids = next(self.dataiterator)
             attributes = torch.from_numpy(self.attributes[ids.data.numpy()].astype('float32'))
+        print(images.shape)
+        print(attributes.shape)
         return torch.cat((images.reshape(batch_size, -1), attributes), dim=1)
 
 
