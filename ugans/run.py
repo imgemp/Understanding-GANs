@@ -169,7 +169,7 @@ def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discrim
     print('\n'+'Saving to '+params['saveto']+'\n',flush=True)
 
     logger = Logger(params['saveto']+'logs/')
-
+    print('logger and now gpu_helper...')
     to_gpu = gpu_helper(params['gpu'])
     print('initializing domain...')
     data = Domain(batch_size=params['batch_size'])
