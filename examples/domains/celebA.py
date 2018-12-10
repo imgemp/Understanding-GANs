@@ -221,7 +221,7 @@ class AttExtractor(Net):
         output = self.main(x)
         output = output.view(-1, self.image_dim*8*4*4)
         output = self.output(output)
-        return output.view(-1, self.output_dim)
+        return F.sigmoid(output.view(-1, self.output_dim))
 
     def init_weights(self):
         self.apply(weights_init)
@@ -264,7 +264,7 @@ class LatExtractor(Net):
         self.first_forward = True
 
     def forward(self, x):
-        x = x.view(-1, 1, self.image_dim, self.image_dim)
+        x = x.view(-1, 3, self.image_dim, self.image_dim)
         output = self.main(x)
         output = output.view(-1, self.image_dim*8*4*4)
         output = self.output(output)
@@ -353,7 +353,7 @@ class Disentangler(Net):
             h = self.nonlin(hfc(h))
             if self.first_forward: print(h.shape)
         self.first_forward = False
-        return self.final_fc(h)
+        return F.sigmoid(self.final_fc(h))
 
     def init_weights(self):
         for layer in self.layers:

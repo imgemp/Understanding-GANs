@@ -98,7 +98,10 @@ class Manager(object):
             self.criterion = lambda dec, label: -loss(dec, label)
         elif params['divergence'] == 'Wasserstein':
             self.criterion = lambda dec, label: torch.mean(dec*(2.*label-1.))  #loss(dec, label) #torch.sum(dec)  #torch.sum(dec*(2.*label-1.))
-        self.att_loss = lambda pred, true: torch.mean((pred-true)**2.)
+        if params['att_binary']:
+            self.att_loss = nn.BCELoss()
+        else:
+            self.att_loss = lambda pred, true: torch.mean((pred-true)**2.)
         self.logger = logger
 
     def get_real(self, batch_size):

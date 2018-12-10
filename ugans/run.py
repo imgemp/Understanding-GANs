@@ -84,6 +84,7 @@ def parse_params():
     parser.add_argument('-cdim','--c_dim', type=int, default=1, help='number of channels in data distribution', required=False)
     parser.add_argument('-latdim','--lat_dim', type=int, default=2, help='dimensionality of latent feature extractor', required=False)
     parser.add_argument('-attdim','--att_dim', type=int, default=2, help='dimensionality of attribute feature extractor', required=False)
+    parser.add_argument('-attbin','--att_binary', type=lambda x: (str(x).lower() == 'true'), default=False, help='whether the attributes are binary', required=False)
     
     parser.add_argument('-maps','--map_strings', type=str, nargs='+', default=[], help='string names of optimizers to use for generator and discriminator', required=False)
     parser.add_argument('-gam_v','--gamma_v', type=float, default=1., help='gamma parameter for consensus applied to V(G,D)', required=False)
