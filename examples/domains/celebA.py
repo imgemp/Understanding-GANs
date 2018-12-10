@@ -73,7 +73,7 @@ class CelebA(Data):
         with open(newfilepath) as file:
             num_labels = file.readline()
             attribute_names = file.readline()
-        attributes = np.loadtxt(newfilepath, usecols=range(1,41))
+        attributes = np.loadtxt(newfilepath, usecols=range(1,41), skiprows=2)
         np.savez_compressed(os.path.join(dirpath, 'celebA_att.npz'), names=attribute_names,attributes=attributes)
         
     def plot_current(self, train, params, i):
