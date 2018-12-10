@@ -20,6 +20,7 @@ import seaborn as sns
 class CelebA(Data):
     def __init__(self, batch_size=128):
         super(CelebA, self).__init__()
+        self.batch_size = batch_size
         self.download_celeb_a()
         # Root directory for dataset
         dataroot = './examples/domains/data/celebA_img'
@@ -100,7 +101,7 @@ class CelebA(Data):
         plt.close()
 
     def plot_real(self, params):
-        images = self.sample(batch_size=64).view(-1, 3, 64, 64)
+        images = self.sample(batch_size=self.batch_size).view(-1, 3, 64, 64)[:64]
         img = torchvision.utils.make_grid(images)
         # img = img / 2 + 0.5     # unnormalize
         plt.imshow(np.transpose(img.cpu().numpy(), (1, 2, 0)))
