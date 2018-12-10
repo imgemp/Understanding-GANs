@@ -15,7 +15,7 @@ from ugans.utils import download_file_from_google_drive
 
 import matplotlib.pyplot as plt
 import seaborn as sns
-
+from IPython import embed
 # Taken from DCGAN
 class CelebA(Data):
     def __init__(self, batch_size=128):
@@ -53,7 +53,7 @@ class CelebA(Data):
         # url = 'https://www.dropbox.com/sh/8oqt9vytwxb3s4r/AADIKlz8PR9zr6Y20qbkunrba/Img/img_align_celeba.zip?dl=1&pv=1'
         # url_img = 'https://drive.google.com/file/d/0B7EVK8r0v71pblRyaVFSWGxPY0U/view?usp=sharing'
         destination = os.path.join(dirpath, 'img_align_celeba.zip')
-        print(destination)
+        embed()
         filepath = download_file_from_google_drive(id='0B7EVK8r0v71pZjFTYXZWM3FlRnM', destination=destination)
         zip_dir = ''
         with zipfile.ZipFile(filepath) as zf:
