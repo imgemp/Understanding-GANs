@@ -15,14 +15,14 @@ from ugans.utils import download_file_from_google_drive
 
 import matplotlib.pyplot as plt
 import seaborn as sns
-from IPython import embed
+
 # Taken from DCGAN
 class CelebA(Data):
     def __init__(self, batch_size=128):
         super(CelebA, self).__init__()
         self.download_celeb_a()
         # Root directory for dataset
-        dataroot = 'examples/domains/data/celebA_img'
+        dataroot = './examples/domains/data/celebA_img'
         # Number of workers for dataloader
         workers = 2
         # Batch size during training
@@ -41,11 +41,11 @@ class CelebA(Data):
         self.dataloader = torch.utils.data.DataLoader(dataset, batch_size=batch_size,
                                                       shuffle=True, num_workers=workers)
         self.dataiterator = iter(self.dataloader)
-        atts = np.load('examples/domains/data/celebA_att.npz')
+        atts = np.load('./examples/domains/data/celebA_att.npz')
         self.attribute_names = atts['names']
         self.attributes = atts['attributes']
 
-    def download_celeb_a(self, dirpath='examples/domains/data'):
+    def download_celeb_a(self, dirpath='./examples/domains/data'):
         data_dir = 'celebA_img'
         if os.path.exists(os.path.join(dirpath, data_dir)):
             print('Found Celeb-A - skip')
@@ -53,7 +53,6 @@ class CelebA(Data):
         # url = 'https://www.dropbox.com/sh/8oqt9vytwxb3s4r/AADIKlz8PR9zr6Y20qbkunrba/Img/img_align_celeba.zip?dl=1&pv=1'
         # url_img = 'https://drive.google.com/file/d/0B7EVK8r0v71pblRyaVFSWGxPY0U/view?usp=sharing'
         destination = os.path.join(dirpath, 'img_align_celeba.zip')
-        embed()
         filepath = download_file_from_google_drive(id='0B7EVK8r0v71pZjFTYXZWM3FlRnM', destination=destination)
         zip_dir = ''
         with zipfile.ZipFile(filepath) as zf:
