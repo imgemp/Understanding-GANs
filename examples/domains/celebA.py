@@ -62,7 +62,7 @@ class CelebA(Data):
         os.rename(os.path.join(dirpath, zip_dir), os.path.join(dirpath, data_dir))
         # may need to create a folder for each image
         img_dir = os.path.join(dirpath, data_dir)
-        for file in img_dir:
+        for file in os.listdir(img_dir):
             file_folder = os.path.join(img_dir, file.strip('.jpg'))
             os.mkdir(file_folder)
             os.rename(os.path.join(dirpath, file), os.path.join(file_folder, file))
