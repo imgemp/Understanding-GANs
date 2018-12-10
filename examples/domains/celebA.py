@@ -65,7 +65,7 @@ class CelebA(Data):
         for file in os.listdir(img_dir):
             file_folder = os.path.join(img_dir, file.strip('.jpg'))
             os.mkdir(file_folder)
-            os.rename(os.path.join(dirpath, file), os.path.join(file_folder, file))
+            os.rename(os.path.join(img_dir, file), os.path.join(file_folder, file))
         # url_att = 'https://drive.google.com/file/d/0B7EVK8r0v71pZjFTYXZWM3FlRnM/view?usp=sharing'
         newfilepath = os.path.join(dirpath, 'celebA_att.txt')
         download_file_from_google_drive(id='0B7EVK8r0v71pblRyaVFSWGxPY0U', destination=newfilepath)
