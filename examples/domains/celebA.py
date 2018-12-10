@@ -221,7 +221,6 @@ class AttExtractor(Net):
         output = self.main(x)
         output = output.view(-1, self.image_dim*8*4*4)
         output = self.output(output)
-        temp = output.view(-1, self.output_dim)
         return output.view(-1, self.output_dim)
 
     def init_weights(self):
@@ -235,7 +234,7 @@ class LatExtractor(Net):
         
         self.main = nn.Sequential(
             # input is (nc) x 64 x 64
-            nn.Conv2d(1, image_dim, 4, 2, 1, bias=False),
+            nn.Conv2d(3, image_dim, 4, 2, 1, bias=False),
             nn.LeakyReLU(0.2, inplace=True),
             # state size. (image_dim) x 32 x 32
             nn.Conv2d(image_dim, image_dim * 2, 4, 2, 1, bias=False),
