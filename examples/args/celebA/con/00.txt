@@ -1,6 +1,6 @@
 -dom celebA
 -bs 128
--div Wasserstein
+-div JS
 -g_opt RMSProp
 -g_lr 0.0001
 -g_l2 0.0
@@ -23,7 +23,7 @@
 -d_lr 0.0001
 -d_l2 0.0
 -d_nh 128
--d_nl 1
+-d_nl 0
 -d_nonlin relu
 -d_quad False
 -dis_opt RMSProp
@@ -39,10 +39,10 @@
 -plot_every 100
 -w_every 100
 -n_viz 8
--zdim 10
+-zdim 100
 -xdim 64
 -cdim 3
--latdim 20
+-latdim 40
 -attdim 40
 -attbin True
 -maps consensus
