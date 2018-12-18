@@ -69,11 +69,13 @@ class CelebA(Data):
         # url_att = 'https://drive.google.com/file/d/0B7EVK8r0v71pZjFTYXZWM3FlRnM/view?usp=sharing'
         newfilepath = os.path.join(dirpath, 'celebA_att.txt')
         download_file_from_google_drive(id='0B7EVK8r0v71pblRyaVFSWGxPY0U', destination=newfilepath)
-        with open(newfilepath) as file:
-            num_labels = file.readline()
-            attribute_names = file.readline()
+        with open(newfilepath, 'r') as file:
+            num_samples = int(file.readline().strip('\n'))
+            attribute_names = file.readline().split(' ')[:-1]
         attributes = np.loadtxt(newfilepath, usecols=range(1,41), skiprows=2)
-        np.savez_compressed(os.path.join(dirpath, 'celebA_att.npz'), names=attribute_names,attributes=attributes)
+        attributes = (attributes + 1) // 2  # convert (-1,1) to (0,1)
+        attributes = attributes.astype('int')
+        np.savez_compressed(os.path.join(dirpath, 'celebA_att.npz'), names=attribute_names, attributes=attributes)
         
     def plot_current(self, train, params, i):
         images = train.m.get_fake(64, params['z_dim']).detach().view(-1, 3, 64, 64)
