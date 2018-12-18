@@ -226,7 +226,7 @@ def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discrim
             if params['n_viz'] > 0:
                 samples = train.m.get_fake(params['n_viz'], params['z_dim']).cpu().data.numpy()
                 np.save(params['saveto']+'samples/'+str(i), samples)
-                logger.image_summary('images', samples.reshape(-1, params['x_dim'], params['x_dim']), i)
+                logger.image_summary('images', samples.reshape(-1, params['x_dim'], params['x_dim'], params['c_dim']), i)
             data.plot_current(train, params, i)
 
         if params['plot_every'] > 0 and i % params['plot_every'] == 0:
