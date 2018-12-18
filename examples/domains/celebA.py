@@ -251,11 +251,11 @@ class LatExtractor(Net):
             nn.BatchNorm2d(image_dim * 8),
             nn.LeakyReLU(0.2, inplace=True),
             # state size. (image_dim*8) x 4 x 4
-            # nn.Conv2d(image_dim * 8, 1, 4, 1, 0, bias=False),
-            # nn.Sigmoid()
+            nn.Conv2d(image_dim * 8, 1, 4, 1, 0, bias=False),
+            nn.Sigmoid()
         )
 
-        output = nn.Linear(image_dim*8 * 4 * 4, output_dim)
+        # output = nn.Linear(image_dim*8 * 4 * 4, output_dim)
 
         self.output = output
         self.input_dim = input_dim
@@ -268,9 +268,10 @@ class LatExtractor(Net):
     def forward(self, x):
         x = x.view(-1, 3, self.image_dim, self.image_dim)
         output = self.main(x)
-        output = output.view(-1, self.image_dim*8*4*4)
-        output = self.output(output)
-        return output.view(-1, self.output_dim)
+        # output = output.view(-1, self.image_dim*8*4*4)
+        # output = self.output(output)
+        # return output.view(-1, self.output_dim)
+        return output
 
     def init_weights(self):
         self.apply(weights_init)
