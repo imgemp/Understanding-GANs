@@ -271,7 +271,7 @@ class LatExtractor(Net):
         # output = output.view(-1, self.image_dim*8*4*4)
         # output = self.output(output)
         # return output.view(-1, self.output_dim)
-        return output
+        return output.view(-1, 1)
 
     def init_weights(self):
         self.apply(weights_init)
