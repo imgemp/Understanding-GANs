@@ -15,7 +15,7 @@ from ugans.utils import download_file_from_google_drive
 
 import matplotlib.pyplot as plt
 import seaborn as sns
-
+from IPython import embed
 # Taken from DCGAN
 class CelebA(Data):
     def __init__(self, batch_size=128):
@@ -126,6 +126,8 @@ class CelebA(Data):
             images, ids = next(self.dataiterator)
             attributes = torch.from_numpy(self.attributes[ids.data.numpy()].astype('float32'))
         if ids.data.numpy().shape[0] < 128:
+            print('BUG!')
+            print(ids.data.numpy().shape[0])
             embed()
         return torch.cat((images.reshape(batch_size, -1), attributes), dim=1)
 
