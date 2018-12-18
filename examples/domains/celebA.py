@@ -257,7 +257,7 @@ class LatExtractor(Net):
 
         # output = nn.Linear(image_dim*8 * 4 * 4, output_dim)
 
-        self.output = output
+        # self.output = output
         self.input_dim = input_dim
         self.output_dim = output_dim
         self.image_dim = image_dim
