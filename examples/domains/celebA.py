@@ -308,7 +308,7 @@ class Discriminator(Net):
 
     def forward(self,x):
         h = x
-        if self.first_forward: print('Discriminator output shapes:')
+        if self.first_forward: print('\nDiscriminator output shapes:')
         for hfc in self.hidden_fcs:
             h = self.nonlin(hfc(h))
             if self.first_forward: print(h.shape)
@@ -356,7 +356,7 @@ class Disentangler(Net):
 
     def forward(self,x):
         h = x
-        if self.first_forward: print('Disentangler output shapes:')
+        if self.first_forward: print('\nDisentangler output shapes:')
         for hfc in self.hidden_fcs:
             h = self.nonlin(hfc(h))
             if self.first_forward: print(h.shape)
