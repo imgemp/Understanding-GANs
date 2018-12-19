@@ -124,6 +124,8 @@ def parse_params():
         if mp.lower() == 'consensus':
             from ugans.train_ops.consensus import Consensus
             args['maps'] += [Consensus]
+        elif mp.lower() == 'simgd':
+            pass
         else:
             raise NotImplementedError(mp)
     from ugans.train_ops.simgd import SimGD
