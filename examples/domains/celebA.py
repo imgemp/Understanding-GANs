@@ -15,7 +15,7 @@ from ugans.utils import download_file_from_google_drive
 
 import matplotlib.pyplot as plt
 import seaborn as sns
-
+from IPython import embed
 # Taken from DCGAN
 class CelebA(Data):
     def __init__(self, batch_size=128):
@@ -105,6 +105,7 @@ class CelebA(Data):
 
     def plot_real(self, params):
         images = self.sample(batch_size=self.batch_size).view(-1, 3, 64, 64)[:64]
+        embed()
         img = torchvision.utils.make_grid(images)
         # img = img / 2 + 0.5     # unnormalize
         plt.imshow(np.transpose(img.cpu().numpy(), (1, 2, 0)))
