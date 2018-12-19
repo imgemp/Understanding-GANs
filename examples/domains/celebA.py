@@ -15,7 +15,7 @@ from ugans.utils import download_file_from_google_drive
 
 import matplotlib.pyplot as plt
 import seaborn as sns
-from IPython import embed
+
 # Taken from DCGAN
 class CelebA(Data):
     def __init__(self, batch_size=128):
@@ -223,7 +223,7 @@ class AttExtractor(Net):
         output = self.main(x)
         output = output.view(-1, self.image_dim*8*4*4)
         output = self.output(output)
-        return F.sigmoid(output.view(-1, self.output_dim))
+        return torch.sigmoid(output.view(-1, self.output_dim))
 
     def init_weights(self):
         self.apply(weights_init)
@@ -300,7 +300,7 @@ class Discriminator(Net):
         elif nonlin == 'tanh':
             self.nonlin = F.tanh
         elif nonlin == 'sigmoid':
-            self.nonlin = F.sigmoid
+            self.nonlin = torch.sigmoid
         else:
             self.nonlin = lambda x: x
 
@@ -312,11 +312,13 @@ class Discriminator(Net):
         for hfc in self.hidden_fcs:
             h = self.nonlin(hfc(h))
             if self.first_forward: print(h.shape)
-        self.first_forward = False
         if self.quad:
-            return torch.sum(h*self.final_fc(h),dim=1)
+            output = torch.sum(h*self.final_fc(h),dim=1)
         else:
-            return self.final_fc(h)
+            output = self.final_fc(h)
+        if self.first_forward: print(output.shape)
+        self.first_forward = False
+        return output
 
     def init_weights(self):
         for layer in self.layers:
@@ -346,7 +348,7 @@ class Disentangler(Net):
         elif nonlin == 'tanh':
             self.nonlin = F.tanh
         elif nonlin == 'sigmoid':
-            self.nonlin = F.sigmoid
+            self.nonlin = torch.sigmoid
         else:
             self.nonlin = lambda x: x
 
@@ -358,8 +360,10 @@ class Disentangler(Net):
         for hfc in self.hidden_fcs:
             h = self.nonlin(hfc(h))
             if self.first_forward: print(h.shape)
+        output = torch.sigmoid(self.final_fc(h))
+        if self.first_forward: print(output.shape)
         self.first_forward = False
-        return F.sigmoid(self.final_fc(h))
+        return output
 
     def init_weights(self):
         for layer in self.layers:
