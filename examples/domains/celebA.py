@@ -79,7 +79,7 @@ class CelebA(Data):
         
     def plot_current(self, train, params, i):
         images = train.m.get_fake(64, params['z_dim']).detach().view(-1, 3, 64, 64)
-        img = torchvision.utils.make_grid(images)
+        img = torchvision.utils.make_grid(images, padding=5, normalize=True)
         # img = img / 2 + 0.5     # unnormalize
         plt.imshow(np.transpose(img.cpu().numpy(), (1, 2, 0)))
         plt.xticks([]); plt.yticks([])
@@ -87,7 +87,7 @@ class CelebA(Data):
         plt.close()
 
     def plot_series(self, np_samples, params):
-        np_samples_ = np.array(np_samples) / 2 + 0.5
+        np_samples_ = np.array(np_samples) / 2 + 0.5  # unnormalize
         cols = len(np_samples_)
         fig = plt.figure(figsize=(2*cols, 2*params['n_viz']))
         for i, samps in enumerate(np_samples_):
@@ -105,8 +105,7 @@ class CelebA(Data):
 
     def plot_real(self, params):
         images = self.sample(batch_size=self.batch_size).view(-1, 3, 64, 64)[:64]
-        embed()
-        img = torchvision.utils.make_grid(images)
+        img = torchvision.utils.make_grid(images, padding=5, normalize=True)
         # img = img / 2 + 0.5     # unnormalize
         plt.imshow(np.transpose(img.cpu().numpy(), (1, 2, 0)))
         plt.xticks([]); plt.yticks([])
