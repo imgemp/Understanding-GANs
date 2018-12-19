@@ -10,7 +10,7 @@ class Consensus(Map):
 
     def map(self, mps, losses, norms):
         map_g, map_att, map_lat_gan, map_lat_dis, map_d, map_dis = mps
-        Vsum, att_error, dis_error = losses
+        V_g, V_d, Vsum, att_error, dis_error = losses
         norm_g, norm_att, norm_lat_gan, norm_lat_dis, norm_d, norm_dis = norms
 
         # 1. Compute squared norm of gradient and differentiate

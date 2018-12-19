@@ -41,7 +41,7 @@ class SimGD(Map):
         map_dis = torch.autograd.grad(dis_error, self.m.D_dis.parameters(), create_graph=True)
 
         mps = [map_g, map_att, map_lat_gan, map_lat_dis, map_d, map_dis]
-        losses = [Vsum, att_error, dis_error]
+        losses = [V_g, V_d, Vsum, att_error, dis_error]
         norms = [sum([torch.sum(g**2.) for g in mp]) for mp in mps]
 
         return [mps, losses, norms]
