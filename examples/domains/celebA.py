@@ -252,7 +252,7 @@ class LatExtractor(Net):
             nn.LeakyReLU(0.2, inplace=True),
             # state size. (image_dim*8) x 4 x 4
             nn.Conv2d(image_dim * 8, 1, 4, 1, 0, bias=False),
-            nn.Sigmoid()
+            # nn.Sigmoid()
         )
 
         # output = nn.Linear(image_dim*8 * 4 * 4, output_dim)
