@@ -320,7 +320,10 @@ class Discriminator(Net):
 
     def init_weights(self):
         for layer in self.layers:
-            nn.init.orthogonal_(layer.weight.data, gain=0.8)
+            # nn.init.orthogonal_(layer.weight.data, gain=0.8)
+            onehot = np.zeros_like(layer.weight.data)
+            onehot[0,0] = 1
+            layer.weight.data = torch.from_numpy(onehot)
             layer.bias.data.zero_()
 
 
