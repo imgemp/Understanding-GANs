@@ -616,7 +616,7 @@ for epoch in range(num_epochs):
         # Add the gradients from the all-real and all-fake batches
         errD = errD_real + errD_fake
         # Update D
-        optimizerD.step()
+        # optimizerD.step()
 
         ############################
         # (2) Update G network: maximize log(D(G(z)))
@@ -632,6 +632,7 @@ for epoch in range(num_epochs):
         D_G_z2 = output.mean().item()
         # Update G
         optimizerG.step()
+        optimizerD.step()
         
         # Output training stats
         if i % 50 == 0:
