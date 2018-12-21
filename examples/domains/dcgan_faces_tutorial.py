@@ -176,7 +176,7 @@ torch.manual_seed(manualSeed)
 # 
 
 # Root directory for dataset
-dataroot = "data/celeba"
+dataroot = "examples/domains/data/celeba"
 
 # Number of workers for dataloader
 workers = 2
