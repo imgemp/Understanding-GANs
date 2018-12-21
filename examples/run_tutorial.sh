@@ -6,4 +6,4 @@ export OMP_NUM_THREADS=3
 
 set -exu
 
-PYTHONPATH=./examples/domains/ python dcgan_faces_tutorial.py
+PYTHONPATH=./examples/domains/ python examples/domains/dcgan_faces_tutorial.py
