@@ -175,7 +175,7 @@ class Generator(Net):
 
     def forward(self, x):
         output = x.view(-1, self.input_dim, 1, 1)
-        # output = self.main(output) / 2. + 0.5
+        output = self.main(output) #/ 2. + 0.5
         return output.view(-1, 3*self.output_dim**2)
 
     def init_weights(self):
