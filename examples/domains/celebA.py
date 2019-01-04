@@ -50,6 +50,7 @@ class CelebA(Data):
         atts = np.load('./examples/domains/data/celebA_att.npz')
         self.attribute_names = atts['names']
         self.attributes = atts['attributes']
+        print('Number of batches: {}'.format(self.attributes.shape[0] // batch_size))
 
     def download_celeb_a(self, dirpath='./examples/domains/data'):
         data_dir = 'celebA_img'
