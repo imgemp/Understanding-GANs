@@ -18,9 +18,11 @@ class SimGD(Map):
             self.m.logger.histo_summary('latents_real', real_outputs[0].cpu().data.numpy(), it)
             self.m.logger.histo_summary('attributes_real', real_outputs[1].cpu().data.numpy(), it)
             self.m.logger.histo_summary('d_probs_real', torch.sigmoid(real_outputs[-1]).cpu().data.numpy(), it)
+            self.m.logger.histo_summary('d_probs_real_mean', torch.sigmoid(real_outputs[-1]).mean().cpu().data.numpy(), it)
             self.m.logger.histo_summary('latents_fake', fake_outputs[0].cpu().data.numpy(), it)
             self.m.logger.histo_summary('attributes_fake', fake_outputs[1].cpu().data.numpy(), it)
             self.m.logger.histo_summary('d_probs_fake', torch.sigmoid(fake_outputs[-1]).cpu().data.numpy(), it)
+            self.m.logger.histo_summary('d_probs_fake_mean', torch.sigmoid(fake_outputs[-1]).mean().cpu().data.numpy(), it)
 
         # 2. Define and record GAN losses
         V_real, V_fake, V_fake_g = self.m.get_V(self.m.params['batch_size'], real_outputs[-1], fake_outputs[-1])
