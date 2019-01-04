@@ -171,7 +171,7 @@ def parse_params():
 
 
 def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discriminator, Disentangler, params):
-    print('\n'+'Saving to '+params['saveto']+'\n',flush=True)
+    print('\n'+'Saving to '+params['saveto']+'\n', flush=True)
 
     logger = Logger(params['saveto']+'logs/')
 
@@ -206,7 +206,6 @@ def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discrim
     norm_names = ['N{}'.format(s) for s in norm_names_raw]
     norms = [[], [], [], [], []]
 
-    sys.stdout.flush()
     iterations = range(params['max_iter'])
     if params['verbose']:
         iterations = tqdm(iterations,desc=params['description'])

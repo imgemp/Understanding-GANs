@@ -50,12 +50,12 @@ class CelebA(Data):
         atts = np.load('./examples/domains/data/celebA_att.npz')
         self.attribute_names = atts['names']
         self.attributes = atts['attributes']
-        print('Number of batches: {}'.format(self.attributes.shape[0] // batch_size))
+        print('Number of batches: {}'.format(self.attributes.shape[0] // batch_size), flush=True)
 
     def download_celeb_a(self, dirpath='./examples/domains/data'):
         data_dir = 'celebA_img'
         if os.path.exists(os.path.join(dirpath, data_dir)):
-            print('Found Celeb-A - skip')
+            print('Found Celeb-A - skip', flush=True)
             return
         # url = 'https://www.dropbox.com/sh/8oqt9vytwxb3s4r/AADIKlz8PR9zr6Y20qbkunrba/Img/img_align_celeba.zip?dl=1&pv=1'
         # url_img = 'https://drive.google.com/file/d/0B7EVK8r0v71pblRyaVFSWGxPY0U/view?usp=sharing'
@@ -315,15 +315,15 @@ class Discriminator(Net):
 
     def forward(self,x):
         h = x
-        if self.first_forward: print('\nDiscriminator output shapes:')
+        if self.first_forward: print('\nDiscriminator output shapes:', flush=True)
         for hfc in self.hidden_fcs:
             h = self.nonlin(hfc(h))
-            if self.first_forward: print(h.shape)
+            if self.first_forward: print(h.shape, flush=True)
         if self.quad:
             output = torch.sum(h*self.final_fc(h),dim=1)
         else:
             output = self.final_fc(h)
-        if self.first_forward: print(output.shape)
+        if self.first_forward: print(output.shape, flush=True)
         self.first_forward = False
         return output
 
@@ -363,12 +363,12 @@ class Disentangler(Net):
 
     def forward(self,x):
         h = x
-        if self.first_forward: print('\nDisentangler output shapes:')
+        if self.first_forward: print('\nDisentangler output shapes:', flush=True)
         for hfc in self.hidden_fcs:
             h = self.nonlin(hfc(h))
-            if self.first_forward: print(h.shape)
+            if self.first_forward: print(h.shape, flush=True)
         output = torch.sigmoid(self.final_fc(h))
-        if self.first_forward: print(output.shape)
+        if self.first_forward: print(output.shape, flush=True)
         self.first_forward = False
         return output
 
