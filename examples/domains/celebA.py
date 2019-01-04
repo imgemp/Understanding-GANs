@@ -183,7 +183,12 @@ class Generator(Net):
     def forward(self, x):
         output = x.view(-1, self.input_dim, 1, 1)
         output = self.main(output) #/ 2. + 0.5
-        return output.view(-1, 3*self.output_dim**2)
+        if self.first_forward: print('\nGenerator output shape:', flush=True)
+        if self.first_forward: print(output.shape, flush=True)
+        output = output.view(-1, 3*self.output_dim**2)
+        if self.first_forward: print(output.shape, flush=True)
+        self.first_forward = False
+        return output
 
     def init_weights(self):
         self.apply(weights_init)
