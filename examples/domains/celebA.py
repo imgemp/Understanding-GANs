@@ -1,5 +1,6 @@
 import os
 import zipfile
+import random
 
 import numpy as np
 
@@ -15,6 +16,11 @@ from ugans.utils import download_file_from_google_drive
 
 import matplotlib.pyplot as plt
 import seaborn as sns
+
+manualSeed = 999
+random.seed(manualSeed)
+torch.manual_seed(manualSeed)
+
 
 # Taken from DCGAN
 class CelebA(Data):
