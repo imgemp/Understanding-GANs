@@ -7,7 +7,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from torch.autograd import Variable
-from torch.distributions import Uniform
+from torch.distributions import Uniform, Normal
 
 from ugans.utils import detach_all
 
@@ -92,7 +92,10 @@ class Manager(object):
         self.mods = (G, F_att, F_lat, D, D_dis)
         self.params = params
         self.to_gpu = to_gpu
-        self.z_rand = Uniform(to_gpu(torch.tensor(0.0)), to_gpu(torch.tensor(1.0)))
+        if params['pz']:  # True = Uniform
+            self.z_rand = Uniform(to_gpu(torch.tensor(0.0)), to_gpu(torch.tensor(1.0)))
+        else:  # False = Normal
+            self.z_rand = Normal(to_gpu(torch.tensor(0.0)), to_gpu(torch.tensor(1.0)))
         if params['divergence'] == 'JS' or params['divergence'] == 'standard':
             loss = nn.BCEWithLogitsLoss()
             self.criterion = lambda dec, label: -loss(dec, label)

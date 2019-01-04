@@ -45,6 +45,7 @@
 -latdim 1
 -attdim 40
 -attbin True
+-pz False
 -maps consensus
 -gam_v 1.0
 -gam_dis 1.0
