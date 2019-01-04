@@ -206,6 +206,7 @@ def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discrim
     norm_names = ['N{}'.format(s) for s in norm_names_raw]
     norms = [[], [], [], [], []]
 
+    sys.stdout.flush()
     iterations = range(params['max_iter'])
     if params['verbose']:
         iterations = tqdm(iterations,desc=params['description'])
