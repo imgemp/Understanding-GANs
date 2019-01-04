@@ -97,7 +97,8 @@ class Manager(object):
         else:  # False = Normal
             self.z_rand = Normal(to_gpu(torch.tensor(0.0)), to_gpu(torch.tensor(1.0)))
         if params['divergence'] == 'JS' or params['divergence'] == 'standard':
-            loss = nn.BCEWithLogitsLoss()
+            # loss = nn.BCEWithLogitsLoss()
+            loss = nn.BCELoss()
             self.criterion = lambda dec, label: -loss(dec, label)
         elif params['divergence'] == 'Wasserstein':
             self.criterion = lambda dec, label: torch.mean(dec*(2.*label-1.))  #loss(dec, label) #torch.sum(dec)  #torch.sum(dec*(2.*label-1.))
