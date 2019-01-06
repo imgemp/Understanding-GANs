@@ -189,8 +189,11 @@ class Train(object):
         self.cmap = self.compose(*self.maps)  # [f,g] becomes f(g(x))
 
     def train_op(self, it):
-        self.m.D.zero_grad()
         self.m.G.zero_grad()
+        self.m.F_att.zero_grad()
+        self.m.F_lat.zero_grad()
+        self.m.D.zero_grad()
+        self.m.D_dis.zero_grad()
 
         # 1. Get real data and samples from p(z) to pass to generator
         real_data = self.m.get_real(self.m.params['batch_size'])
@@ -216,7 +219,6 @@ class Train(object):
         # 4. Update network parameters
         for optimizer in self.optimizers:
             optimizer.step()
-        # self.optimizers[1].step()
 
         return losses, norms
 

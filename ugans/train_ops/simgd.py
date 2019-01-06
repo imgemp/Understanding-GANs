@@ -27,7 +27,7 @@ class SimGD(Map):
         # 2. Define and record GAN losses
         V_real, V_fake, V_fake_g = self.m.get_V(self.m.params['batch_size'], real_outputs[-1], fake_outputs[-1])
         Vsum = V_real + V_fake
-        V_d = Vsum
+        V_d = -Vsum
         V_g = V_fake_g
 
         # 3. Record disentangling losses
