@@ -15,7 +15,7 @@ from scipy.stats import poisson
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# DCGAN with Upsample+Conv instead of TransConv
+# DCGAN with Upsample+Conv instead of TransConv (removes BatchNorm)
 class Circles(Data):
     def __init__(self, **kwargs):
         super(Circles, self).__init__()
