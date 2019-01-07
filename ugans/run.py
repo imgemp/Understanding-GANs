@@ -200,7 +200,7 @@ def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discrim
     fs = []
     frames = []
     loss_names = ['Vg', 'Vd', 'V','Latt','Ldis']
-    losses = [[], [], []]
+    losses = [[], [], [], [], []]
     norm_names_raw = ['g','att','lat','d','dis']
     # norm_names = ['||F_{}||^2'.format(s) for s in norm_names_raw]
     norm_names = ['N{}'.format(s) for s in norm_names_raw]
