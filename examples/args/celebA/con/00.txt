@@ -1,6 +1,6 @@
 -dom celebA
 -bs 128
--div JS
+-div standard
 -g_opt Adam
 -g_lr 0.0002
 -g_l2 0.0
@@ -19,8 +19,8 @@
 -lat_nh 128
 -lat_nl 1
 -lat_nonlin relu
--d_opt RMSProp
--d_lr 0.0000
+-d_opt Adam
+-d_lr 0.0002
 -d_l2 0.0
 -d_nh 128
 -d_nl 0
@@ -42,11 +42,11 @@
 -zdim 100
 -xdim 64
 -cdim 3
--latdim 1
+-latdim 20
 -attdim 40
 -attbin True
 -pz False
--maps consensus
+-maps simgd
 -gam_v 1.0
 -gam_dis 1.0
 -lat_dis_reg 0.0
