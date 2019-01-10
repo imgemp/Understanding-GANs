@@ -46,5 +46,6 @@
 -maps consensus
 -gam_v 1.0
 -gam_dis 1.0
+-lat_dis_reg 1.0
 -gpu 0
 -verb True
