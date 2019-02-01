@@ -28,7 +28,8 @@ process = psutil.Process(os.getpid())
 
 def parse_params():
     parser = argparse.ArgumentParser(description='Understanding GANs in PyTorch')
-    parser.add_argument('-dom','--domain', type=str, default='circles', help='domain to run', required=False)
+    parser.add_argument('-dom','--domain', type=str, default='shapes', help='domain to run', required=False)
+    parser.add_argument('-dom_sub','--sub_domain', type=str, default='circles', help='sub domain to run', required=False)
     parser.add_argument('-desc','--description', type=str, default='', help='description for the experiment', required=False)
     parser.add_argument('-bs','--batch_size', type=int, default=512, help='batch_size for training', required=False)
     parser.add_argument('-div','--divergence', type=str, default='JS', help='divergence measure, i.e. V, for training', required=False)
@@ -95,7 +96,10 @@ def parse_params():
     parser.add_argument('-verb','--verbose', type=lambda x: (str(x).lower() == 'true'), default=False, help='whether to print progress to stdout', required=False)
     args = vars(parser.parse_args())
 
-    if args['domain'] == 'circles':
+    if args['domain'] == 'shapes':
+        from examples.domains.shapes import Shapes as Domain
+        from examples.domains.shapes import Generator, AttExtractor, LatExtractor, Discriminator, Disentangler
+    elif args['domain'] == 'circles':
         from examples.domains.circles import Circles as Domain
         from examples.domains.circles import Generator, AttExtractor, LatExtractor, Discriminator, Disentangler
     elif args['domain'] == 'circles_small':
@@ -177,7 +181,7 @@ def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discrim
 
     to_gpu = gpu_helper(params['gpu'])
 
-    data = Domain(batch_size=params['batch_size'])
+    data = Domain(batch_size=params['batch_size'], sub_domain=params['sub_domain'])
     data.plot_real(params)
     G = Generator(input_dim=params['z_dim'],output_dim=params['x_dim'],n_hidden=params['gen_n_hidden'],
                   n_layer=params['gen_n_layer'],nonlin=params['gen_nonlinearity'])

@@ -1,4 +1,5 @@
--dom circles
+-dom shapes
+-dom_sub circles
 -bs 8
 -div JS
 -g_opt RMSProp
