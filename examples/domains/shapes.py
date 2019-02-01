@@ -7,7 +7,7 @@ import torchvision
 
 from ugans.core import Data, Net
 
-from skimage.draw import polygon as draw_polygon, circle as draw_circle
+from skimage.draw import polygon as draw_polygon, circle as draw_circle, rectangle as draw_rectangle
 from skimage._shared.utils import warn
 from skimage.draw._random_shapes import _generate_rectangle_mask, _generate_triangle_mask, _generate_random_colors
 

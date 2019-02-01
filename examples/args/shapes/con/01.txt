@@ -1,4 +1,5 @@
--dom circles
+-dom shapes
+-dom_sub circle
 -bs 8
 -div Wasserstein
 -g_opt RMSProp
