@@ -24,7 +24,7 @@ torch.manual_seed(manualSeed)
 
 # Taken from DCGAN
 class CelebA(Data):
-    def __init__(self, batch_size=128):
+    def __init__(self, batch_size=128, **kwargs):
         super(CelebA, self).__init__()
         self.batch_size = batch_size
         self.download_celeb_a()
