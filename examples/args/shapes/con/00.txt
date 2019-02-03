@@ -1,7 +1,7 @@
 -dom shapes
 -dom_sub circle
 -bs 8
--div JS
+-div Wasserstein
 -g_opt RMSProp
 -g_lr 0.0001
 -g_l2 0.0
@@ -47,5 +47,6 @@
 -maps consensus
 -gam_v 1.0
 -gam_dis 1.0
+-lat_dis_reg 1.0
 -gpu 0
 -verb True
