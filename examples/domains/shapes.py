@@ -71,10 +71,11 @@ class Shapes(Data):
             image, label = result  # label = ('circle', (px, py, radius))
             image = (255.-image)/255.
             px, py, radius = np.array(label[0][1])
-            px = (px-dim-1)/float(dim)
-            py = (py-dim-1)/float(dim)
-            radius = 0.5*(2*radius-min_size)/(max_size-min_size)
+            px = (px+1-dim)/float(dim)
+            py = (py+1-dim)/float(dim)
+            radius = (2*radius-min_size)/(max_size-min_size)
             label = np.array([px,py,radius])
+            print(label)
             samples += [np.concatenate([image.flatten(), label]).astype('float32')]
         return torch.from_numpy(np.vstack(samples))
 
