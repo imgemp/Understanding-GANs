@@ -293,6 +293,8 @@ def random_shapes_distr(image_shape,
             row = np.random.normal(loc0, scale0)
             column = np.random.normal(loc1, scale1)
             point = (int(row), int(column))
+            print(loc0, loc1, flush=True)
+            print(point, flush=True)
             try:
                 indices, label = shape_generator(point, image_shape, shape,
                                                  random)
