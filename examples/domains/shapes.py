@@ -55,7 +55,7 @@ class Shapes(Data):
         plt.savefig(params['saveto']+'samples_real.png')
         plt.close()
 
-    def sample(self, batch_size, dim=64, min_size=10, max_size=40):
+    def sample(self, batch_size, dim=64, min_size=10, max_size=32):
         samples = []
         for b in range(batch_size):
             image = random_shapes_distr((dim, dim), max_shapes=1, shape=self.shape, min_size=min_size,
@@ -63,7 +63,7 @@ class Shapes(Data):
             samples += [((255.-image)/255.).astype('float32').flatten()]
         return torch.from_numpy(np.vstack(samples))
 
-    def sample_att(self, batch_size, dim=64, min_size=10, max_size=40):
+    def sample_att(self, batch_size, dim=64, min_size=10, max_size=32):
         samples = []
         for b in range(batch_size):
             result = random_shapes_distr((dim, dim), max_shapes=1, shape=self.shape, min_size=min_size,
@@ -75,7 +75,6 @@ class Shapes(Data):
             py = py/float(dim-1)
             radius = (2*radius-min_size)/(max_size-min_size)
             label = np.array([px,py,radius])
-            print(label, flush=True)
             samples += [np.concatenate([image.flatten(), label]).astype('float32')]
         return torch.from_numpy(np.vstack(samples))
 
