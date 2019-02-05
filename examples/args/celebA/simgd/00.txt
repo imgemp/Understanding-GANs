@@ -44,7 +44,7 @@
 -cdim 3
 -latdim 20
 -attdim 40
--attbin True
+-atttyp 0
 -pz False
 -maps simgd
 -gam_v 1.0

@@ -133,3 +133,10 @@ def save_response_content(response, destination):
         for chunk in response.iter_content(CHUNK_SIZE):
             if chunk: # filter out keep-alive new chunks
                 f.write(chunk)
+
+def KL(P, Q, eps=1e-10):
+    return -(P*torch.log(Q+eps) + (1-P)*torch.log(1-Q+eps))
+
+def JSD(P, Q):
+    M = 0.5*(P+Q)
+    return 0.5*KL(P, M) + 0.5*KL(Q, M)

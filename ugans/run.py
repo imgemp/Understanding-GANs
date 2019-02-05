@@ -85,7 +85,7 @@ def parse_params():
     parser.add_argument('-cdim','--c_dim', type=int, default=1, help='number of channels in data distribution', required=False)
     parser.add_argument('-latdim','--lat_dim', type=int, default=2, help='dimensionality of latent feature extractor', required=False)
     parser.add_argument('-attdim','--att_dim', type=int, default=2, help='dimensionality of attribute feature extractor', required=False)
-    parser.add_argument('-attbin','--att_binary', type=lambda x: (str(x).lower() == 'true'), default=False, help='whether the attributes are binary', required=False)
+    parser.add_argument('-atttyp','--att_type', type=int, default=2, help='range of attributes (0={0,1},1=[0,1],2=[-inf,inf])', required=False)
     
     parser.add_argument('-pz','--pz', type=lambda x: (str(x).lower() == 'true'), default=True, help='p(z) distribution (True=Uniform(0,1), False=Normal(0,1))', required=False)
     parser.add_argument('-maps','--map_strings', type=str, nargs='+', default=[], help='string names of optimizers to use for generator and discriminator', required=False)
