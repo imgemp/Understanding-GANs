@@ -71,11 +71,11 @@ class Shapes(Data):
             image, label = result  # label = ('circle', (px, py, radius))
             image = (255.-image)/255.
             px, py, radius = np.array(label[0][1])
-            print(dim, px, py, flush=True)
-            px = (px+1-dim)/float(dim)
-            py = (py+1-dim)/float(dim)
+            px = px/float(dim-1)
+            py = py/float(dim-1)
             radius = (2*radius-min_size)/(max_size-min_size)
             label = np.array([px,py,radius])
+            print(label, flush=True)
             samples += [np.concatenate([image.flatten(), label]).astype('float32')]
         return torch.from_numpy(np.vstack(samples))
 
@@ -293,8 +293,6 @@ def random_shapes_distr(image_shape,
             row = np.random.normal(loc0, scale0)
             column = np.random.normal(loc1, scale1)
             point = (int(row), int(column))
-            # print(loc0, loc1, flush=True)
-            # print(point, flush=True)
             try:
                 indices, label = shape_generator(point, image_shape, shape,
                                                  random)
