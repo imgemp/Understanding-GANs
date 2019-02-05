@@ -75,7 +75,7 @@ class Shapes(Data):
             py = (py+1-dim)/float(dim)
             radius = (2*radius-min_size)/(max_size-min_size)
             label = np.array([px,py,radius])
-            print(label)
+            print(dim, px, py)
             samples += [np.concatenate([image.flatten(), label]).astype('float32')]
         return torch.from_numpy(np.vstack(samples))
 
