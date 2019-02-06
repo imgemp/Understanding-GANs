@@ -282,7 +282,7 @@ class LatExtractor(Net):
         output = self.main(x)
         output = output.view(-1, self.image_dim*8*4*4)
         output = self.output(output)
-        return output.view(-1, self.output_dim)
+        return torch.sigmoid(output.view(-1, self.output_dim))
 
     def init_weights(self):
         self.apply(weights_init)
