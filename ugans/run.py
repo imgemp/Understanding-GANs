@@ -203,11 +203,10 @@ def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discrim
                          n_layer=params['dis_n_layer'],nonlin=params['dis_nonlinearity'])
     for mod, path_ref in zip([G, F_att, F_lat, D, D_dis], ['gen', 'att', 'lat', 'disc', 'dis']):
         try:
-            print(path_ref+'_weight_path')
-            print(params[path_ref+'_weight_path'])
             load_weights(mod, params[path_ref+'_weight_path'])
         except:
-            print('failed to load '+path_ref, flush=True)
+            if params[path_ref+'_weight_path'] != '':
+                print('Failed to load module weights from '+params[path_ref+'_weight_path'], flush=True)
             mod.init_weights()
     G, F_att, F_lat, D, D_dis = [to_gpu(mod) for mod in [G, F_att, F_lat, D, D_dis]]
 
