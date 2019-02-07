@@ -26,7 +26,7 @@ class Shapes(Data):
         # img = img / 2 + 0.5     # unnormalize output of tanh
         plt.imshow(np.transpose(img.cpu().numpy(), (1, 2, 0)))
         plt.xticks([]); plt.yticks([])
-        plt.savefig(params['saveto']+'samples_{}.png'.format(i))
+        plt.savefig(params['saveto']+'samples/samples_{}.png'.format(i))
         plt.close()
 
     def plot_series(self, np_samples, params):
