@@ -205,6 +205,7 @@ def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discrim
         try:
             load_weights(mod, params[path_ref+'_weight_path'])
         except:
+            print('failed to load '+path_ref, flush=True)
             mod.init_weights()
     G, F_att, F_lat, D, D_dis = [to_gpu(mod) for mod in [G, F_att, F_lat, D, D_dis]]
 
@@ -255,7 +256,7 @@ def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discrim
 
         if params['weights_every'] > 0 and i % params['weights_every'] == 0:
             for mod, name in zip(m.mods, m.mod_names):
-                save_weights(mod, params['saveto']+name+'_'+str(i)+'.pkl')
+                save_weights(mod, params['saveto']+'weights/'+name+'_'+str(i)+'.pkl')
                  
     for name, loss in zip(loss_names, losses):
         np.savetxt(params['saveto']+name+'.out',np.array(loss))
