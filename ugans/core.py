@@ -90,6 +90,7 @@ class Manager(object):
         self.D = D
         self.D_dis = D_dis
         self.mods = (G, F_att, F_lat, D, D_dis)
+        self.mod_names = ('G','F_att','F_lat','D','D_dis')
         self.params = params
         self.to_gpu = to_gpu
         if params['pz']:  # True = Uniform
@@ -108,6 +109,8 @@ class Manager(object):
         else:
             self.att_loss = lambda pred, true: torch.mean((pred-true)**2.)
         self.logger = logger
+        self.feature_means = self.load_feature_means()
+        self.feature_mask = self.load_feature_mask()
 
     def get_real(self, batch_size):
         return self.to_gpu(self.data.sample(batch_size))
@@ -127,6 +130,8 @@ class Manager(object):
             attributes = self.F_att(datum)
             latents = self.F_lat(datum)
             features = torch.cat([latents, attributes], dim=1)
+            if self.feature_means is not None and self.feature_mask is not None:
+                features = (1-self.feature_mask)*self.feature_means + self.feature_mask*features
             d_probs = self.D(features).squeeze()
             d_dis_preds = self.D_dis(latents)
             outputs += [(latents, attributes, d_dis_preds, d_probs)]
@@ -169,6 +174,36 @@ class Manager(object):
                 datum = self.to_gpu(Variable(torch.from_numpy(datum).float()))
             predictions += [self.D_dis(self.F_z(datum))]
         return predictions
+
+    def load_feature_means(self, path='', batches=100):
+        if path == '':
+            path = self.params['feature_means']
+        try:
+            feature_means = self.to_gpu(Variable(torch.from_numpy(np.load(path)).float()))
+        except:
+            feature_means = torch.zeros(self.params['lat_dim']+self.params['att_dim'])
+            try:
+                for b in range(batches):
+                    real_data = self.get_real(self.params['batch_size'])
+                    fake_data = self.G(self.get_z(self.params['batch_size'], self.params['z_dim']))
+                    real_outputs, fake_outputs = self.m.get_outputs([real_data, fake_data])
+                    real_feats = torch.cat([real_outputs[0], real_outputs[1]], dim=1)
+                    fake_feats = torch.cat([fake_outputs[0], fake_outputs[1]], dim=1)
+                    feats = torch.cat([real_feats, fake_feats], dim=0)
+                    feature_means += torch.mean(feats, dim=0) / batches
+                np.save(self.params['saveto']+'/feature_means.npy', feature_means)
+            except:
+                feature_means = None
+        return feature_means
+
+    def load_feature_mask(self, path=''):
+        if path == '':
+            path = self.params['feature_mask']
+        try:
+            feature_mask = self.to_gpu(Variable(torch.from_numpy(np.load(path)).float()))
+        except:
+            feature_mask = torch.ones(self.params['lat_dim']+self.params['att_dim'])
+        return feature_mask
 
 
 class Train(object):

@@ -15,7 +15,7 @@ import sys
 sys.path.append('../')
 
 from ugans.core import Manager
-from ugans.utils import gpu_helper, save_weights, simple_plot
+from ugans.utils import gpu_helper, save_weights, load_weights, simple_plot
 
 from logger import Logger
 
@@ -34,12 +34,16 @@ def parse_params():
     parser.add_argument('-bs','--batch_size', type=int, default=512, help='batch_size for training', required=False)
     parser.add_argument('-div','--divergence', type=str, default='JS', help='divergence measure, i.e. V, for training', required=False)
     
+    parser.add_argument('-feat_mask','--feature_mask', type=str, default='', help='path to feature mask to be loaded (empty string means load nothing)', required=False)
+    parser.add_argument('-feat_means','--feature_means', type=str, default='', help='path to feature means to be loaded (empty string means load nothing)', required=False)
+
     parser.add_argument('-g_opt','--gen_optim', type=str, default='RMSProp', help='generator training algorithm', required=False)
     parser.add_argument('-g_lr','--gen_learning_rate', type=float, default=1e-4, help='generator learning rate', required=False)
     parser.add_argument('-g_l2','--gen_weight_decay', type=float, default=0., help='generator weight decay', required=False)
     parser.add_argument('-g_nh','--gen_n_hidden', type=int, default=128, help='# of hidden units for generator', required=False)
     parser.add_argument('-g_nl','--gen_n_layer', type=int, default=2, help='# of hidden layers for generator', required=False)
     parser.add_argument('-g_nonlin','--gen_nonlinearity', type=str, default='relu', help='type of nonlinearity for generator', required=False)
+    parser.add_argument('-g_weights','--gen_weight_path', type=str, default='', help='path to weights to be loaded (empty string means load nothing)', required=False)
     
     parser.add_argument('-att_opt','--att_optim', type=str, default='RMSProp', help='attribute extractor training algorithm', required=False)
     parser.add_argument('-att_lr','--att_learning_rate', type=float, default=1e-4, help='attribute extractor learning rate', required=False)
@@ -48,6 +52,7 @@ def parse_params():
     parser.add_argument('-att_nh','--att_n_hidden', type=int, default=128, help='# of hidden units for attribute extractor', required=False)
     parser.add_argument('-att_nl','--att_n_layer', type=int, default=1, help='# of hidden layers for attribute extractor', required=False)
     parser.add_argument('-att_nonlin','--att_nonlinearity', type=str, default='relu', help='type of nonlinearity for attribute extractor', required=False)
+    parser.add_argument('-att_weights','--att_weight_path', type=str, default='', help='path to weights to be loaded (empty string means load nothing)', required=False)
 
     parser.add_argument('-lat_opt','--lat_optim', type=str, default='RMSProp', help='latent extractor training algorithm', required=False)
     parser.add_argument('-lat_lr','--lat_learning_rate', type=float, default=1e-4, help='latent extractor learning rate', required=False)
@@ -56,6 +61,7 @@ def parse_params():
     parser.add_argument('-lat_nl','--lat_n_layer', type=int, default=1, help='# of hidden layers for latent extractor', required=False)
     parser.add_argument('-lat_nonlin','--lat_nonlinearity', type=str, default='relu', help='type of nonlinearity for latent extractor', required=False)
     parser.add_argument('-lat_dis_reg','--lat_dis_reg', type=float, default=0.1, help='latent extractor regularizer for disentangler game', required=False)
+    parser.add_argument('-lat_weights','--lat_weight_path', type=str, default='', help='path to weights to be loaded (empty string means load nothing)', required=False)
 
     parser.add_argument('-d_opt','--disc_optim', type=str, default='RMSProp', help='discriminator training algorithm', required=False)
     parser.add_argument('-d_lr','--disc_learning_rate', type=float, default=1e-4, help='discriminator learning rate', required=False)
@@ -63,6 +69,7 @@ def parse_params():
     parser.add_argument('-d_nh','--disc_n_hidden', type=int, default=128, help='# of hidden units for discriminator', required=False)
     parser.add_argument('-d_nl','--disc_n_layer', type=int, default=1, help='# of hidden layers for discriminator', required=False)
     parser.add_argument('-d_nonlin','--disc_nonlinearity', type=str, default='relu', help='type of nonlinearity for discriminator', required=False)
+    parser.add_argument('-d_weights','--disc_weight_path', type=str, default='', help='path to weights to be loaded (empty string means load nothing)', required=False)
     parser.add_argument('-d_quad','--disc_quadratic_layer', type=lambda x: (str(x).lower() == 'true'), default=False, help='whether to use a quadratic final layer', required=False)
 
     parser.add_argument('-dis_opt','--dis_optim', type=str, default='RMSProp', help='disentangler training algorithm', required=False)
@@ -71,6 +78,7 @@ def parse_params():
     parser.add_argument('-dis_nh','--dis_n_hidden', type=int, default=128, help='# of hidden units for disentangler', required=False)
     parser.add_argument('-dis_nl','--dis_n_layer', type=int, default=1, help='# of hidden layers for disentangler', required=False)
     parser.add_argument('-dis_nonlin','--dis_nonlinearity', type=str, default='relu', help='type of nonlinearity for disentangler', required=False)
+    parser.add_argument('-dis_weights','--dis_weight_path', type=str, default='', help='path to weights to be loaded (empty string means load nothing)', required=False)
 
     parser.add_argument('-betas','--betas', type=float, nargs=2, default=(0.5,0.999), help='beta params for Adam', required=False)
     parser.add_argument('-eps','--epsilon', type=float, default=1e-8, help='epsilon param for Adam', required=False)
@@ -193,8 +201,11 @@ def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discrim
                       nonlin=params['disc_nonlinearity'],quad=params['disc_quadratic_layer'])
     D_dis = Disentangler(input_dim=params['lat_dim'],output_dim=params['att_dim'],n_hidden=params['dis_n_hidden'],
                          n_layer=params['dis_n_layer'],nonlin=params['dis_nonlinearity'])
-    for mod in [G, F_att, F_lat, D, D_dis]:
-        mod.init_weights()
+    for mod, path_ref in zip([G, F_att, F_lat, D, D_dis], ['gen', 'att', 'lat', 'disc', 'dis']):
+        try:
+            load_weights(mod, params[path_ref+'_weight_path'])
+        except:
+            mod.init_weights()
     G, F_att, F_lat, D, D_dis = [to_gpu(mod) for mod in [G, F_att, F_lat, D, D_dis]]
 
     m = Manager(data, G, F_att, F_lat, D, D_dis, params, to_gpu, logger)
@@ -206,7 +217,6 @@ def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discrim
     loss_names = ['Vg', 'Vd', 'V','Latt','Ldis']
     losses = [[], [], [], [], []]
     norm_names_raw = ['g','att','lat','d','dis']
-    # norm_names = ['||F_{}||^2'.format(s) for s in norm_names_raw]
     norm_names = ['N{}'.format(s) for s in norm_names_raw]
     norms = [[], [], [], [], []]
 
@@ -244,8 +254,8 @@ def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discrim
                 simple_plot(data_1d=norm, xlabel='Iteration', ylabel=name, title='final '+name+'='+str(norm[-1]), filepath=params['saveto']+name_raw+'_norm.pdf')
 
         if params['weights_every'] > 0 and i % params['weights_every'] == 0:
-            save_weights(m.D,params['saveto']+'D_'+str(i)+'.pkl')
-            save_weights(m.G,params['saveto']+'G_'+str(i)+'.pkl')
+            for mod, name in zip(m.mods, m.mod_names):
+                save_weights(mod, params['saveto']+name+'_'+str(i)+'.pkl')
                  
     for name, loss in zip(loss_names, losses):
         np.savetxt(params['saveto']+name+'.out',np.array(loss))

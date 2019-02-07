@@ -23,15 +23,15 @@ def gpu_helper(gpu):
             return x
         return no_op
 
-def save_weights(module,file):
+def save_weights(module, file):
     weights = []
     for p in module.parameters():
         weights += [p.cpu().data.numpy()]
     pickle.dump(weights,open(file,'wb'))
 
-def load_weights(module,file):
+def load_weights(module, file):
     weights = pickle.load(open(file,'rb'))
-    for p,w in zip(module.parameters(),weights):
+    for p,w in zip(module.parameters(), weights):
         p.data = torch.from_numpy(w)
     return weights
 
