@@ -182,7 +182,7 @@ class Manager(object):
         try:
             feature_means = self.to_gpu(Variable(torch.from_numpy(np.load(filepath)).float()))
         except:
-            feature_means = self.to_gpu(torch.zeros(self.params['lat_dim']+self.params['att_dim']))
+            feature_means = self.to_gpu(Variable(torch.zeros(self.params['lat_dim']+self.params['att_dim'])))
             try:
                 print('Computing feature means...', flush=True)
                 for b in range(batches):
