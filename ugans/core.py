@@ -175,12 +175,12 @@ class Manager(object):
             predictions += [self.D_dis(self.F_z(datum))]
         return predictions
 
-    def load_feature_means(self, path='', batches=100):
+    def load_feature_means(self, filepath='', batches=100):
         self.feature_means = None
-        if path == '':
-            path = self.params['feature_means']
+        if filepath == '':
+            filepath = self.params['feature_means']
         try:
-            feature_means = self.to_gpu(Variable(torch.from_numpy(np.load(path)).float()))
+            feature_means = self.to_gpu(Variable(torch.from_numpy(np.load(filepath)).float()))
         except:
             feature_means = self.to_gpu(torch.zeros(self.params['lat_dim']+self.params['att_dim']))
             try:
@@ -193,17 +193,17 @@ class Manager(object):
                     fake_feats = torch.cat([fake_outputs[0], fake_outputs[1]], dim=1)
                     feats = torch.cat([real_feats, fake_feats], dim=0)
                     feature_means += torch.mean(feats, dim=0) / batches
-                np.save(self.params['feature_means']+'/feature_means.npy', feature_means.cpu().data.numpy())
+                np.save(self.params['feature_means'], feature_means.cpu().data.numpy())
             except:
-                print('Process failed. Check feature mean path.', flush=True)
+                print('Process failed. Check feature mean filepath.', flush=True)
                 feature_means = None
         return feature_means
 
-    def load_feature_mask(self, path=''):
-        if path == '':
-            path = self.params['feature_mask']
+    def load_feature_mask(self, filepath=''):
+        if filepath == '':
+            filepath = self.params['feature_mask']
         try:
-            feature_mask = self.to_gpu(Variable(torch.from_numpy(np.load(path)).float()))
+            feature_mask = self.to_gpu(Variable(torch.from_numpy(np.load(filepath)).float()))
         except:
             feature_mask = torch.ones(self.params['lat_dim']+self.params['att_dim'])
         return feature_mask
