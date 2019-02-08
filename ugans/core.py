@@ -182,7 +182,7 @@ class Manager(object):
         try:
             feature_means = self.to_gpu(Variable(torch.from_numpy(np.load(path)).float()))
         except:
-            feature_means = torch.zeros(self.params['lat_dim']+self.params['att_dim'])
+            feature_means = self.to_gpu(torch.zeros(self.params['lat_dim']+self.params['att_dim']))
             try:
                 print('Computing feature means...', flush=True)
                 for b in range(batches):
@@ -194,9 +194,7 @@ class Manager(object):
                     feats = torch.cat([real_feats, fake_feats], dim=0)
                     embed()
                     feature_means += torch.mean(feats, dim=0) / batches
-                    print('updated mean', flush=True)
-                np.save(self.params['feature_means']+'/feature_means.npy', feature_means)
-                print('saved mean', flush=True)
+                np.save(self.params['feature_means']+'/feature_means.npy', feature_means.cpu().data.numpy())
             except:
                 print('Process failed. Check feature mean path.', flush=True)
                 feature_means = None
