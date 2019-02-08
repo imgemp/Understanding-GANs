@@ -186,10 +186,8 @@ class Manager(object):
                 print('Computing feature means...', flush=True)
                 for b in range(batches):
                     real_data = self.get_real(self.params['batch_size'])
-                    print('got real data', flush=True)
                     fake_data = self.G(self.get_z(self.params['batch_size'], self.params['z_dim']))
-                    print('got fake data', flush=True)
-                    real_outputs, fake_outputs = self.m.get_outputs([real_data, fake_data])
+                    real_outputs, fake_outputs = self.get_outputs([real_data, fake_data])
                     print('got outputs', flush=True)
                     real_feats = torch.cat([real_outputs[0], real_outputs[1]], dim=1)
                     fake_feats = torch.cat([fake_outputs[0], fake_outputs[1]], dim=1)
