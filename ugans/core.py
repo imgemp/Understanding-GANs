@@ -189,11 +189,10 @@ class Manager(object):
                     real_data = self.get_real(self.params['batch_size'])
                     fake_data = self.G(self.get_z(self.params['batch_size'], self.params['z_dim']))
                     real_outputs, fake_outputs = self.get_outputs([real_data, fake_data])
-                    print('got outputs', flush=True)
                     real_feats = torch.cat([real_outputs[0], real_outputs[1]], dim=1)
                     fake_feats = torch.cat([fake_outputs[0], fake_outputs[1]], dim=1)
                     feats = torch.cat([real_feats, fake_feats], dim=0)
-                    print('got reshaped outputs', flush=True)
+                    embed()
                     feature_means += torch.mean(feats, dim=0) / batches
                     print('updated mean', flush=True)
                 np.save(self.params['feature_means']+'/feature_means.npy', feature_means)
