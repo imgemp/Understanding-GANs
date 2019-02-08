@@ -179,6 +179,8 @@ class Manager(object):
         self.feature_means = None
         if filepath == '':
             filepath = self.params['feature_means']
+        if filepath == '':
+            return None
         try:
             feature_means = self.to_gpu(torch.from_numpy(np.load(filepath)).float())
         except:
