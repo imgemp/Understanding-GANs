@@ -183,6 +183,7 @@ class Manager(object):
         except:
             feature_means = torch.zeros(self.params['lat_dim']+self.params['att_dim'])
             try:
+                print('Computing feature means...', flush=True)
                 for b in range(batches):
                     real_data = self.get_real(self.params['batch_size'])
                     fake_data = self.G(self.get_z(self.params['batch_size'], self.params['z_dim']))
@@ -191,8 +192,9 @@ class Manager(object):
                     fake_feats = torch.cat([fake_outputs[0], fake_outputs[1]], dim=1)
                     feats = torch.cat([real_feats, fake_feats], dim=0)
                     feature_means += torch.mean(feats, dim=0) / batches
-                np.save(self.params['saveto']+'/feature_means.npy', feature_means)
+                np.save(self.params['feature_means']+'/feature_means.npy', feature_means)
             except:
+                print('Process failed. Check feature mean path.', flush=True)
                 feature_means = None
         return feature_means
 

@@ -2,7 +2,7 @@
 -dom_sub circle
 -bs 8
 -div Wasserstein
--feat_mask	examples/masks/shapes/mask01.npy
+-feat_mask	examples/masks/shapes/mask_noradius.npy
 -feat_means examples/results/shapes/consensus/2019-02-07-16-35-32/feature_means.npy
 -g_opt RMSProp
 -g_lr 0.0001
