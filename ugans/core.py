@@ -192,7 +192,6 @@ class Manager(object):
                     real_feats = torch.cat([real_outputs[0], real_outputs[1]], dim=1)
                     fake_feats = torch.cat([fake_outputs[0], fake_outputs[1]], dim=1)
                     feats = torch.cat([real_feats, fake_feats], dim=0)
-                    embed()
                     feature_means += torch.mean(feats, dim=0) / batches
                 np.save(self.params['feature_means']+'/feature_means.npy', feature_means.cpu().data.numpy())
             except:
