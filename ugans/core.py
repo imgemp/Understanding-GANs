@@ -109,8 +109,8 @@ class Manager(object):
         else:
             self.att_loss = lambda pred, true: torch.mean((pred-true)**2.)
         self.logger = logger
-        self.feature_means = self.load_feature_means()
         self.feature_mask = self.load_feature_mask()
+        self.feature_means = self.load_feature_means()
 
     def get_real(self, batch_size):
         return self.to_gpu(self.data.sample(batch_size))
@@ -176,6 +176,7 @@ class Manager(object):
         return predictions
 
     def load_feature_means(self, path='', batches=100):
+        self.feature_means = None
         if path == '':
             path = self.params['feature_means']
         try:
