@@ -30,11 +30,11 @@ class Raman(Data):
         # Number of workers for dataloader
         workers = 2
         # Create the dataloader
-        self.dataloader = torch.utils.data.DataLoader(torch.from_numpy(self.x), batch_size=batch_size,
+        self.dataloader = torch.utils.data.DataLoader(torch.from_numpy(self.x_att), batch_size=batch_size,
                                                       shuffle=True, num_workers=workers,
                                                       drop_last=True)
         self.dataiterator = iter(self.dataloader)
-        print('Number of batches: {}'.format(self.attributes.shape[0] // batch_size), flush=True)
+        print('Number of batches: {}'.format(self.x_att.shape[0] // batch_size), flush=True)
 
 
     def zero_one(self,x):
@@ -54,8 +54,9 @@ class Raman(Data):
 
     def load_raman(self):
         xy, ux, waves, names, colors = self.load_process_data(DropLastDim=False)
-        self.x = xy[-2]
-        self.attributes = xy[-1]
+        self.x_dim = xy[-2].shape[1]
+        self.att_dim = xy[-1].shape[1]
+        self.x_att = np.hstack((xy[-2],xy[-1]))
         self.attribute_names = names
         self.waves = waves
 
@@ -153,21 +154,19 @@ class Raman(Data):
 
     def sample(self, batch_size, dim=64):
         try:
-            samples, ids = next(self.dataiterator)
+            samples, atts = next(self.dataiterator).split([self.x_dim, self.att_dim], dim=1)
         except:
             self.dataiterator = iter(self.dataloader)
-            samples, ids = next(self.dataiterator)
+            samples, atts = next(self.dataiterator).split([self.x_dim, self.att_dim], dim=1)
         return samples.reshape(batch_size, -1)
 
     def sample_att(self, batch_size, dim=64):
         try:
-            samples, ids = next(self.dataiterator)
-            attributes = torch.from_numpy(self.attributes[ids.data.numpy()].astype('float32'))
+            samples_atts = next(self.dataiterator)
         except:
             self.dataiterator = iter(self.dataloader)
-            samples, ids = next(self.dataiterator)
-            attributes = torch.from_numpy(self.attributes[ids.data.numpy()].astype('float32'))
-        return torch.cat((samples.reshape(batch_size, -1), attributes), dim=1)
+            samples_atts = next(self.dataiterator)
+        return samples_atts
 
 
 class Generator(Net):
