@@ -34,10 +34,10 @@
 -dis_nonlin relu
 -betas 0.5 0.999
 -eps 1e-08
--mx_it 1000
--viz_every 100
--plot_every 100
--w_every 100
+-mx_it 100000
+-viz_every 1000
+-plot_every 1000
+-w_every 1000
 -n_viz 8
 -zdim 10
 -xdim 1715
