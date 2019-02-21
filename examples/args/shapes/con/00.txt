@@ -42,6 +42,8 @@
 -n_viz 8
 -zdim 10
 -xdim 64
+-cdim 1
+-images False
 -latdim 3
 -attdim 3
 -atttyp 1

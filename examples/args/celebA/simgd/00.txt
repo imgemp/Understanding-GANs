@@ -42,6 +42,7 @@
 -zdim 100
 -xdim 64
 -cdim 3
+-images False
 -latdim 20
 -attdim 40
 -atttyp 0
