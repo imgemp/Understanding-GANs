@@ -1,5 +1,5 @@
 -dom raman
--bs 128
+-bs 32
 -div Wasserstein
 -g_opt RMSProp
 -g_lr 0.0001

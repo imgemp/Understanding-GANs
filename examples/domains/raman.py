@@ -110,7 +110,7 @@ class Raman(Data):
         return xy, ux, waves, names, colors
         
     def plot_current(self, train, params, i, ylim=1, force_ylim=True, fs=24, fs_tick=18):
-        samples = train.m.get_fake(64, params['z_dim']).detach().data.numpy()
+        samples = train.m.get_fake(64, params['z_dim']).cpu().data.numpy()
         plt.plot(self.waves,samples.T)
         plt.title('Generated Spectra', fontsize=fs)
         plt.xlabel('Channels', fontsize=fs)
@@ -141,7 +141,7 @@ class Raman(Data):
         plt.close()
 
     def plot_real(self, params, ylim=1, force_ylim=True, fs=24, fs_tick=18):
-        samples = self.sample(batch_size=self.batch_size)[:64].detach().data.numpy()
+        samples = self.sample(batch_size=self.batch_size)[:64].cpu().data.numpy()
         plt.plot(self.waves,samples.T)
         plt.title('Generated Spectra', fontsize=fs)
         plt.xlabel('Channels', fontsize=fs)
