@@ -126,12 +126,13 @@ class Raman(Data):
         print(np_samples[0].shape)
         cols = len(np_samples_)
         print(cols)
+        print('plotting')
         fig = plt.figure(figsize=(2*cols, 2*params['n_viz']))
         for i, samps in enumerate(np_samples_):
             for j, samp in enumerate(samps):
                 if j == 0:
-                    plt.title('step %d'%(i*params['viz_every']))
                     ax = plt.subplot(params['n_viz'],cols,i+1)
+                    plt.title('step %d'%(i*params['viz_every']))
                     print(i+1)
                 else:
                     plt.subplot(params['n_viz'],cols,i+j*cols+1, sharex=ax, sharey=ax)
