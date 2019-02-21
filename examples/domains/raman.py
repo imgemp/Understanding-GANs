@@ -16,6 +16,7 @@ from ugans.utils import load_url
 
 import matplotlib.pyplot as plt
 import seaborn as sns
+from sklearn.model_selection import KFold
 
 
 
