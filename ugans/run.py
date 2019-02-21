@@ -107,24 +107,9 @@ def parse_params():
     if args['domain'] == 'shapes':
         from examples.domains.shapes import Shapes as Domain
         from examples.domains.shapes import Generator, AttExtractor, LatExtractor, Discriminator, Disentangler
-    elif args['domain'] == 'circles':
-        from examples.domains.circles import Circles as Domain
-        from examples.domains.circles import Generator, AttExtractor, LatExtractor, Discriminator, Disentangler
-    elif args['domain'] == 'circles_small':
-        from examples.domains.circles_small import Circles as Domain
-        from examples.domains.circles_small import Generator, AttExtractor, LatExtractor, Discriminator, Disentangler
-    elif args['domain'] == 'circles_fcn':
-        from examples.domains.circles_fcn import Circles as Domain
-        from examples.domains.circles_fcn import Generator, AttExtractor, LatExtractor, Discriminator, Disentangler
-    elif args['domain'] == 'circles_small2':
-        from examples.domains.circles_small2 import Circles as Domain
-        from examples.domains.circles_small2 import Generator, AttExtractor, LatExtractor, Discriminator, Disentangler
-    elif args['domain'] == 'circles_small3':
-        from examples.domains.circles_small3 import Circles as Domain
-        from examples.domains.circles_small3 import Generator, AttExtractor, LatExtractor, Discriminator, Disentangler
-    elif args['domain'] == 'circles_small4':
-        from examples.domains.circles_small4 import Circles as Domain
-        from examples.domains.circles_small4 import Generator, AttExtractor, LatExtractor, Discriminator, Disentangler
+    elif args['domain'] == 'raman':
+        from examples.domains.raman import Raman as Domain
+        from examples.domains.raman import Generator, AttExtractor, LatExtractor, Discriminator, Disentangler
     elif args['domain'] == 'celebA':
         from examples.domains.celebA import CelebA as Domain
         from examples.domains.celebA import Generator, AttExtractor, LatExtractor, Discriminator, Disentangler
