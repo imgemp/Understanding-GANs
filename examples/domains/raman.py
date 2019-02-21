@@ -11,16 +11,17 @@ import torchvision
 import torchvision.datasets as dset
 import torchvision.transforms as transforms
 
+from sklearn.model_selection import KFold
+
 from ugans.core import Data, Net
 from ugans.utils import load_url
 
 import matplotlib.pyplot as plt
+from matplotlib.pyplot import cm
 import seaborn as sns
-from sklearn.model_selection import KFold
 
 
 
-# Taken from DCGAN
 class Raman(Data):
     def __init__(self, batch_size=128, **kwargs):
         super(Raman, self).__init__()
