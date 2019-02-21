@@ -53,8 +53,6 @@ class Raman(Data):
     def load_raman(self):
         xy, ux, waves, names, colors = self.load_process_data(DropLastDim=False)
         self.x = xy[-2]
-        print(x.shape)
-        print(y.shape)
         self.attributes = xy[-1]
         self.attribute_names = names
         self.waves = waves
