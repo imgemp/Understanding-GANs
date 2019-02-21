@@ -56,7 +56,7 @@ class Raman(Data):
         xy, ux, waves, names, colors = self.load_process_data(DropLastDim=False)
         self.x_dim = xy[-2].shape[1]
         self.att_dim = xy[-1].shape[1]
-        self.x_att = np.hstack((xy[-2],xy[-1]))
+        self.x_att = np.hstack((xy[-2],xy[-1])).astype('float32')
         self.attribute_names = names
         self.waves = waves
 
