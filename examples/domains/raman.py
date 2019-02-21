@@ -131,9 +131,11 @@ class Raman(Data):
             for j, samp in enumerate(samps):
                 if j == 0:
                     plt.title('step %d'%(i*params['viz_every']))
-                    ax = plt.subplot(params['n_viz'],cols,j+1)
+                    ax = plt.subplot(params['n_viz'],cols,i+1)
+                    print(i+1)
                 else:
                     plt.subplot(params['n_viz'],cols,i+j*cols+1, sharex=ax, sharey=ax)
+                    print(i+j*cols+1)
                 plt.plot(self.waves, samp)
                 if force_ylim:
                     plt.gca().set_ylim(ylim)
