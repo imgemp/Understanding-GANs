@@ -27,6 +27,8 @@ class Raman(Data):
         super(Raman, self).__init__()
         self.batch_size = batch_size
         self.load_raman()
+        # Number of workers for dataloader
+        workers = 2
         # Create the dataloader
         self.dataloader = torch.utils.data.DataLoader(torch.from_numpy(self.x), batch_size=batch_size,
                                                       shuffle=True, num_workers=workers,
