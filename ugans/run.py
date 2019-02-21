@@ -91,6 +91,7 @@ def parse_params():
     parser.add_argument('-zdim','--z_dim', type=int, default=256, help='dimensionality of p(z) - unit normal', required=False)
     parser.add_argument('-xdim','--x_dim', type=int, default=2, help='dimensionality of p(x) - data distribution', required=False)
     parser.add_argument('-cdim','--c_dim', type=int, default=1, help='number of channels in data distribution', required=False)
+    parser.add_argument('-images','--images', type=lambda x: (str(x).lower() == 'true'), default=True, help='whether data consists of images', required=False)
     parser.add_argument('-latdim','--lat_dim', type=int, default=2, help='dimensionality of latent feature extractor', required=False)
     parser.add_argument('-attdim','--att_dim', type=int, default=2, help='dimensionality of attribute feature extractor', required=False)
     parser.add_argument('-atttyp','--att_type', type=int, default=2, help='range of attributes (0={0,1},1=[0,1],2=[-inf,inf])', required=False)
@@ -230,8 +231,9 @@ def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discrim
             if params['n_viz'] > 0:
                 samples = train.m.get_fake(params['n_viz'], params['z_dim']).cpu().data.numpy()
                 np.save(params['saveto']+'samples/'+str(i), samples)
-                logger_images = samples.reshape(-1, params['c_dim'], params['x_dim'], params['x_dim']).transpose((0,2,3,1)).squeeze()
-                logger.image_summary('images', logger_images, i)
+                if params['images']:
+                    logger_images = samples.reshape(-1, params['c_dim'], params['x_dim'], params['x_dim']).transpose((0,2,3,1)).squeeze()
+                    logger.image_summary('images', logger_images, i)
             data.plot_current(train, params, i)
 
         if params['plot_every'] > 0 and i % params['plot_every'] == 0:
