@@ -192,7 +192,6 @@ class Generator(Net):
         else:
             self.nonlin = lambda x: x
 
-        self.output = output
         self.input_dim = input_dim
         self.output_dim = output_dim
         self.image_dim = image_dim
@@ -235,7 +234,6 @@ class AttExtractor(Net):
         else:
             self.nonlin = lambda x: x
 
-        self.output = output
         self.input_dim = input_dim
         self.output_dim = output_dim
         self.image_dim = image_dim
@@ -278,7 +276,6 @@ class LatExtractor(Net):
         else:
             self.nonlin = lambda x: x
 
-        self.output = output
         self.input_dim = input_dim
         self.output_dim = output_dim
         self.image_dim = image_dim
