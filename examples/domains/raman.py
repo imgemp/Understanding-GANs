@@ -194,7 +194,6 @@ class Generator(Net):
 
         self.input_dim = input_dim
         self.output_dim = output_dim
-        self.image_dim = image_dim
         self.n_hidden = n_hidden
 
         self.first_forward = True
@@ -236,7 +235,6 @@ class AttExtractor(Net):
 
         self.input_dim = input_dim
         self.output_dim = output_dim
-        self.image_dim = image_dim
         self.n_hidden = n_hidden
 
         self.first_forward = True
@@ -278,7 +276,6 @@ class LatExtractor(Net):
 
         self.input_dim = input_dim
         self.output_dim = output_dim
-        self.image_dim = image_dim
         self.n_hidden = n_hidden
 
         self.first_forward = True
