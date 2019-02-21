@@ -132,7 +132,7 @@ class Raman(Data):
                 if i == 0 and j == 0:
                     ax = plt.subplot(params['n_viz'],cols,1)
                 else:
-                    plt.subplot(params['n_viz'],cols,i*cols+j, sharex=ax, sharey=ax)
+                    plt.subplot(params['n_viz'],cols,i+j*cols, sharex=ax, sharey=ax)
                 plt.plot(self.waves, samp)
                 if force_ylim:
                     plt.gca().set_ylim(ylim)
