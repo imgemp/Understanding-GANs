@@ -58,7 +58,7 @@ class Raman(Data):
         self.waves = waves
 
 
-    def load_process_data(self,dataset='examples/datasets/raman/raman.pkl.gz',trial=0,n_folds=2,
+    def load_process_data(self,dataset='examples/domains/data/raman.pkl.gz',trial=0,n_folds=2,
                           remove_mean=False,log_x=False,DropLastDim=True):
         x, y, waves, majors = load_url('http://www-anw.cs.umass.edu/public_data/untapped/raman.pkl.gz',dataset)
 
