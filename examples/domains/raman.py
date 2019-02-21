@@ -133,10 +133,9 @@ class Raman(Data):
                     ax = plt.subplot(params['n_viz'],cols,1)
                 else:
                     plt.subplot(params['n_viz'],cols,i*cols+j, sharex=ax, sharey=ax)
-                ax2 = plt.plot(self.waves, samp)
+                plt.plot(self.waves, samp)
                 if force_ylim:
-                    # embed()
-                    ax2[0].set_ylim(ylim)
+                    plt.gca().set_ylim(ylim)
                 plt.xticks([]); plt.yticks([])
             plt.title('step %d'%(i*params['viz_every']))
         plt.gcf().tight_layout()
