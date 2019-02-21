@@ -20,7 +20,7 @@ import matplotlib.pyplot as plt
 from matplotlib.pyplot import cm
 import seaborn as sns
 
-
+from IPython import embed
 
 class Raman(Data):
     def __init__(self, batch_size=128, **kwargs):
@@ -135,6 +135,7 @@ class Raman(Data):
                     plt.subplot(params['n_viz'],cols,i*cols+j, sharex=ax, sharey=ax)
                 ax2 = plt.plot(self.waves, samp)
                 if force_ylim:
+                    embed()
                     ax2.set_ylim(ylim)
                 plt.xticks([]); plt.yticks([])
             plt.title('step %d'%(i*params['viz_every']))
