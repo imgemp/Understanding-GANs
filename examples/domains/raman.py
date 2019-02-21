@@ -122,19 +122,20 @@ class Raman(Data):
         plt.close()
 
     def plot_series(self, np_samples, params, ylim=1, force_ylim=True, fs=24, fs_tick=18):
-        np_samples_ = np.array(np_samples) / 2 + 0.5  # unnormalize
+        np_samples_ = np.array(np_samples)
+        print(np_samples.shape)
         cols = len(np_samples_)
         fig = plt.figure(figsize=(2*cols, 2*params['n_viz']))
         for i, samps in enumerate(np_samples_):
-            if i == 0:
-                ax = plt.subplot(1,cols,1)
-            else:
-                plt.subplot(1,cols,i+1, sharex=ax, sharey=ax)
-            thissamp = samps.reshape((params['n_viz'],-1))
-            ax2 = plt.plot(self.waves,thissamp.T)
-            if force_ylim:
-                ax2.set_ylim(ylim)
-            plt.xticks([]); plt.yticks([])
+            for j, samp in enumerate(samps):
+                if i == 0 and j == 0:
+                    ax = plt.subplot(params['n_viz'],cols,1)
+                else:
+                    plt.subplot(params['n_viz'],cols,i*cols+j, sharex=ax, sharey=ax)
+                ax2 = plt.plot(self.waves, samp)
+                if force_ylim:
+                    ax2.set_ylim(ylim)
+                plt.xticks([]); plt.yticks([])
             plt.title('step %d'%(i*params['viz_every']))
         plt.gcf().tight_layout()
         fig.savefig(params['saveto']+'series.pdf')
