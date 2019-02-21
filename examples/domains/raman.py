@@ -123,8 +123,9 @@ class Raman(Data):
 
     def plot_series(self, np_samples, params, ylim=1, force_ylim=True, fs=24, fs_tick=18):
         np_samples_ = np.array(np_samples)
-        print(np_samples.shape)
+        print(np_samples[0].shape)
         cols = len(np_samples_)
+        print(cols)
         fig = plt.figure(figsize=(2*cols, 2*params['n_viz']))
         for i, samps in enumerate(np_samples_):
             for j, samp in enumerate(samps):
