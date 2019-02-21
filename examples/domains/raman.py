@@ -20,7 +20,7 @@ import matplotlib.pyplot as plt
 from matplotlib.pyplot import cm
 import seaborn as sns
 
-from IPython import embed
+
 
 class Raman(Data):
     def __init__(self, batch_size=128, **kwargs):
@@ -123,25 +123,18 @@ class Raman(Data):
 
     def plot_series(self, np_samples, params, ylim=1, force_ylim=True, fs=24, fs_tick=18):
         np_samples_ = np.array(np_samples)
-        print(np_samples[0].shape)
         cols = len(np_samples_)
-        print(cols)
-        print('plotting')
         fig = plt.figure(figsize=(2*cols, 2*params['n_viz']))
         for i, samps in enumerate(np_samples_):
             for j, samp in enumerate(samps):
                 if j == 0:
                     ax = plt.subplot(params['n_viz'],cols,i+1)
-                    plt.plot(self.waves, samp)
                     plt.title('step %d'%(i*params['viz_every']))
-                    print(i+1)
                 else:
                     plt.subplot(params['n_viz'],cols,i+j*cols+1, sharex=ax, sharey=ax)
-                    plt.plot(self.waves, samp)
-                    print(i+j*cols+1)
-                # plt.plot(self.waves, samp)
-                # if force_ylim:
-                #     plt.gca().set_ylim(ylim)
+                plt.plot(self.waves, samp)
+                if force_ylim:
+                    plt.gca().set_ylim(ylim)
                 plt.xticks([]); plt.yticks([])
         plt.gcf().tight_layout()
         fig.savefig(params['saveto']+'series.pdf')

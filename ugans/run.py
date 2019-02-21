@@ -274,7 +274,7 @@ def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discrim
     print('Plotting sample series over epochs...')
     if params['n_viz'] > 0:
         np_samples = []
-        for viz_i in range(0,params['max_iter'],params['viz_every']):
+        for viz_i in range(0,params['max_iter']+1,params['viz_every']):
             np_samples.append(np.load(params['saveto']+'samples/'+str(viz_i)+'.npy'))
         data.plot_series(np_samples, params)
 
