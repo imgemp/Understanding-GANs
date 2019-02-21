@@ -38,7 +38,7 @@ class Raman(Data):
         return (x.T/np.ptp(x,axis=1)).T
 
 
-    def get_endmembers(self,dataset='examples/datasets/raman/raman.pkl.gz'):
+    def get_endmembers(self,dataset='examples/domains/data/raman.pkl.gz'):
         x, y, waves, majors = load_url('http://www-anw.cs.umass.edu/public_data/untapped/raman.pkl.gz',dataset)
         x = zero_one(x)
         endmems = np.zeros((y.shape[1],x.shape[1]))
