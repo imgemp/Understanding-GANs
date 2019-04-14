@@ -141,7 +141,7 @@ class Raman(Data):
         fig.savefig(params['saveto']+'series.pdf')
         plt.close()
 
-    def plot_real(self, params, ylim=1, force_ylim=True, fs=24, fs_tick=18):
+    def plot_real(self, params, ylim=[0,1], force_ylim=True, fs=24, fs_tick=18):
         samples = self.sample(batch_size=self.batch_size)[:64].cpu().data.numpy()
         plt.plot(self.waves,samples.T)
         plt.title('Generated Spectra', fontsize=fs)
