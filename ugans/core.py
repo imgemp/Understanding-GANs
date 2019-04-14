@@ -106,6 +106,8 @@ class Manager(object):
             self.att_loss = lambda pred, true: torch.mean(-(true*torch.log(pred+1e-10) + (1-true)*torch.log(1-pred+1e-10)))
         elif params['att_type'] == 1:
             self.att_loss = lambda pred, true: torch.mean((pred-true)**2.)
+        elif params['att_type'] == 2:
+            self.att_loss = lambda pred, true: 0
         else:
             self.att_loss = lambda pred, true: torch.mean((pred-true)**2.)
         self.logger = logger
