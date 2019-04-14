@@ -45,8 +45,8 @@ class CRISM(Data):
 
 
     def load_crism(self):
-        x, goodrows = get_np_image(datasets)
-        y = get_np_labels(labelsets, goodrows)
+        x, goodrows = self.get_np_image(datasets)
+        y = self.get_np_labels(labelsets, goodrows)
         waves = np.linspace(1.02, 2.6, x.shape[1])
         self.x_dim = x.shape[1]
         self.att_dim = y.shape[1]
