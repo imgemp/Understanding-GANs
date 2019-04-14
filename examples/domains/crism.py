@@ -87,7 +87,7 @@ class CRISM(Data):
     def get_np_labels(self, labelsets, goodrows):
         labels = []
         ys = []
-        for label in labels:
+        for labelset in labelsets:
             img = envi.open(labelset+'.hdr', labelset+'.img')
             img_np = np.asarray(img.asarray())
             y = img_np.reshape((-1,img_np.shape[-1]))
