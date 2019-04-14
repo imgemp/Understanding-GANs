@@ -55,6 +55,11 @@ class CRISM(Data):
         self.waves = waves
 
 
+    def zero_one(self,x):
+        x -= np.min(x,axis=1)[:,None]
+        return (x.T/np.ptp(x,axis=1)).T
+
+
     def get_np_image(self, datasets):
         channels = []
         goodrows = []
