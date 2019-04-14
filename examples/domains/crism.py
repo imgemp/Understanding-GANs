@@ -30,10 +30,10 @@ labelsets = [d+'_2014params' for d in datasets]
 
 
 class CRISM(Data):
-    def __init__(self, batch_size=128, **kwargs):
+    def __init__(self, batch_size=128, num_labels=None, **kwargs):
         super(CRISM, self).__init__()
         self.batch_size = batch_size
-        self.load_crism()
+        self.load_crism(num_labels)
         # Number of workers for dataloader
         workers = 2
         # Create the dataloader
@@ -44,10 +44,12 @@ class CRISM(Data):
         print('Number of batches: {}'.format(self.x_att.shape[0] // batch_size), flush=True)
 
 
-    def load_crism(self):
+    def load_crism(self, num_labels):
         x, goodrows = self.get_np_image(datasets)
         x = self.zero_one(x)
         y = self.get_np_labels(labelsets, goodrows)
+        if isinstance(num_labels, int):
+            y = y[:,:num_labels]
         waves = np.linspace(1.02, 2.6, x.shape[1])
         self.x_dim = x.shape[1]
         self.att_dim = y.shape[1]
