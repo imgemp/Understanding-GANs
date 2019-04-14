@@ -111,6 +111,9 @@ def parse_params():
     elif args['domain'] == 'raman':
         from examples.domains.raman import Raman as Domain
         from examples.domains.raman import Generator, AttExtractor, LatExtractor, Discriminator, Disentangler
+    elif args['domain'] == 'crism':
+        from examples.domains.crism import CRISM as Domain
+        from examples.domains.crism import Generator, AttExtractor, LatExtractor, Discriminator, Disentangler
     elif args['domain'] == 'celebA':
         from examples.domains.celebA import CelebA as Domain
         from examples.domains.celebA import Generator, AttExtractor, LatExtractor, Discriminator, Disentangler
