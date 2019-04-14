@@ -44,7 +44,7 @@ class Raman(Data):
 
     def get_endmembers(self,dataset='examples/domains/data/raman.pkl.gz'):
         x, y, waves, majors = load_url('http://www-anw.cs.umass.edu/public_data/untapped/raman.pkl.gz',dataset)
-        x = zero_one(x)
+        x = self.zero_one(x)
         endmems = np.zeros((y.shape[1],x.shape[1]))
         for i in range(y.shape[1]):
             samples = (y[:,i] == 1.)
@@ -64,6 +64,7 @@ class Raman(Data):
     def load_process_data(self,dataset='examples/domains/data/raman.pkl.gz',trial=0,n_folds=2,
                           remove_mean=False,log_x=False,DropLastDim=True):
         x, y, waves, majors = load_url('http://www-anw.cs.umass.edu/public_data/untapped/raman.pkl.gz',dataset)
+        x = self.zero_one(x)
 
         # last column of y is dummy column (all zeros, major 'name' is None)
         y = y[:,:-1]
@@ -109,7 +110,7 @@ class Raman(Data):
 
         return xy, ux, waves, names, colors
         
-    def plot_current(self, train, params, i, ylim=1, force_ylim=True, fs=24, fs_tick=18):
+    def plot_current(self, train, params, i, ylim=[0,1], force_ylim=True, fs=24, fs_tick=18):
         samples = train.m.get_fake(64, params['z_dim']).cpu().data.numpy()
         plt.plot(self.waves,samples.T)
         plt.title('Generated Spectra', fontsize=fs)
@@ -121,7 +122,7 @@ class Raman(Data):
         plt.savefig(params['saveto']+'samples/samples_{}.png'.format(i))
         plt.close()
 
-    def plot_series(self, np_samples, params, ylim=1, force_ylim=True, fs=24, fs_tick=18):
+    def plot_series(self, np_samples, params, ylim=[0,1], force_ylim=True, fs=24, fs_tick=18):
         np_samples_ = np.array(np_samples)
         cols = len(np_samples_)
         fig = plt.figure(figsize=(2*cols, 2*params['n_viz']))

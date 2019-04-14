@@ -46,6 +46,7 @@ class CRISM(Data):
 
     def load_crism(self):
         x, goodrows = self.get_np_image(datasets)
+        x = self.zero_one(x)
         y = self.get_np_labels(labelsets, goodrows)
         waves = np.linspace(1.02, 2.6, x.shape[1])
         self.x_dim = x.shape[1]
@@ -102,7 +103,7 @@ class CRISM(Data):
         return y_joined
 
 
-    def plot_current(self, train, params, i, ylim=1, force_ylim=True, fs=24, fs_tick=18):
+    def plot_current(self, train, params, i, ylim=[0,1], force_ylim=True, fs=24, fs_tick=18):
         samples = train.m.get_fake(64, params['z_dim']).cpu().data.numpy()
         plt.plot(self.waves,samples.T)
         plt.title('Generated Spectra', fontsize=fs)
@@ -114,7 +115,7 @@ class CRISM(Data):
         plt.savefig(params['saveto']+'samples/samples_{}.png'.format(i))
         plt.close()
 
-    def plot_series(self, np_samples, params, ylim=1, force_ylim=True, fs=24, fs_tick=18):
+    def plot_series(self, np_samples, params, ylim=[0,1], force_ylim=True, fs=24, fs_tick=18):
         np_samples_ = np.array(np_samples)
         cols = len(np_samples_)
         fig = plt.figure(figsize=(2*cols, 2*params['n_viz']))
