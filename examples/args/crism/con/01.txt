@@ -43,7 +43,7 @@
 -xdim 241
 -images False
 -latdim 58
--attdim 0
+-attdim 1
 -atttyp 2
 -maps consensus
 -gam_v 1.0
