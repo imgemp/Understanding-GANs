@@ -44,10 +44,14 @@ class CRISM(Data):
         print('Number of batches: {}'.format(self.x_att.shape[0] // batch_size), flush=True)
 
 
-    def load_crism(self, num_labels):
+    def load_crism(self, num_labels, normalize=True):
         x, goodrows = self.get_np_image(datasets)
         x = self.zero_one(x)
         y = self.get_np_labels(labelsets, goodrows)
+        if normalize:
+            width = np.ptp(y, axis=0, keepdims=True)
+            width[width==0.] = 1.
+            y = (y-np.min(y,axis=0))/width
         if isinstance(num_labels, int):
             y = y[:,:num_labels]
         waves = np.linspace(1.02, 2.6, x.shape[1])
