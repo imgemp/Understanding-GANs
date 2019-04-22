@@ -14,6 +14,7 @@ import torchvision.datasets as dset
 import torchvision.transforms as transforms
 
 from sklearn.model_selection import KFold
+from sklearn.preprocessing import StandardScaler
 
 from ugans.core import Data, Net
 from ugans.utils import load_url
@@ -49,9 +50,11 @@ class CRISM(Data):
         x = self.zero_one(x)
         y = self.get_np_labels(labelsets, goodrows)
         if normalize:
-            width = np.ptp(y, axis=0, keepdims=True)
-            width[width==0.] = 1.
-            y = (y-np.min(y,axis=0))/width
+            # width = np.ptp(y, axis=0, keepdims=True)
+            # width[width==0.] = 1.
+            # y = (y-np.min(y,axis=0))/width
+            scaler = StandardScaler()
+            y = scaler.fit_transform(y)
         if isinstance(num_labels, int):
             y = y[:,:num_labels]
         waves = np.linspace(1.02, 2.6, x.shape[1])
