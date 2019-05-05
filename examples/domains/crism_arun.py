@@ -11,7 +11,7 @@ def weights_init(m):
             m.bias.data.fill_(1.)
         elif classname.find('Linear') != -1:
             m.bias.data.fill_(1.)
-        
+
 
 class View(nn.Module):
     def __init__(self, *shape):
@@ -92,7 +92,8 @@ class LatExtractor(Net):
             nn.Conv1d(20*4, 20*8, kernel_size=11, stride=2, padding=5, bias=True),
             nn.ReLU(True),
             # # state size. bs x 160 x 15
-            View((-1, 160*15))
+            View((-1, 160*15)),
+            nn.Linear(160*15, (160*15)//100)
         )
 
         self.input_dim = input_dim
