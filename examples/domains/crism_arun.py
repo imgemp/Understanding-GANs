@@ -92,49 +92,8 @@ class LatExtractor(Net):
             nn.Conv1d(20*4, 20*8, kernel_size=11, stride=2, padding=5, bias=True),
             nn.ReLU(True),
             # # state size. bs x 160 x 15
-            # View((-1, 160*15)),
-            # nn.Linear(160*15, 1)
+            View((-1, 160*15))
         )
-
-        # #'LAYER -1'
-        # #'In: 240 X 1 X 1, depth =1'
-        # #'Out: 120 X 1 X 1, depth = 25'
-        # discriminator.add(Conv1D(filters=self.disFilters, 
-        #     kernel_size=self.filterSize ,strides=2,
-        #     input_shape=(self.img_rows, 1), bias_initializer=Constant(0.1), 
-        #     activation= 'relu', padding ='same'))
-        # discriminator.add(Dropout(self.dropout))
-
-        # #'LAYER -2'
-        # #'In: 120 X 1 X 1, depth =25'
-        # #'Out: 60 X 1 X 1, depth = 50'
-        # discriminator.add(Conv1D(filters=self.disFilters*2, 
-        #     kernel_size=self.filterSize, strides=2,
-        #     bias_initializer=Constant(0.1), activation= 'relu', 
-        #     padding ='same'))
-        # discriminator.add(Dropout(self.dropout))
-
-        # #'LAYER -3'
-        # #'In: 60 X 1 X 1, depth =50'
-        # #'Out: 30 X 1 X 1, depth = 75'
-        # discriminator.add(Conv1D(filters=self.disFilters*4, 
-        #     kernel_size=self.filterSize ,strides=2,
-        #     bias_initializer=Constant(0.1), activation= 'relu', 
-        #     padding ='same'))
-        # discriminator.add(Dropout(self.dropout))
-
-        # #'LAYER -4'
-        # #'In: 30 X 1 X 1, depth =50'
-        # #'Out: 15 X 1 X 1, depth = 100'
-        # discriminator.add(Conv1D(filters=self.disFilters*8, 
-        #     kernel_size=self.filterSize ,strides=2,
-        #     bias_initializer=Constant(0.1), activation= 'relu',
-        #     padding ='same'))
-        # discriminator.add(Dropout(self.dropout))
-
-        # # Output Layer
-        # discriminator.add(Flatten())
-        # discriminator.add(Dense(1))
 
         self.input_dim = input_dim
         self.output_dim = output_dim
@@ -147,8 +106,6 @@ class LatExtractor(Net):
         output = self.main(x)
         if self.first_forward: print(output.shape, flush=True)
         self.first_forward = False
-        embed()
-        assert False
         return output
 
     def init_weights(self):
