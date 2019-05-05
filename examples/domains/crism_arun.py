@@ -32,7 +32,7 @@ class Generator(Net):
             View((-1, 250, 15)),
             # state size. bs x 250 x 15
             nn.Upsample(scale_factor=2, mode='nearest'),
-            # nn.Conv1d(250, 250//2, kernel_size=11, stride=1, padding=5, bias=True),
+            nn.Conv1d(250, 250//2, kernel_size=11, stride=1, padding=5, bias=True),
             # nn.BatchNorm1d(250//2),
             # nn.ReLU(True),
             # # state size. bs x 125 x 30
