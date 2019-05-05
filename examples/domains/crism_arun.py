@@ -32,26 +32,26 @@ class Generator(Net):
             View((-1, 250, 15)),
             # state size. bs x 250 x 15
             nn.Upsample(scale_factor=2, mode='nearest'),
-            nn.Conv1d(250, 250//2, kernel_size=11, stride=1, padding=5, bias=True),
-            nn.BatchNorm1d(250//2),
-            nn.ReLU(True),
-            # state size. bs x 125 x 30
-            nn.Upsample(scale_factor=2, mode='nearest'),
-            nn.Conv1d(250//2, 250//4, kernel_size=11, stride=1, padding=5, bias=True),
-            nn.BatchNorm1d(250//4),
-            nn.ReLU(True),
-            # state size. bs x 62 x 60
-            nn.Upsample(scale_factor=2, mode='nearest'),
-            nn.Conv1d(250//4, 250//8, kernel_size=11, stride=1, padding=5, bias=True),
-            nn.BatchNorm1d(250//8),
-            nn.ReLU(True),
-            # state size. bs x 31 x 120
-            nn.Upsample(scale_factor=2, mode='nearest'),
-            nn.Conv1d(250//8, 250//16, kernel_size=11, stride=1, padding=5, bias=True),
-            nn.BatchNorm1d(250//16),
-            nn.ReLU(True),
-            # state size. bs x 1 x 240
-            nn.Conv1d(1, output_dim, kernel_size=11, stride=1, padding=5, bias=True)
+            # nn.Conv1d(250, 250//2, kernel_size=11, stride=1, padding=5, bias=True),
+            # nn.BatchNorm1d(250//2),
+            # nn.ReLU(True),
+            # # state size. bs x 125 x 30
+            # nn.Upsample(scale_factor=2, mode='nearest'),
+            # nn.Conv1d(250//2, 250//4, kernel_size=11, stride=1, padding=5, bias=True),
+            # nn.BatchNorm1d(250//4),
+            # nn.ReLU(True),
+            # # state size. bs x 62 x 60
+            # nn.Upsample(scale_factor=2, mode='nearest'),
+            # nn.Conv1d(250//4, 250//8, kernel_size=11, stride=1, padding=5, bias=True),
+            # nn.BatchNorm1d(250//8),
+            # nn.ReLU(True),
+            # # state size. bs x 31 x 120
+            # nn.Upsample(scale_factor=2, mode='nearest'),
+            # nn.Conv1d(250//8, 250//16, kernel_size=11, stride=1, padding=5, bias=True),
+            # nn.BatchNorm1d(250//16),
+            # nn.ReLU(True),
+            # # state size. bs x 1 x 240
+            # nn.Conv1d(1, output_dim, kernel_size=11, stride=1, padding=5, bias=True)
         )
         
         self.input_dim = input_dim
