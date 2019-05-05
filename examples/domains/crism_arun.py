@@ -45,11 +45,11 @@ class Generator(Net):
             nn.Conv1d(250//4, 250//8, kernel_size=11, stride=1, padding=5, bias=True),
             nn.BatchNorm1d(250//8),
             nn.ReLU(True),
-            # # state size. bs x 31 x 120
-            # nn.Upsample(scale_factor=2, mode='nearest'),
-            # nn.Conv1d(250//8, 250//16, kernel_size=11, stride=1, padding=5, bias=True),
-            # nn.BatchNorm1d(250//16),
-            # nn.ReLU(True),
+            # state size. bs x 31 x 120
+            nn.Upsample(scale_factor=2, mode='nearest'),
+            nn.Conv1d(250//8, 250//16, kernel_size=11, stride=1, padding=5, bias=True),
+            nn.BatchNorm1d(250//16),
+            nn.ReLU(True),
             # # state size. bs x 1 x 240
             # nn.Conv1d(1, output_dim, kernel_size=11, stride=1, padding=5, bias=True)
         )
