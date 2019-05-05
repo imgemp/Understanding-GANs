@@ -27,9 +27,9 @@ class Generator(Net):
         self.main = nn.Sequential(
             # input is Z, going into a dense layer
             nn.Linear(input_dim, 15 * 250, bias=True),
-            nn.ReLU(True),
-            nn.BatchNorm1d(15 * 250, momentum=0.9),
-            View((-1, 250, 15)),
+            # nn.ReLU(True),
+            # nn.BatchNorm1d(15 * 250, momentum=0.9),
+            # View((-1, 250, 15)),
             # state size. bs x 250 x 15
             # nn.Upsample(scale_factor=2, mode='bilinear'),
             # nn.Conv1d(250, 250//2, kernel_size=11, stride=1, padding=1, bias=True),
