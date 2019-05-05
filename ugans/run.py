@@ -114,7 +114,7 @@ def parse_params():
     elif args['domain'] == 'crism':
         from examples.domains.crism import CRISM as Domain
         from examples.domains.crism import Generator, AttExtractor, LatExtractor, Discriminator, Disentangler
-    elif args['domain'] == 'crism':
+    elif args['domain'] == 'crism_arun':
         from examples.domains.crism import CRISM as Domain
         from examples.domains.crism import AttExtractor, LatExtractor, Discriminator, Disentangler
         from examples.domains.crism_arun import Generator
