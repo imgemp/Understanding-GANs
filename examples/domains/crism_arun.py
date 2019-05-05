@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from ugans.core import Data, Net
-
+from IPython import embed
 
 def weights_init(m):
         classname = m.__class__.__name__
@@ -121,6 +121,7 @@ class Generator(Net):
         output = self.main(x)
         if self.first_forward: print(output.shape, flush=True)
         self.first_forward = False
+        embed()
         assert False
         return output
 
