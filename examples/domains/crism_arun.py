@@ -55,7 +55,7 @@ class Generator(Net):
         )
         
         self.input_dim = input_dim
-        self.n_hidden = n_hidden
+        self.n_hidden = 6
         self.output_dim = output_dim
         
         # 'Convolutional Layer 1'
@@ -119,6 +119,8 @@ class Generator(Net):
 
     def forward(self, x):
         output = self.main(x)
+        if self.first_forward: print(output.shape, flush=True)
+        self.first_forward = False
         return output
 
     def init_weights(self):
