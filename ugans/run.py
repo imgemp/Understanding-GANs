@@ -103,6 +103,7 @@ def parse_params():
     parser.add_argument('-saveto','--saveto', type=str, default='', help='path prefix for saving results', required=False)
     parser.add_argument('-gpu','--gpu', type=int, default=-2, help='if/which gpu to use (-1: all, -2: None)', required=False)
     parser.add_argument('-verb','--verbose', type=lambda x: (str(x).lower() == 'true'), default=False, help='whether to print progress to stdout', required=False)
+    parser.add_argument('-logverb','--log_verbose', type=lambda x: (str(x).lower() == 'true'), default=False, help='whether to log minor details like D prob histograms', required=False)
     args = vars(parser.parse_args())
 
     if args['domain'] == 'shapes':
@@ -203,7 +204,10 @@ def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discrim
             mod.init_weights()
     G, F_att, F_lat, D, D_dis = [to_gpu(mod) for mod in [G, F_att, F_lat, D, D_dis]]
 
-    m = Manager(data, G, F_att, F_lat, D, D_dis, params, to_gpu, logger)
+    if params['log_verbose']:
+        m = Manager(data, G, F_att, F_lat, D, D_dis, params, to_gpu, logger)
+    else:
+        m = Manager(data, G, F_att, F_lat, D, D_dis, params, to_gpu, None)
 
     train = Train(manager=m)
 
