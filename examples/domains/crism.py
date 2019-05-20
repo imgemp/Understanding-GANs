@@ -47,11 +47,12 @@ class CRISM(Data):
 
     def load_crism(self, num_labels, normalize=True):
         x, goodrows = self.get_np_image(datasets)
-        x = self.zero_one(x)
-        y = self.get_np_labels(labelsets, goodrows)
+        x = self.zero_one_x(x)
+        y, names = self.get_np_labels(labelsets, goodrows)
         if normalize:
-            scaler = StandardScaler()
-            y = scaler.fit_transform(y)
+            # scaler = StandardScaler()
+            # y = scaler.fit_transform(y)
+            y = self.zero_one_y(y)
         if isinstance(num_labels, int):
             y = y[:,:num_labels]
         waves = np.linspace(1.02, 2.6, x.shape[1])
@@ -63,11 +64,26 @@ class CRISM(Data):
         self.att_dim = y.shape[1]
         self.x_att = np.hstack((x,y)).astype('float32')
         self.waves = waves
+        self.att_names = names
 
 
-    def zero_one(self,x):
+    def zero_one_x(self,x):
+        mn, mx = np.min(x), np.max(x)
+        if mx > mn:
+            return (x-mn)/(mx-mn)
+        else:
+            return x
+
+
+    def zero_one_x_ind(self,x):
+        '''expecting normalization along columns'''
         x -= np.min(x,axis=1)[:,None]
         return (x.T/np.ptp(x,axis=1)).T
+
+
+    def zero_one_y(self,y):
+        y -= np.min(y,axis=0)[None]
+        return (y/np.ptp(y,axis=0))
 
 
     def get_np_image(self, datasets):
@@ -103,8 +119,10 @@ class CRISM(Data):
     def get_np_labels(self, labelsets, goodrows):
         labels = []
         ys = []
+        names = []
         for labelset in labelsets:
             img = envi.open(labelset+'.hdr', labelset+'.img')
+            names = img.metadata['band names']
             img_np = np.asarray(img.asarray())
             y = img_np.reshape((-1,img_np.shape[-1]))
             labels += [y.shape[1]]
@@ -115,7 +133,26 @@ class CRISM(Data):
         y_joined = np.vstack(ys)
         print('Removing {:0.2f}% of rows (any NaN) from joined label.'.format((1-goodrows.sum()/y_joined.shape[0])*100))
         y_joined = y_joined[goodrows]
-        return y_joined
+        return y_joined, names
+
+    def plot_att_hists(self):
+        y = self.x_att[self.x_dim:]
+        assert y.shape[1] == 26
+        stds = np.std(y,axis=0)
+        plt.clf()
+        fig, ax = plt.subplots(7,4, figsize=(20,10))
+        for r in range(7):
+            for c in range(4):
+                if r*4+c < 26:
+                    ax[r,c].hist(y01[:,r*4+c], num_bins, density=1)
+                    ax[r,c].set_ylabel(str(r*4+c))
+                    ax[r,c].set_title(r'{:s}: {:.3f}$\sigma$'.format(self.att_names[r*4+c], stds[r*4+c]))
+                    ax[r,c].tick_params(left=False,bottom=False,right=False,top=False)
+                    ax[r,c].set_xticklabels([])
+                    ax[r,c].set_yticklabels([])
+        fig.tight_layout()
+        plt.savefig(params['saveto']+'att_hist_01.png')
+        plt.close()
 
 
     def plot_current(self, train, params, i, ylim=[0,1], force_ylim=True, fs=24, fs_tick=18):
