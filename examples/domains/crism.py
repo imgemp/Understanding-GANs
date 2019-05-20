@@ -47,7 +47,7 @@ class CRISM(Data):
 
     def load_crism(self, num_labels, normalize=True):
         x, goodrows = self.get_np_image(datasets)
-        x = self.zero_one_x(x)
+        x = self.zero_one_x_ind(x)
         y, names = self.get_np_labels(labelsets, goodrows)
         if normalize:
             # scaler = StandardScaler()
