@@ -163,7 +163,7 @@ class CRISM(Data):
         plt.savefig(params['saveto']+'hists/att_hist_{}.png'.format(i))
         plt.close()
 
-    def plot_current(self, train, params, i, ylim=[0,1], force_ylim=True, fs=24, fs_tick=18, opt=True):
+    def plot_current(self, train, params, i, ylim=[0,1], force_ylim=True, fs=24, fs_tick=18, opt=False):
         if opt:
             samples = torch.cat([train.m.get_fake(64, params['z_dim']) for i in range(10)], dim=0)
             atts = train.m.F_att(samples).cpu().data.numpy()
@@ -205,7 +205,7 @@ class CRISM(Data):
         fig.savefig(params['saveto']+filename+'.pdf')
         plt.close()
 
-    def plot_real(self, params, ylim=[0,1], force_ylim=True, fs=24, fs_tick=18, opt=True):
+    def plot_real(self, params, ylim=[0,1], force_ylim=True, fs=24, fs_tick=18, opt=False):
         if opt:
             samples = []
             atts = []
