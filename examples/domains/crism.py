@@ -23,8 +23,9 @@ import matplotlib.pyplot as plt
 from matplotlib.pyplot import cm
 import seaborn as sns
 
-datasets = ['./examples/domains/data/CRISM_data_summPar_1/FRT000097E2/FRT000097E2_07_IF166L_TRR3_atcr_sabcondv4_1_Lib11123_1_4_5_l1_gadmm_a_v2_ca_ice_b200_MS',
-            './examples/domains/data/CRISM_data_summPar_1/HRL000040FF/HRL000040FF_07_IF183L_TRR3_atcr_sabcondv4_1_Lib11123_1_4_5_l1_gadmm_a_v2_ca_ice_b200_MS']
+# originals FRT000097E2, HRL000040FF
+directories = ['FRT000047A3', 'FRT00005850', 'FRT000097E2', 'FRT0000CBE5', 'FRT00013EBC', 'FRT000161EF', 'HRL000040FF', 'HRL0000C0BA']
+datasets = ['./examples/domains/data/CRISM_data_summPar_1/'+direc+'/'+direc+'_07_IF166L_TRR3_atcr_sabcondv4_1_Lib11123_1_4_5_l1_gadmm_a_v2_ca_ice_b200_MS' for direc in directories]
 labelsets = [d+'_2014params' for d in datasets]
 
 # srun -p m40-long --gres=gpu:1 examples/run.sh "examples/args/crism/con/00.txt"

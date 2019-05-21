@@ -21,7 +21,7 @@ class View(nn.Module):
         return input.view(*self.shape)
 
 class Generator(Net):
-    def __init__(self, input_dim, output_dim, **kwargs):
+    def __init__(self, input_dim, output_dim, p=0.3, **kwargs):
         super(Generator, self).__init__()
         # input is bs x 50
         self.main = nn.Sequential(
@@ -30,26 +30,31 @@ class Generator(Net):
             nn.ReLU(True),
             nn.BatchNorm1d(15 * 250, momentum=0.9),
             View((-1, 250, 15)),
+            nn.Dropout(p=p),
             # state size. bs x 250 x 15
             nn.Upsample(scale_factor=2, mode='nearest'),
             nn.Conv1d(250, 250//2, kernel_size=11, stride=1, padding=5, bias=True),
-            nn.BatchNorm1d(250//2),
             nn.ReLU(True),
+            nn.BatchNorm1d(250//2),
+            nn.Dropout(p=p),
             # state size. bs x 125 x 30
             nn.Upsample(scale_factor=2, mode='nearest'),
             nn.Conv1d(250//2, 250//4, kernel_size=11, stride=1, padding=5, bias=True),
-            nn.BatchNorm1d(250//4),
             nn.ReLU(True),
+            nn.BatchNorm1d(250//4),
+            nn.Dropout(p=p),
             # state size. bs x 62 x 60
             nn.Upsample(scale_factor=2, mode='nearest'),
             nn.Conv1d(250//4, 250//8, kernel_size=11, stride=1, padding=5, bias=True),
-            nn.BatchNorm1d(250//8),
             nn.ReLU(True),
+            nn.BatchNorm1d(250//8),
+            nn.Dropout(p=p),
             # state size. bs x 31 x 120
             nn.Upsample(scale_factor=2, mode='nearest'),
             nn.Conv1d(250//8, 250//16, kernel_size=11, stride=1, padding=5, bias=True),
-            nn.BatchNorm1d(250//16),
             nn.ReLU(True),
+            nn.BatchNorm1d(250//16),
+            nn.Dropout(p=p),
             # # state size. bs x 15 x 240
             nn.Conv1d(250//16, 1, kernel_size=11, stride=1, padding=5, bias=True),
             nn.Sigmoid(),
@@ -74,7 +79,7 @@ class Generator(Net):
 
 
 class AttExtractor(Net):
-    def __init__(self, input_dim, output_dim, **kwargs):
+    def __init__(self, input_dim, output_dim, p=0.3, **kwargs):
         super(AttExtractor, self).__init__()
         # input is bs x 240
         self.main = nn.Sequential(
@@ -82,15 +87,19 @@ class AttExtractor(Net):
             View((-1, 1, 240)),
             nn.Conv1d(1, 20, kernel_size=11, stride=2, padding=5, bias=True),
             nn.ReLU(True),
+            nn.Dropout(p=p),
             # state size. bs x 20 x 120
             nn.Conv1d(20, 20*2, kernel_size=11, stride=2, padding=5, bias=True),
             nn.ReLU(True),
+            nn.Dropout(p=p),
             # state size. bs x 40 x 60
             nn.Conv1d(20*2, 20*4, kernel_size=11, stride=2, padding=5, bias=True),
             nn.ReLU(True),
+            nn.Dropout(p=p),
             # state size. bs x 80 x 30
             nn.Conv1d(20*4, 20*8, kernel_size=11, stride=2, padding=5, bias=True),
             nn.ReLU(True),
+            nn.Dropout(p=p),
             # # state size. bs x 160 x 15
             View((-1, 160*15)),
             nn.Linear(160*15, output_dim)
@@ -114,7 +123,7 @@ class AttExtractor(Net):
 
 
 class LatExtractor(Net):
-    def __init__(self, input_dim, output_dim, **kwargs):
+    def __init__(self, input_dim, output_dim, p=0.3, **kwargs):
         super(LatExtractor, self).__init__()
         # input is bs x 240
         self.main = nn.Sequential(
@@ -122,15 +131,19 @@ class LatExtractor(Net):
             View((-1, 1, 240)),
             nn.Conv1d(1, 20, kernel_size=11, stride=2, padding=5, bias=True),
             nn.ReLU(True),
+            nn.Dropout(p=p),
             # state size. bs x 20 x 120
             nn.Conv1d(20, 20*2, kernel_size=11, stride=2, padding=5, bias=True),
             nn.ReLU(True),
+            nn.Dropout(p=p),
             # state size. bs x 40 x 60
             nn.Conv1d(20*2, 20*4, kernel_size=11, stride=2, padding=5, bias=True),
             nn.ReLU(True),
+            nn.Dropout(p=p),
             # state size. bs x 80 x 30
             nn.Conv1d(20*4, 20*8, kernel_size=11, stride=2, padding=5, bias=True),
             nn.ReLU(True),
+            nn.Dropout(p=p),
             # # state size. bs x 160 x 15
             View((-1, 160*15)),
             nn.Linear(160*15, output_dim)
