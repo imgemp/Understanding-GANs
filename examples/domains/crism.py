@@ -210,7 +210,7 @@ class CRISM(Data):
             samples = []
             atts = []
             for i in range(10):
-                samps, ats = torch.split(self.data.sample_att(self.batch_size), [params['x_dim'], params['att_dim']], dim=1)
+                samps, ats = torch.split(self.sample_att(self.batch_size), [params['x_dim'], params['att_dim']], dim=1)
                 samples += [samps[:64].cpu().data.numpy()]
                 atts += [ats[:64].cpu().data.numpy()]
             atts = np.vstack(atts)
