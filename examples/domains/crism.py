@@ -140,6 +140,7 @@ class CRISM(Data):
 
     def plot_att_hists(self, i=0, y2=None):
         y = self.x_att[self.x_dim:]
+        print(self.x_att.shape, self.x_dim, self.att_dim)
         assert y.shape[1] == 26
         stds = np.std(y,axis=0)
         if y2 is not None:
