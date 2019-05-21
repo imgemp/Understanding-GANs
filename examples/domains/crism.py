@@ -139,8 +139,9 @@ class CRISM(Data):
         return y_joined, names
 
     def plot_att_hists(self, i=0, y2=None):
-        y = self.x_att[self.x_dim:]
+        print('got here')
         print(self.x_att.shape, self.x_dim, self.att_dim)
+        y = self.x_att[self.x_dim:]
         assert y.shape[1] == 26
         stds = np.std(y,axis=0)
         if y2 is not None:
