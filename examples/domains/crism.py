@@ -137,7 +137,7 @@ class CRISM(Data):
         y_joined = y_joined[goodrows]
         return y_joined, names
 
-    def plot_att_hists(self, i=0, y2=None):
+    def plot_att_hists(self, params, i=0, y2=None):
         y = self.x_att[:,self.x_dim:]
         assert y.shape[1] == 26
         stds = np.std(y,axis=0)
@@ -174,7 +174,7 @@ class CRISM(Data):
         plt.close()
         samples = train.m.get_fake(1000, params['z_dim'])
         atts = train.m.F_att(samples).cpu().data.numpy()
-        self.plot_att_hists(y2=atts)
+        self.plot_att_hists(params, i=i, y2=atts)
 
     def plot_series(self, np_samples, params, ylim=[0,1], force_ylim=True, fs=24, fs_tick=18, filename='series'):
         np_samples_ = np.array(np_samples)
