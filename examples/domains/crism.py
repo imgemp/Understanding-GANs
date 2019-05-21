@@ -66,7 +66,7 @@ class CRISM(Data):
         self.x_att = np.hstack((x,y)).astype('float32')
         self.waves = waves
         self.att_names = names
-        print(x_dim, y_dim, num_labels)
+        print(x_dim, self.att_dim, num_labels)
 
     def zero_one_x(self,x):
         mn, mx = np.min(x), np.max(x)
