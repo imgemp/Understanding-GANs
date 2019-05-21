@@ -6,6 +6,8 @@ import spectral.io.envi as envi
 
 import numpy as np
 
+from scipy.spatial.distance import pdist, squareform
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -161,8 +163,16 @@ class CRISM(Data):
         plt.savefig(params['saveto']+'hists/att_hist_{}.png'.format(i))
         plt.close()
 
-    def plot_current(self, train, params, i, ylim=[0,1], force_ylim=True, fs=24, fs_tick=18):
-        samples = train.m.get_fake(64, params['z_dim']).cpu().data.numpy()
+    def plot_current(self, train, params, i, ylim=[0,1], force_ylim=True, fs=24, fs_tick=18, opt=True):
+        if opt:
+            samples = torch.cat([train.m.get_fake(64, params['z_dim']) for i in range(10)], dim=0)
+            atts = train.m.F_att(samples).cpu().data.numpy()
+            dists = squareform(pdist(atts, 'cityblock'))
+            dists[range(640),range(640)] = 1.
+            sorted_degrees = np.argsort((1/dists).mean(axis=1))
+            samples = samples.cpu().data.numpy()[sorted_degrees[:64]]
+        else:
+            samples = train.m.get_fake(64, params['z_dim']).cpu().data.numpy()
         plt.plot(self.waves,samples.T)
         plt.title('Generated Spectra', fontsize=fs)
         plt.xlabel('Channels', fontsize=fs)
@@ -195,8 +205,22 @@ class CRISM(Data):
         fig.savefig(params['saveto']+filename+'.pdf')
         plt.close()
 
-    def plot_real(self, params, ylim=[0,1], force_ylim=True, fs=24, fs_tick=18):
-        samples = self.sample(batch_size=self.batch_size)[:64].cpu().data.numpy()
+    def plot_real(self, params, ylim=[0,1], force_ylim=True, fs=24, fs_tick=18, opt=True):
+        if opt:
+            samples = []
+            atts = []
+            for i in range(10):
+                samps, ats = torch.split(self.data.sample_att(self.batch_size), [params['x_dim'], params['att_dim']], dim=1)
+                samples += [samps[:64].cpu().data.numpy()]
+                atts += [ats[:64].cpu().data.numpy()]
+            atts = np.vstack(atts)
+            samples = np.vstack(samples)
+            dists = squareform(pdist(atts, 'cityblock'))
+            dists[range(640),range(640)] = 1.
+            sorted_degrees = np.argsort((1/dists).mean(axis=1))
+            samples = samples[sorted_degrees[:64]]
+        else:
+            samples = self.sample(batch_size=self.batch_size)
         plt.plot(self.waves,samples.T)
         plt.title('Generated Spectra', fontsize=fs)
         plt.xlabel('Channels', fontsize=fs)
