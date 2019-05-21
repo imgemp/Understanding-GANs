@@ -45,7 +45,6 @@ class CRISM(Data):
         self.dataiterator = iter(self.dataloader)
         print('Number of batches: {}'.format(self.x_att.shape[0] // batch_size), flush=True)
 
-
     def load_crism(self, num_labels, normalize=True):
         x, goodrows = self.get_np_image(datasets)
         x = self.zero_one_x_ind(x)
@@ -67,7 +66,6 @@ class CRISM(Data):
         self.waves = waves
         self.att_names = names
 
-
     def zero_one_x(self,x):
         mn, mx = np.min(x), np.max(x)
         if mx > mn:
@@ -75,17 +73,14 @@ class CRISM(Data):
         else:
             return x
 
-
     def zero_one_x_ind(self,x):
         '''expecting normalization along columns'''
         x -= np.min(x,axis=1)[:,None]
         return (x.T/np.ptp(x,axis=1)).T
 
-
     def zero_one_y(self,y):
         y -= np.min(y,axis=0)[None]
         return (y/np.ptp(y,axis=0))
-
 
     def get_np_image(self, datasets):
         channels = []
@@ -116,7 +111,6 @@ class CRISM(Data):
         goodrows[goodrows] = ~nanrows
         return x_joined, goodrows
 
-
     def get_np_labels(self, labelsets, goodrows):
         labels = []
         ys = []
@@ -136,25 +130,28 @@ class CRISM(Data):
         y_joined = y_joined[goodrows]
         return y_joined, names
 
-    def plot_att_hists(self):
+    def plot_att_hists(self, i=0, y2=None):
         y = self.x_att[self.x_dim:]
         assert y.shape[1] == 26
         stds = np.std(y,axis=0)
+        if y2 is not None:
+            stds2 = np.std(y2,axis=0)
         plt.clf()
         fig, ax = plt.subplots(7,4, figsize=(20,10))
         for r in range(7):
             for c in range(4):
                 if r*4+c < 26:
-                    ax[r,c].hist(y01[:,r*4+c], num_bins, density=1)
+                    n, bins, _ ax[r,c].hist(y[:,r*4+c], num_bins, density=1, color='b', alpha=0.5)
+                    if y2 is not None:
+                        ax[r,c].hist(y2[:,r*4+c], bins, density=1, color='r', alpha=0.5)
                     ax[r,c].set_ylabel(str(r*4+c))
                     ax[r,c].set_title(r'{:s}: {:.3f}$\sigma$'.format(self.att_names[r*4+c], stds[r*4+c]))
                     ax[r,c].tick_params(left=False,bottom=False,right=False,top=False)
                     ax[r,c].set_xticklabels([])
                     ax[r,c].set_yticklabels([])
         fig.tight_layout()
-        plt.savefig(params['saveto']+'att_hist_01.png')
+        plt.savefig(params['saveto']+'hists/att_hist_{}.png'.format(i))
         plt.close()
-
 
     def plot_current(self, train, params, i, ylim=[0,1], force_ylim=True, fs=24, fs_tick=18):
         samples = train.m.get_fake(64, params['z_dim']).cpu().data.numpy()
@@ -167,8 +164,11 @@ class CRISM(Data):
             plt.gca().set_ylim(ylim)
         plt.savefig(params['saveto']+'samples/samples_{}.png'.format(i))
         plt.close()
+        samples = train.m.get_fake(1000, params['z_dim'])
+        atts = train.m.F_att(samples).cpu().data.numpy()
+        self.plot_att_hists(y2=atts)
 
-    def plot_series(self, np_samples, params, ylim=[0,1], force_ylim=True, fs=24, fs_tick=18):
+    def plot_series(self, np_samples, params, ylim=[0,1], force_ylim=True, fs=24, fs_tick=18, filename='series'):
         np_samples_ = np.array(np_samples)
         cols = len(np_samples_)
         fig = plt.figure(figsize=(2*cols, 2*params['n_viz']))
@@ -184,7 +184,7 @@ class CRISM(Data):
                     plt.gca().set_ylim(ylim)
                 plt.xticks([]); plt.yticks([])
         plt.gcf().tight_layout()
-        fig.savefig(params['saveto']+'series.pdf')
+        fig.savefig(params['saveto']+filename+'.pdf')
         plt.close()
 
     def plot_real(self, params, ylim=[0,1], force_ylim=True, fs=24, fs_tick=18):
@@ -198,6 +198,7 @@ class CRISM(Data):
             plt.gca().set_ylim(ylim)
         plt.savefig(params['saveto']+'samples_real.png')
         plt.close()
+        self.plot_series(np.split(samples, 8), {'n_viz':8, 'viz_every':1, 'saveto':params['saveto']}, filename='grid_real')
 
     def sample(self, batch_size, dim=64):
         try:
