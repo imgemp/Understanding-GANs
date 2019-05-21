@@ -84,6 +84,7 @@ class CRISM(Data):
 
     def get_np_image(self, datasets):
         channels = []
+        shared_range = [0,np.infty]
         goodrows = []
         xs = []
         for dataset in datasets:
@@ -99,10 +100,15 @@ class CRISM(Data):
             start = np.argmin(nancols)
             end = len(nancols)-1-np.argmin(nancols[::-1])
             print('Selecting good channels ({:d}-{:d}) from {:d} total of {:s}.'.format(start,end,x.shape[1],dataset))
-            xs += [x[:,start:end+1]]
+            shared_range[0] = max(shared_range[0], start)
+            shared_range[1] = min(shared_range[1], end)
+            xs += [x]
+        for i in range(len(xs)):
+            xs[i] = xs[i][:,shared_range[0]:shared_range[1]+1]
         if len(set(channels)) > 1:
             channel_str = ','.join([str(ch) for ch in channels])
             raise ValueError('Dataset channels do not align: [{:s}].'.format(channel_str))
+
         x_joined = np.vstack(xs)
         goodrows = np.hstack(goodrows)
         nanrows = np.any(np.isnan(x_joined), axis=1)
