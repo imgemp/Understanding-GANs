@@ -57,9 +57,10 @@ class CRISM(Data):
             y = y[:,:num_labels]
         waves = np.linspace(1.02, 2.6, x.shape[1])
         x_dim = x.shape[1]
-        x = x[:,:-1]
-        waves = waves[:-1]
-        print('Temporary hack for even dims for conv, xdims: {:d}-->{:d}.'.format(x_dim, x.shape[1]))
+        if x_dim != 240:
+            x = x[:,:240]
+            waves = waves[:240]
+            print('Temporary hack for even dims for conv, xdims: {:d}-->{:d}.'.format(x_dim, x.shape[1]))
         self.x_dim = x.shape[1]
         self.att_dim = y.shape[1]
         self.x_att = np.hstack((x,y)).astype('float32')
