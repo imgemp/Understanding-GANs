@@ -149,9 +149,9 @@ class CRISM(Data):
         for r in range(7):
             for c in range(4):
                 if r*4+c < 26:
-                    n, bins, _ = ax[r,c].hist(y[:,r*4+c], num_bins, density=1, color='b', alpha=0.5)
+                    n, bins, _ = ax[r,c].hist(y[:,r*4+c], bins=50, density=1, color='b', alpha=0.5)
                     if y2 is not None:
-                        ax[r,c].hist(y2[:,r*4+c], bins, density=1, color='r', alpha=0.5)
+                        ax[r,c].hist(y2[:,r*4+c], bins=bins, density=1, color='r', alpha=0.5)
                     ax[r,c].set_ylabel(str(r*4+c))
                     ax[r,c].set_title(r'{:s}: {:.3f}$\sigma$'.format(self.att_names[r*4+c], stds[r*4+c]))
                     ax[r,c].tick_params(left=False,bottom=False,right=False,top=False)
