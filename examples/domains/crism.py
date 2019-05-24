@@ -220,7 +220,7 @@ class CRISM(Data):
             sorted_degrees = np.argsort((1/dists).mean(axis=1))
             samples = samples[sorted_degrees[:64]]
         else:
-            samples = self.sample(batch_size=self.batch_size)
+            samples = self.sample(batch_size=self.batch_size)[:64].cpu().data.numpy()
         plt.plot(self.waves,samples.T)
         plt.title('Generated Spectra', fontsize=fs)
         plt.xlabel('Channels', fontsize=fs)
