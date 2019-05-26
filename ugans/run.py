@@ -207,6 +207,7 @@ def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discrim
     G, F_att, F_lat, D, D_dis = [to_gpu(mod) for mod in [G, F_att, F_lat, D, D_dis]]
 
     if params['att_eval_weight_path'] != '':
+        embed()
         att_eval_dim = pickle.load(open(params['att_eval_weight_path'],'rb'))[-1].shape[1]
         print(att_eval_dim)
         F_att_eval = AttExtractor(input_dim=params['x_dim'],output_dim=att_eval_dim,n_hidden=params['att_n_hidden'],
