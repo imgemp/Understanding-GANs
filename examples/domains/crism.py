@@ -147,7 +147,7 @@ class CRISM(Data):
         if y2 is not None:
             if y2.shape[1] != y.shape[1]:
                 print(y2.shape)
-                print(y1.shape)
+                print(y.shape)
                 return
             stds2 = np.std(y2,axis=0)
         plt.clf()
