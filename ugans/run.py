@@ -53,6 +53,7 @@ def parse_params():
     parser.add_argument('-att_nl','--att_n_layer', type=int, default=1, help='# of hidden layers for attribute extractor', required=False)
     parser.add_argument('-att_nonlin','--att_nonlinearity', type=str, default='relu', help='type of nonlinearity for attribute extractor', required=False)
     parser.add_argument('-att_weights','--att_weight_path', type=str, default='', help='path to weights to be loaded (empty string means load nothing)', required=False)
+    parser.add_argument('-att_eval_weights','--att_eval_weight_path', type=str, default='', help='path to weights to be loaded for extracting full set of attributes (empty string means load nothing)', required=False)
 
     parser.add_argument('-lat_opt','--lat_optim', type=str, default='RMSProp', help='latent extractor training algorithm', required=False)
     parser.add_argument('-lat_lr','--lat_learning_rate', type=float, default=1e-4, help='latent extractor learning rate', required=False)
@@ -204,6 +205,18 @@ def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discrim
                 print('Failed to load module weights from '+params[path_ref+'_weight_path'], flush=True)
             mod.init_weights()
     G, F_att, F_lat, D, D_dis = [to_gpu(mod) for mod in [G, F_att, F_lat, D, D_dis]]
+
+    if params['att_eval_weight_path'] != '':
+        att_eval_dim = pickle.load(open(params['att_eval_weight_path'],'rb'))[-1].shape[1]
+        print(att_eval_dim)
+        F_att_eval = AttExtractor(input_dim=params['x_dim'],output_dim=att_eval_dim,n_hidden=params['att_n_hidden'],
+                                  n_layer=params['att_n_layer'],nonlin=params['att_nonlinearity'])
+        try:
+            load_weights(F_att_eval, params['att_eval_weight_path'])
+            to_gpu(F_att_eval)
+            data.F_att_eval = F_att_eval
+        except:
+            print('Failed to load module weights from '+params['att_eval_weight_path'], flush=True)
 
     if params['log_verbose']:
         m = Manager(data, G, F_att, F_lat, D, D_dis, params, to_gpu, logger)

@@ -45,6 +45,7 @@ class CRISM(Data):
                                                       shuffle=True, num_workers=workers,
                                                       drop_last=True)
         self.dataiterator = iter(self.dataloader)
+        self.F_att_eval = None
         print('Number of batches: {}'.format(self.x_att.shape[0] // batch_size), flush=True)
 
     def load_crism(self, num_labels, normalize=True):
@@ -141,10 +142,10 @@ class CRISM(Data):
 
     def plot_att_hists(self, params, i=0, y2=None):
         y = self.x_att[:,self.x_dim:]
-        assert y.shape[1] == 26
+        if y.shape[1] != 26: pass
         stds = np.std(y,axis=0)
         if y2 is not None:
-            assert y2.shape[1] == 26
+            if y2.shape[1] != 26: pass
             stds2 = np.std(y2,axis=0)
         plt.clf()
         fig, ax = plt.subplots(7,4, figsize=(20,10))
@@ -183,7 +184,10 @@ class CRISM(Data):
         plt.savefig(params['saveto']+'samples/samples_{}.png'.format(i))
         plt.close()
         samples = train.m.get_fake(1000, params['z_dim'])
-        atts = train.m.F_att(samples).cpu().data.numpy()
+        if self.F_att_eval is None:
+            atts = train.m.F_att(samples).cpu().data.numpy()
+        else:
+            atts = self.F_att_eval(samples).cpu().data.numpy()
         self.plot_att_hists(params, i=i, y2=atts)
 
     def plot_series(self, np_samples, params, ylim=[0,1], force_ylim=True, fs=24, fs_tick=18, filename='series'):
