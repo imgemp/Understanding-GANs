@@ -145,7 +145,10 @@ class CRISM(Data):
         y = self.y_real
         stds = np.std(y,axis=0)
         if y2 is not None:
-            if y2.shape[1] != y.shape[1]: return
+            if y2.shape[1] != y.shape[1]:
+                print(y2.shape)
+                print(y1.shape)
+                return
             stds2 = np.std(y2,axis=0)
         plt.clf()
         fig, ax = plt.subplots(7,4, figsize=(20,10))
