@@ -167,7 +167,6 @@ def parse_params():
         for key, val in args.items():
             file.write('--'+str(key)+' '+str(val)+'\n')
     args['saveto'] = saveto
-    embed()
 
     cuda_available = torch.cuda.is_available()
     if args['gpu'] >= -1 and cuda_available:
