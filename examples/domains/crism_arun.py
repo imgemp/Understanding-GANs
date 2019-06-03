@@ -21,7 +21,7 @@ class View(nn.Module):
         return input.view(*self.shape)
 
 class Generator(Net):
-    def __init__(self, input_dim, output_dim, p=0., **kwargs):
+    def __init__(self, input_dim, output_dim, p=0.3, **kwargs):
         super(Generator, self).__init__()
         # input is bs x 50
         self.main = nn.Sequential(
@@ -79,7 +79,7 @@ class Generator(Net):
 
 
 class AttExtractor(Net):
-    def __init__(self, input_dim, output_dim, p=0., **kwargs):
+    def __init__(self, input_dim, output_dim, p=0.3, **kwargs):
         super(AttExtractor, self).__init__()
         # input is bs x 240
         self.main = nn.Sequential(
@@ -123,7 +123,7 @@ class AttExtractor(Net):
 
 
 class LatExtractor(Net):
-    def __init__(self, input_dim, output_dim, p=0., **kwargs):
+    def __init__(self, input_dim, output_dim, p=0.3, **kwargs):
         super(LatExtractor, self).__init__()
         # input is bs x 240
         self.main = nn.Sequential(
