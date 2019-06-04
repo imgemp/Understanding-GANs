@@ -54,9 +54,9 @@ class CRISM(Data):
         x = self.zero_one_x_ind(x)
         y, names = self.get_np_labels(labelsets, goodrows)
         if normalize:
-            # scaler = StandardScaler()
-            # y = scaler.fit_transform(y)
-            y = self.zero_one_y(y)
+            scaler = StandardScaler()
+            y = scaler.fit_transform(y)
+            # y = self.zero_one_y(y)
         self.y_real = np.array(y).astype('float32')
         if isinstance(num_labels, int):
             y = y[:,:num_labels]
