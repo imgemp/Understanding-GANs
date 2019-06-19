@@ -191,20 +191,24 @@ class Manager(object):
         except:
             try:
                 print('Computing feature means...', flush=True)
-                with torch.no_grad():
-                    feature_means = self.to_gpu(torch.zeros(self.params['lat_dim']+self.params['att_dim']))
-                    for b in range(batches):
-                        real_data = self.get_real(self.params['batch_size'])
-                        fake_data = self.G(self.get_z(self.params['batch_size'], self.params['z_dim']))
-                        real_outputs, fake_outputs = self.get_outputs([real_data, fake_data])
-                        real_feats = torch.cat([real_outputs[0], real_outputs[1]], dim=1)
-                        fake_feats = torch.cat([fake_outputs[0], fake_outputs[1]], dim=1)
-                        feats = torch.cat([real_feats, fake_feats], dim=0)
-                        feature_means += torch.mean(feats, dim=0) / batches
+                feature_means = self.compute_feature_means(batches)
                 np.save(self.params['feature_means'], feature_means.cpu().data.numpy())
             except:
                 print('Process failed. Check feature mean filepath.', flush=True)
                 feature_means = None
+        return feature_means
+
+    def compute_feature_means(self, batches):
+        with torch.no_grad():
+            feature_means = self.to_gpu(torch.zeros(self.params['lat_dim']+self.params['att_dim']))
+            for b in range(batches):
+                real_data = self.get_real(self.params['batch_size'])
+                fake_data = self.G(self.get_z(self.params['batch_size'], self.params['z_dim']))
+                real_outputs, fake_outputs = self.get_outputs([real_data, fake_data])
+                real_feats = torch.cat([real_outputs[0], real_outputs[1]], dim=1)
+                fake_feats = torch.cat([fake_outputs[0], fake_outputs[1]], dim=1)
+                feats = torch.cat([real_feats, fake_feats], dim=0)
+                feature_means += torch.mean(feats, dim=0) / batches
         return feature_means
 
     def load_feature_mask(self, filepath=''):

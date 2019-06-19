@@ -269,6 +269,8 @@ def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discrim
         if params['weights_every'] > 0 and i % params['weights_every'] == 0:
             for mod, name in zip(m.mods, m.mod_names):
                 save_weights(mod, params['saveto']+'weights/'+name+'_'+str(i)+'.pkl')
+            feature_means = m.compute_feature_means(batches=100)
+            np.save('feature_means.npy', feature_means.cpu().data.numpy())
                  
     for name, loss in zip(loss_names, losses):
         np.savetxt(params['saveto']+name+'.out',np.array(loss))
