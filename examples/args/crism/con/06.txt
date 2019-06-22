@@ -1,8 +1,8 @@
 -dom crism_arun
 -bs 256
 -div Wasserstein
--feat_mask examples/masks/crism/mask_noBD2500_att26.npy
--feat_means examples/masks/crism/att_means.npy
+-feat_mask examples/masks/crism_arun/mask_noBD2500_att26.npy
+-feat_means examples/masks/crism_arun/att_means.npy
 -g_opt RMSProp
 -g_lr 0.0001
 -g_l2 0.0
