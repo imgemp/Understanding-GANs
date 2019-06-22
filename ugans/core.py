@@ -188,6 +188,7 @@ class Manager(object):
             return None
         try:
             feature_means = np.load(filepath)
+            # handle small feature means (just for attributes, not latents)
             rem = self.params['lat_dim']+self.params['att_dim'] - feature_means.shape[0]
             if rem > 0:
                 feature_means = np.concatenate((np.zeros(rem),feature_means))
@@ -220,9 +221,10 @@ class Manager(object):
             filepath = self.params['feature_mask']
         try:
             feature_mask = np.load(filepath)
+            # handle small feature mask (just for attributes, not latents)
             rem = self.params['lat_dim']+self.params['att_dim'] - feature_mask.shape[0]
             if rem > 0:
-                feature_mask = np.concatenate((np.zeros(rem),feature_mask))
+                feature_mask = np.concatenate((np.ones(rem),feature_mask))
             feature_mask = self.to_gpu(torch.from_numpy(feature_mask).float())
         except:
             feature_mask = self.to_gpu(torch.ones(self.params['lat_dim']+self.params['att_dim']))
