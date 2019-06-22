@@ -58,7 +58,8 @@ class CRISM(Data):
             y = scaler.fit_transform(y)
             # y = self.zero_one_y(y)
         self.y_real = np.array(y).astype('float32')
-        np.save('./examples/masks/crism_arun/att_means.npy', self.y_real.mean(axis=0))
+        if not os.path.isfile('./examples/masks/crism_arun/att_means.npy'):
+            np.save('./examples/masks/crism_arun/att_means.npy', self.y_real.mean(axis=0))
         if isinstance(num_labels, int):
             y = y[:,:num_labels]
         waves = np.linspace(1.02, 2.6, x.shape[1])
