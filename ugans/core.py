@@ -187,7 +187,11 @@ class Manager(object):
         if filepath == '':
             return None
         try:
-            feature_means = self.to_gpu(torch.from_numpy(np.load(filepath)).float())
+            feature_means = np.load(filepath)
+            rem = self.params['lat_dim']+self.params['att_dim'] - feature_means.shape[0]
+            if rem > 0:
+                feature_means = np.concatenate((np.zeros(rem),feature_means))
+            feature_means = self.to_gpu(torch.from_numpy(feature_means).float())
         except:
             try:
                 print('Computing feature means...', flush=True)
@@ -215,7 +219,11 @@ class Manager(object):
         if filepath == '':
             filepath = self.params['feature_mask']
         try:
-            feature_mask = self.to_gpu(torch.from_numpy(np.load(filepath)).float())
+            feature_mask = np.load(filepath)
+            rem = self.params['lat_dim']+self.params['att_dim'] - feature_mask.shape[0]
+            if rem > 0:
+                feature_mask = np.concatenate((np.zeros(rem),feature_mask))
+            feature_mask = self.to_gpu(torch.from_numpy(feature_mask).float())
         except:
             feature_mask = self.to_gpu(torch.ones(self.params['lat_dim']+self.params['att_dim']))
         return feature_mask
