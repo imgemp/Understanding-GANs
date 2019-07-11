@@ -327,7 +327,7 @@ class CRISM(Data):
             plt.tick_params(axis='both', which='major', labelsize=fs_tick)
             if force_ylim:
                 plt.gca().set_ylim(ylim)
-            filename = ''.join([c for c in self.mica_names[endmember] if c.isalpha() or c.isdigit() or c==' ']).rstrip()
+            filename = ''.join([c for c in self.mica_names[endmember] if c.isalpha() or c.isdigit()]).rstrip()
             plt.savefig(params['saveto']+'mica/{}.png'.format(filename))
             plt.close()
 
