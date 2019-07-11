@@ -320,7 +320,7 @@ class CRISM(Data):
         for endmember, sample_idxs in groups.items():
             group_samples = samples[list(sample_idxs)]
             plt.plot(self.waves, group_samples.T, 'r--')
-            plt.plot(self.waves, self.mica_library[endmember], 'k-')
+            plt.plot(self.waves, self.mica_library[endmember].cpu().data.numpy(), 'k-')
             plt.title('Generated Spectra: {:s}'.format(self.mica_names[endmember]), fontsize=fs)
             plt.xlabel('Channels', fontsize=fs)
             plt.ylabel('Intensities', fontsize=fs)
