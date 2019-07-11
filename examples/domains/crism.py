@@ -48,6 +48,7 @@ class CRISM(Data):
                                                       drop_last=True)
         self.dataiterator = iter(self.dataloader)
         self.F_att_eval = None
+        self.mica_library = None
         print('Number of batches: {}'.format(self.x_att.shape[0] // batch_size), flush=True)
 
     def load_crism(self, num_labels, normalize=True):
