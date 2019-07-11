@@ -17,6 +17,7 @@ import torchvision.transforms as transforms
 
 from sklearn.model_selection import KFold
 from sklearn.preprocessing import StandardScaler
+from sklearn.metrics.pairwise import cosine_similarity
 
 from ugans.core import Data, Net
 from ugans.utils import load_url
@@ -90,7 +91,22 @@ class CRISM(Data):
         y -= np.min(y,axis=0)[None]
         return (y/np.ptp(y,axis=0))
 
-    def get_np_image(self, datasets):
+    def fnScaleMICAEM(self, mica_data):
+        'First subtract 1 and set everything at 1 to 0'
+        mica_data_shft = mica_data - 1
+        'divide by the minimum in each row'
+        mica_data_min = mica_data_shft.min(axis=1) 
+        
+        mica_data_scale = np.zeros(mica_data.shape)
+
+        'Scale each endmember and create plots to see what it looks like'
+        for ii in range(mica_data.shape[0]):
+            temp = mica_data_shft[ii,:]/mica_data_min[ii]
+            mica_data_scale[ii,:] = temp * -0.02
+            
+        return (mica_data_scale + 1)
+
+    def get_np_image(self, datasets, scale_mica=True):
         channels = []
         shared_range = [0,np.infty]
         goodrows = []
@@ -123,6 +139,9 @@ class CRISM(Data):
         print('Removing {:0.2f}% of {:d} rows (any NaN) from joined dataset.'.format(nanrows.sum()/x_joined.shape[0]*100,x_joined.shape[0]))
         x_joined = x_joined[~nanrows]
         goodrows[goodrows] = ~nanrows
+        # call fnScaleMICAEM on x_joined here
+        if scale_mica:
+            x_joined = self.fnScaleMICAEM(x_joined)
         return x_joined, goodrows
 
     def get_np_labels(self, labelsets, goodrows):
@@ -198,6 +217,7 @@ class CRISM(Data):
         else:
             atts = self.F_att_eval(samples).cpu().data.numpy()
         self.plot_att_hists(params, i=i, y2=atts)
+        self.plot_grouped_by_mica(train, params)
 
     def plot_series(self, np_samples, params, ylim=[0,1], force_ylim=True, fs=24, fs_tick=18, filename='series'):
         np_samples_ = np.array(np_samples)
@@ -260,6 +280,54 @@ class CRISM(Data):
             self.dataiterator = iter(self.dataloader)
             samples_atts = next(self.dataiterator)
         return samples_atts
+
+    def plot_grouped_by_mica(self, train, params, ylim=[0,1], force_ylim=True, fs=24, fs_tick=18):
+        # if mica_library is not loaded, load it
+        if self.mica_library is None:
+            sliName = './examples/domains/data/CRISM_data_summPar_1/UMass_redMICA_CR_enhanced.sli'
+            sliHdrName = './examples/domains/data/CRISM_data_summPar_1/UMass_redMICA_CR_enhanced.sli.hdr'
+            micaSLI = envi.open(sliHdrName, sliName)
+            mica_dataRed = micaSLI.spectra
+            mica_dataRed = self.fnScaleMICAEM(mica_dataRed[:, 4:244])
+            self.mica_library = torch.from_numpy(mica_dataRed)
+            sliHdr = envi.read_envi_header(sliHdrName)
+            endMem_Name = sliHdr['spectra names']
+            self.mica_names = endMem_Name
+        # compute mica features
+        mica_attributes = self.F_att(self.mica_library)
+        mica_latents = self.F_lat(self.mica_library)
+        mica_features = torch.cat([mica_latents, mica_attributes], dim=1).cpu().data.numpy()
+        # generate samples and compute their features
+        samples = torch.cat([train.m.get_fake(64, params['z_dim']) for i in range(10)], dim=0)
+        attributes = self.F_att(samples)
+        latents = self.F_lat(samples)
+        features = torch.cat([latents, attributes], dim=1).cpu().data.numpy()
+        # compute cosine similarity
+        similarity = cosine_similarity(features, mica_features)
+        # matches = argmax cosine similarity
+        matches = np.argmax(similarity, axis=1)
+        # group spectra by matches
+        groups = {}
+        for idx, match in enumerate(matches):
+            if match not in groups:
+                groups[match] = set([idx])
+            else:
+                groups[match].add(idx)
+        # for each class in generated spectra:
+        # plot spectra and save plot with filename as mica match
+        samples = samples.cpu().data.numpy()
+        for endmember, sample_idxs in groups:
+            group_samples = samples[list(sample_idxs)]
+            plt.plot(self.waves, group_samples.T, 'r--')
+            plt.plot(self.waves, self.mica_library[endmember], 'k-')
+            plt.title('Generated Spectra: {:s}'.format(self.mica_names[endmember]), fontsize=fs)
+            plt.xlabel('Channels', fontsize=fs)
+            plt.ylabel('Intensities', fontsize=fs)
+            plt.tick_params(axis='both', which='major', labelsize=fs_tick)
+            if force_ylim:
+                plt.gca().set_ylim(ylim)
+            plt.savefig(params['saveto']+'mica/{}.png'.format(self.mica_names[endmember]))
+            plt.close()
 
 
 class Generator(Net):
