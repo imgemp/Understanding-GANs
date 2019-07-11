@@ -295,13 +295,13 @@ class CRISM(Data):
             endMem_Name = sliHdr['spectra names']
             self.mica_names = endMem_Name
         # compute mica features
-        mica_attributes = self.F_att(self.mica_library)
-        mica_latents = self.F_lat(self.mica_library)
+        mica_attributes = train.m.F_att(self.mica_library)
+        mica_latents = train.m.F_lat(self.mica_library)
         mica_features = torch.cat([mica_latents, mica_attributes], dim=1).cpu().data.numpy()
         # generate samples and compute their features
         samples = torch.cat([train.m.get_fake(64, params['z_dim']) for i in range(10)], dim=0)
-        attributes = self.F_att(samples)
-        latents = self.F_lat(samples)
+        attributes = train.m.F_att(samples)
+        latents = train.m.F_lat(samples)
         features = torch.cat([latents, attributes], dim=1).cpu().data.numpy()
         # compute cosine similarity
         similarity = cosine_similarity(features, mica_features)
