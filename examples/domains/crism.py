@@ -290,7 +290,7 @@ class CRISM(Data):
             micaSLI = envi.open(sliHdrName, sliName)
             mica_dataRed = micaSLI.spectra
             mica_dataRed = self.fnScaleMICAEM(mica_dataRed[:, 4:244]).astype('float32')
-            self.mica_library = torch.from_numpy(mica_dataRed)
+            self.mica_library = train.m.to_gpu(torch.from_numpy(mica_dataRed))
             sliHdr = envi.read_envi_header(sliHdrName)
             endMem_Name = sliHdr['spectra names']
             self.mica_names = endMem_Name
