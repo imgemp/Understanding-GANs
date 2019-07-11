@@ -308,6 +308,8 @@ class CRISM(Data):
         # matches = argmax cosine similarity
         matches = np.argmax(similarity, axis=1)
         # group spectra by matches
+        print(features.shape)
+        print(mica_features.shape)
         print(matches.shape)
         groups = {}
         for idx, match in enumerate(matches):
