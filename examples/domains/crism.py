@@ -308,10 +308,6 @@ class CRISM(Data):
         # matches = argmax cosine similarity
         matches = np.argmax(similarity, axis=1)
         # group spectra by matches
-        print('-----')
-        print(features.shape)
-        print(mica_features.shape)
-        print(matches.shape)
         groups = {}
         for idx, match in enumerate(matches):
             if match not in groups:
@@ -321,9 +317,7 @@ class CRISM(Data):
         # for each class in generated spectra:
         # plot spectra and save plot with filename as mica match
         samples = samples.cpu().data.numpy()
-        print(groups)
-        for endmember, sample_idxs in groups:
-            print(sample_idxs)
+        for endmember, sample_idxs in groups.items():
             group_samples = samples[list(sample_idxs)]
             plt.plot(self.waves, group_samples.T, 'r--')
             plt.plot(self.waves, self.mica_library[endmember], 'k-')
