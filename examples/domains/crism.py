@@ -289,7 +289,7 @@ class CRISM(Data):
             sliHdrName = './examples/domains/data/CRISM_data_summPar_1/UMass_redMICA_CR_enhanced.sli.hdr'
             micaSLI = envi.open(sliHdrName, sliName)
             mica_dataRed = micaSLI.spectra
-            mica_dataRed = self.fnScaleMICAEM(mica_dataRed[:, 4:244])
+            mica_dataRed = self.fnScaleMICAEM(mica_dataRed[:, 4:244]).astype('float32')
             self.mica_library = torch.from_numpy(mica_dataRed)
             sliHdr = envi.read_envi_header(sliHdrName)
             endMem_Name = sliHdr['spectra names']
