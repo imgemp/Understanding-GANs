@@ -30,8 +30,8 @@ import seaborn as sns
 # ids = [('FRT000047A3','66'), ('FRT00005850','67'), ('FRT000097E2','66'), ('FRT0000CBE5','66')] #, ('FRT00013EBC','66'), ('FRT000161EF','67'), ('HRL000040FF','83'), ('HRL0000C0BA','83')]
 ids = [('FRT000097E2','66'), ('HRL000040FF','83')]
 prefixes = ['./examples/domains/data/CRISM_data_summPar_1/'+direc+'/'+direc+'_07_IF1'+num+'L_TRR3_atcr_sabcondv4_1_Lib11123_1_4_5_l1_gadmm_a_v2_ca_ice_b200_MS' for direc, num in ids]
-datasets = [d+'_CR' for d in prefixes]
-labelsets = [d+'_2014params' for d in datasets]
+datasets = [p+'_CR' for p in prefixes]
+labelsets = [p+'_2014params' for p in prefixes]
 
 # srun -p m40-long --gres=gpu:1 examples/run.sh "examples/args/crism/con/00.txt"
 
