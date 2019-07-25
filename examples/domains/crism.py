@@ -30,7 +30,9 @@ import seaborn as sns
 # ids = [('FRT000047A3','66'), ('FRT00005850','67'), ('FRT000097E2','66'), ('FRT0000CBE5','66')] #, ('FRT00013EBC','66'), ('FRT000161EF','67'), ('HRL000040FF','83'), ('HRL0000C0BA','83')]
 ids = [('FRT000097E2','66'), ('HRL000040FF','83')]
 prefixes = ['./examples/domains/data/CRISM_data_summPar_1/'+direc+'/'+direc+'_07_IF1'+num+'L_TRR3_atcr_sabcondv4_1_Lib11123_1_4_5_l1_gadmm_a_v2_ca_ice_b200_MS' for direc, num in ids]
-datasets = [p+'_CR' for p in prefixes]
+# postfix = '_CR'
+postfix = ''
+datasets = [p+postfix for p in prefixes]
 labelsets = [p+'_2014params' for p in prefixes]
 
 # srun -p m40-long --gres=gpu:1 examples/run.sh "examples/args/crism/con/00.txt"
@@ -220,7 +222,7 @@ class CRISM(Data):
         else:
             atts = self.F_att_eval(samples).cpu().data.numpy()
         self.plot_att_hists(params, i=i, y2=atts)
-        self.plot_grouped_by_mica(train, params)
+        # self.plot_grouped_by_mica(train, params)
 
     def plot_series(self, np_samples, params, ylim=[0,1], force_ylim=True, fs=24, fs_tick=18, filename='series'):
         np_samples_ = np.array(np_samples)
