@@ -222,7 +222,7 @@ class CRISM(Data):
         else:
             atts = self.F_att_eval(samples).cpu().data.numpy()
         self.plot_att_hists(params, i=i, y2=atts)
-        # self.plot_grouped_by_mica(train, params)
+        self.plot_grouped_by_mica(train, params)
 
     def plot_series(self, np_samples, params, ylim=[0,1], force_ylim=True, fs=24, fs_tick=18, filename='series'):
         np_samples_ = np.array(np_samples)
@@ -289,8 +289,10 @@ class CRISM(Data):
     def plot_grouped_by_mica(self, train, params, ylim=[0,1], force_ylim=True, fs=24, fs_tick=18):
         # if mica_library is not loaded, load it
         if self.mica_library is None:
-            sliName = './examples/domains/data/CRISM_data_summPar_1/UMass_redMICA_CR_enhanced.sli'
-            sliHdrName = './examples/domains/data/CRISM_data_summPar_1/UMass_redMICA_CR_enhanced.sli.hdr'
+            # sliName = './examples/domains/data/CRISM_data_summPar_1/UMass_redMICA_CR_enhanced.sli'
+            # sliHdrName = './examples/domains/data/CRISM_data_summPar_1/UMass_redMICA_CR_enhanced.sli.hdr'
+            sliName = './examples/domains/data/CRISM_data_summPar_1/yukiMicaNum.sli'
+            sliHdrName = './examples/domains/data/CRISM_data_summPar_1/yukiMicaNum.hdr'
             micaSLI = envi.open(sliHdrName, sliName)
             mica_dataRed = micaSLI.spectra
             mica_dataRed = self.fnScaleMICAEM(mica_dataRed[:, 4:244]).astype('float32')
