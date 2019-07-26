@@ -291,12 +291,13 @@ class CRISM(Data):
         if self.mica_library is None:
             # sliName = './examples/domains/data/CRISM_data_summPar_1/UMass_redMICA_CR_enhanced.sli'
             # sliHdrName = './examples/domains/data/CRISM_data_summPar_1/UMass_redMICA_CR_enhanced.sli.hdr'
+            # subset = (4,244)
             sliName = './examples/domains/data/CRISM_data_summPar_1/yukiMicaNum.sli'
             sliHdrName = './examples/domains/data/CRISM_data_summPar_1/yukiMicaNum.hdr'
+            subset = (0,240)
             micaSLI = envi.open(sliHdrName, sliName)
             mica_dataRed = micaSLI.spectra
-            print('mica shape',mica_dataRed.shape)
-            mica_dataRed = self.fnScaleMICAEM(mica_dataRed[:, 4:244]).astype('float32')
+            mica_dataRed = self.fnScaleMICAEM(mica_dataRed[:, subset[0]:subset[1]]).astype('float32')
             mica_dataRed = self.zero_one_x_ind(mica_dataRed)
             # mica_dataRed -= 0.5
             self.mica_library = train.m.to_gpu(torch.from_numpy(mica_dataRed))
