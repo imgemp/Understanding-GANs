@@ -295,6 +295,7 @@ class CRISM(Data):
             sliHdrName = './examples/domains/data/CRISM_data_summPar_1/yukiMicaNum.hdr'
             micaSLI = envi.open(sliHdrName, sliName)
             mica_dataRed = micaSLI.spectra
+            print('mica shape',mica_dataRed.shape)
             mica_dataRed = self.fnScaleMICAEM(mica_dataRed[:, 4:244]).astype('float32')
             mica_dataRed = self.zero_one_x_ind(mica_dataRed)
             # mica_dataRed -= 0.5
