@@ -321,15 +321,20 @@ class CRISM(Data):
         groups = {}
         for idx, match in enumerate(matches):
             if match not in groups:
-                groups[match] = set([idx])
+                groups[match] = set([(idx, similarity[idx][match])])
             else:
-                groups[match].add(idx)
+                groups[match].add((idx, similarity[idx][match]))
         # for each class in generated spectra:
         # plot spectra and save plot with filename as mica match
         samples = samples.cpu().data.numpy()
         for endmember, sample_idxs in groups.items():
-            group_samples = samples[list(sample_idxs)]
-            plt.plot(self.waves, group_samples.T, 'r--')
+            # set alpha based on similarity score?
+            # need to loop through sample_idxs and plot each separately
+            # alpha = (sim+1.)/2.
+            # group_samples = samples[list(sample_idxs)]
+            # plt.plot(self.waves, group_samples.T, 'r--')
+            for idx, sim in list(sample_idxs):
+                plt.plot(self.waves, samples[idx], 'r--', alpha=(sim+1.)/2.)
             plt.plot(self.waves, self.mica_library[endmember].cpu().data.numpy(), 'k-')
             plt.title('Generated Spectra: {:s}'.format(self.mica_names[endmember]), fontsize=fs)
             plt.xlabel('Channels', fontsize=fs)
