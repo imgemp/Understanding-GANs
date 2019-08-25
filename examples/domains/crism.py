@@ -376,6 +376,7 @@ class CRISM(Data):
         # ax.tick_params(left=False,bottom=True,right=False,top=False)
         print(self.mica_names)
         print(matches.shape)
+        print(matches)
         # ax.set_xticks()
         ax.set_xticklabels(self.mica_names, rotation=90)
         # ax.set_yticklabels([])
