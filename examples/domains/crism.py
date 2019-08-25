@@ -223,7 +223,7 @@ class CRISM(Data):
             atts = self.F_att_eval(samples).cpu().data.numpy()
         self.plot_att_hists(params, i=i, y2=atts)
         self.plot_grouped_by_mica(train, params)
-        self.plot_training_hist(train, params)
+        self.plot_training_hist(train, params, i=i)
 
     def plot_series(self, np_samples, params, ylim=[0,1], force_ylim=True, fs=24, fs_tick=18, filename='series'):
         np_samples_ = np.array(np_samples)
@@ -332,11 +332,6 @@ class CRISM(Data):
         # plot spectra and save plot with filename as mica match
         samples = samples.cpu().data.numpy()
         for endmember, sample_idxs in groups.items():
-            # set alpha based on similarity score?
-            # need to loop through sample_idxs and plot each separately
-            # alpha = (sim+1.)/2.
-            # group_samples = samples[list(sample_idxs)]
-            # plt.plot(self.waves, group_samples.T, 'r--')
             for idx, sim in list(sample_idxs):
                 plt.plot(self.waves, samples[idx], 'r--', alpha=(sim+1.)/2.)
             plt.plot(self.waves, self.mica_library[endmember].cpu().data.numpy(), 'k-')
@@ -350,7 +345,7 @@ class CRISM(Data):
             plt.savefig(params['saveto']+'mica/{}.png'.format(filename))
             plt.close()
 
-    def plot_training_hist(self, train, params, ylim=[0,1], force_ylim=True, fs=24, fs_tick=18):
+    def plot_training_hist(self, train, params, i, ylim=[0,1], force_ylim=True, fs=24, fs_tick=18):
         # if mica_library is not loaded, load it
         self.load_mica_library(train)
         # generate samples and compute their features
@@ -372,16 +367,11 @@ class CRISM(Data):
         fig, ax = plt.subplots()
         n, bins, _ = plt.hist(matches, bins=len(self.mica_names), density=1, color='b', alpha=1.)
         ax.set_ylabel('counts')
-        ax.set_title('training endmember histogram ({:6.1}k samples, {:d}/{:d} classes)'.format(matches.shape[0]/1000, num_matches, len(self.mica_names)))
-        # ax.tick_params(left=False,bottom=True,right=False,top=False)
-        # print(self.mica_names)
-        # print(matches.shape)
-        # print(matches)
+        ax.set_title('training endmember histogram ({:6.1f}k samples, {:d}/{:d} classes)'.format(matches.shape[0]/1000, num_matches, len(self.mica_names)))
         ax.set_xticks(np.arange(0,len(self.mica_names)))
         ax.set_xticklabels(self.mica_names, rotation=90)
-        # ax.set_yticklabels([])
         fig.tight_layout()
-        plt.savefig(params['saveto']+'train_hists/train_hist.png')
+        plt.savefig(params['saveto']+'train_hists/train_hist_{}.png'.format(i))
         plt.close()
 
 
