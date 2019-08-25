@@ -340,6 +340,7 @@ class CRISM(Data):
             for idx, sim in list(sample_idxs):
                 plt.plot(self.waves, samples[idx], 'r--', alpha=(sim+1.)/2.)
             plt.plot(self.waves, self.mica_library[endmember].cpu().data.numpy(), 'k-')
+            plt.colorbar(plt.gca())
             plt.title('Generated Spectra: {:s}'.format(self.mica_names[endmember]), fontsize=fs)
             plt.xlabel('Channels', fontsize=fs)
             plt.ylabel('Intensities', fontsize=fs)
@@ -371,13 +372,13 @@ class CRISM(Data):
         fig, ax = plt.subplots()
         n, bins, _ = plt.hist(matches, bins=len(self.mica_names), density=1, color='b', alpha=1.)
         ax.set_ylabel('counts')
-        ax.set_title('training endmember histogram')
+        ax.set_title('training endmember histogram ({:d} classes)'.format(len(self.mica_names)))
         ax.tick_params(left=False,bottom=True,right=False,top=False)
         # ax.set_xticks([mn,mx])
         ax.set_xticklabels(self.mica_names)
         # ax.set_yticklabels([])
         fig.tight_layout()
-        plt.savefig(params['saveto']+'hists/train_hist.png')
+        plt.savefig(params['saveto']+'train_hists/train_hist.png')
         plt.close()
 
 

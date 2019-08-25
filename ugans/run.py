@@ -156,6 +156,7 @@ def parse_params():
         os.makedirs(saveto)
         os.makedirs(saveto+'/samples')
         os.makedirs(saveto+'/hists')
+        os.makedirs(saveto+'/train_hists')
         os.makedirs(saveto+'/mica')
         os.makedirs(saveto+'/weights')
     shutil.copy(os.path.realpath('ugans/run.py'), os.path.join(saveto, 'run.py'))
