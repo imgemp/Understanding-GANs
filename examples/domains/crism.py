@@ -377,7 +377,7 @@ class CRISM(Data):
         print(self.mica_names)
         print(matches.shape)
         print(matches)
-        ax.set_xticks(np.linspace(0,1,len(self.mica_names)))
+        ax.set_xticks(np.arange(0,len(self.mica_names)))
         ax.set_xticklabels(self.mica_names, rotation=90)
         # ax.set_yticklabels([])
         fig.tight_layout()
