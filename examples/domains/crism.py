@@ -366,13 +366,14 @@ class CRISM(Data):
         similarity = cosine_similarity(features, self.mica_features)
         # matches = argmax cosine similarity
         matches = np.argmax(similarity, axis=1)
+        num_matches = len(set(list(matches)))
         print('done computing.')
 
         fig, ax = plt.subplots()
         n, bins, _ = plt.hist(matches, bins=len(self.mica_names), density=1, color='b', alpha=1.)
         ax.set_ylabel('counts')
-        ax.set_title('training endmember histogram ({:d} classes)'.format(len(self.mica_names)))
-        ax.tick_params(left=False,bottom=True,right=False,top=False)
+        ax.set_title('training endmember histogram ({:d}/{:d} classes)'.format(num_matches, len(self.mica_names)))
+        # ax.tick_params(left=False,bottom=True,right=False,top=False)
         print(self.mica_names)
         print(matches.shape)
         # ax.set_xticks()
