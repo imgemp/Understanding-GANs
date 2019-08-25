@@ -340,7 +340,6 @@ class CRISM(Data):
             for idx, sim in list(sample_idxs):
                 plt.plot(self.waves, samples[idx], 'r--', alpha=(sim+1.)/2.)
             plt.plot(self.waves, self.mica_library[endmember].cpu().data.numpy(), 'k-')
-            plt.colorbar(ax=plt.gca())
             plt.title('Generated Spectra: {:s}'.format(self.mica_names[endmember]), fontsize=fs)
             plt.xlabel('Channels', fontsize=fs)
             plt.ylabel('Intensities', fontsize=fs)
