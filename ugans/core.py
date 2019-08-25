@@ -118,7 +118,7 @@ class Manager(object):
         return self.to_gpu(self.data.sample(batch_size))
 
     def get_z(self, batch_size, z_dim):
-        z = self.z_rand.sample((batch_size,z_dim))
+        z = self.z_rand.sample((batch_size, z_dim))
         return z
 
     def get_fake(self, batch_size, z_dim):

@@ -223,6 +223,7 @@ class CRISM(Data):
             atts = self.F_att_eval(samples).cpu().data.numpy()
         self.plot_att_hists(params, i=i, y2=atts)
         self.plot_grouped_by_mica(train, params)
+        self.plot_training_hist(train, params)
 
     def plot_series(self, np_samples, params, ylim=[0,1], force_ylim=True, fs=24, fs_tick=18, filename='series'):
         np_samples_ = np.array(np_samples)
@@ -286,8 +287,7 @@ class CRISM(Data):
             samples_atts = next(self.dataiterator)
         return samples_atts
 
-    def plot_grouped_by_mica(self, train, params, ylim=[0,1], force_ylim=True, fs=24, fs_tick=18):
-        # if mica_library is not loaded, load it
+    def load_mica_library(self, train):
         if self.mica_library is None:
             # sliName = './examples/domains/data/CRISM_data_summPar_1/UMass_redMICA_CR_enhanced.sli'
             # sliHdrName = './examples/domains/data/CRISM_data_summPar_1/UMass_redMICA_CR_enhanced.sli.hdr'
@@ -304,17 +304,21 @@ class CRISM(Data):
             sliHdr = envi.read_envi_header(sliHdrName)
             endMem_Name = sliHdr['spectra names']
             self.mica_names = endMem_Name
-        # compute mica features
-        mica_attributes = train.m.F_att(self.mica_library)
-        mica_latents = train.m.F_lat(self.mica_library)
-        mica_features = torch.cat([mica_latents, mica_attributes], dim=1).cpu().data.numpy()
+            # compute mica features
+            mica_attributes = train.m.F_att(self.mica_library)
+            mica_latents = train.m.F_lat(self.mica_library)
+            self.mica_features = torch.cat([mica_latents, mica_attributes], dim=1).cpu().data.numpy()
+
+    def plot_grouped_by_mica(self, train, params, ylim=[0,1], force_ylim=True, fs=24, fs_tick=18):
+        # if mica_library is not loaded, load it
+        self.load_mica_library(train)
         # generate samples and compute their features
         samples = torch.cat([train.m.get_fake(64, params['z_dim']) for i in range(10)], dim=0)
         attributes = train.m.F_att(samples)
         latents = train.m.F_lat(samples)
         features = torch.cat([latents, attributes], dim=1).cpu().data.numpy()
         # compute cosine similarity
-        similarity = cosine_similarity(features, mica_features)
+        similarity = cosine_similarity(features, self.mica_features)
         # matches = argmax cosine similarity
         matches = np.argmax(similarity, axis=1)
         # group spectra by matches
@@ -345,6 +349,36 @@ class CRISM(Data):
             filename = ''.join([c for c in self.mica_names[endmember] if c.isalpha() or c.isdigit()]).rstrip()
             plt.savefig(params['saveto']+'mica/{}.png'.format(filename))
             plt.close()
+
+    def plot_training_hist(self, train, params, ylim=[0,1], force_ylim=True, fs=24, fs_tick=18):
+        # if mica_library is not loaded, load it
+        self.load_mica_library(train)
+        # generate samples and compute their features
+        print('computing features for training set...')
+        # n_batches = self.x_att.shape[0] // params['batch_size']
+        n_batches = 25
+        samples = torch.cat([train.m.get_real(params['batch_size']) for i in range(n_batches)], dim=0)
+        attributes = train.m.F_att(samples)
+        latents = train.m.F_lat(samples)
+        features = torch.cat([latents, attributes], dim=1).cpu().data.numpy()
+        # compute cosine similarity
+        print('computing cosine similarity...')
+        similarity = cosine_similarity(features, self.mica_features)
+        # matches = argmax cosine similarity
+        matches = np.argmax(similarity, axis=1)
+        print('done computing.')
+
+        fig, ax = plt.subplots()
+        n, bins, _ = plt.hist(matches, bins=len(self.mica_names), density=1, color='b', alpha=1.)
+        ax.set_ylabel('counts')
+        ax.set_title('training endmember histogram')
+        ax.tick_params(left=False,bottom=True,right=False,top=False)
+        # ax.set_xticks([mn,mx])
+        ax.set_xticklabels(self.mica_names)
+        # ax.set_yticklabels([])
+        fig.tight_layout()
+        plt.savefig(params['saveto']+'hists/train_hist.png')
+        plt.close()
 
 
 class Generator(Net):
