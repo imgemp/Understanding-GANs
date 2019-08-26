@@ -365,7 +365,8 @@ class CRISM(Data):
         print('done computing.')
 
         fig, ax = plt.subplots()
-        n, bins, _ = plt.hist(matches, bins=len(self.mica_names), density=1, color='b', alpha=1.)
+        bins = np.arange(0, len(self.mica_names)+1)
+        n, _, _ = plt.hist(matches, bins=bins, density=True, color='b', alpha=1.)
         ax.set_ylabel('counts')
         ax.set_title('training endmember histogram ({:1.1f}k samples, {:d}/{:d} classes)'.format(matches.shape[0]/1000, num_matches, len(self.mica_names)))
         ax.set_xticks(np.arange(0,len(self.mica_names)))
