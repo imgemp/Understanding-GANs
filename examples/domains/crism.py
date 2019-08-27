@@ -222,7 +222,7 @@ class CRISM(Data):
         else:
             atts = self.F_att_eval(samples).cpu().data.numpy()
         self.plot_att_hists(params, i=i, y2=atts)
-        self.plot_grouped_by_mica(train, params)
+        self.plot_grouped_by_mica(train, params, i=i)
         self.plot_training_hist(train, params, i=i)
 
     def plot_series(self, np_samples, params, ylim=[0,1], force_ylim=True, fs=24, fs_tick=18, filename='series'):
@@ -304,14 +304,14 @@ class CRISM(Data):
             sliHdr = envi.read_envi_header(sliHdrName)
             endMem_Name = sliHdr['spectra names']
             self.mica_names = endMem_Name
-            # compute mica features
-            mica_attributes = train.m.F_att(self.mica_library)
-            mica_latents = train.m.F_lat(self.mica_library)
-            self.mica_features = torch.cat([mica_latents, mica_attributes], dim=1).cpu().data.numpy()
 
-    def plot_grouped_by_mica(self, train, params, ylim=[0,1], force_ylim=True, fs=24, fs_tick=18):
+    def plot_grouped_by_mica(self, train, params, i, ylim=[0,1], force_ylim=True, fs=24, fs_tick=18):
         # if mica_library is not loaded, load it
         self.load_mica_library(train)
+        # compute mica features
+        mica_attributes = train.m.F_att(self.mica_library)
+        mica_latents = train.m.F_lat(self.mica_library)
+        self.mica_features = torch.cat([mica_latents, mica_attributes], dim=1).cpu().data.numpy()
         # generate samples and compute their features
         samples = torch.cat([train.m.get_fake(64, params['z_dim']) for i in range(10)], dim=0)
         attributes = train.m.F_att(samples)
@@ -342,16 +342,20 @@ class CRISM(Data):
             if force_ylim:
                 plt.gca().set_ylim(ylim)
             filename = ''.join([c for c in self.mica_names[endmember] if c.isalpha() or c.isdigit()]).rstrip()
-            plt.savefig(params['saveto']+'mica/{}.png'.format(filename))
+            plt.savefig(params['saveto']+'mica/{}_{}.png'.format(i, filename))
             plt.close()
 
     def plot_training_hist(self, train, params, i, ylim=[0,1], force_ylim=True, fs=24, fs_tick=18):
         # if mica_library is not loaded, load it
         self.load_mica_library(train)
+        # compute mica features
+        mica_attributes = train.m.F_att(self.mica_library)
+        mica_latents = train.m.F_lat(self.mica_library)
+        self.mica_features = torch.cat([mica_latents, mica_attributes], dim=1).cpu().data.numpy()
         # generate samples and compute their features
         print('computing features for training set...')
         # n_batches = self.x_att.shape[0] // params['batch_size']
-        n_batches = 25
+        n_batches = 100
         samples = torch.cat([train.m.get_real(params['batch_size']) for i in range(n_batches)], dim=0)
         attributes = train.m.F_att(samples)
         latents = train.m.F_lat(samples)
@@ -368,7 +372,7 @@ class CRISM(Data):
         bins = np.arange(0, len(self.mica_names)+1)
         n, _, _ = plt.hist(matches, bins=bins, density=True, color='b', alpha=1.)
         ax.set_ylabel('counts')
-        ax.set_title('training endmember histogram ({:1.1f}k samples, {:d}/{:d} classes)'.format(matches.shape[0]/1000, num_matches, len(self.mica_names)))
+        ax.set_title('training endmember histogram ({:1.0f}k samples, {:d}/{:d} classes)'.format(matches.shape[0]/1000, num_matches, len(self.mica_names)))
         ax.set_xticks(np.arange(0,len(self.mica_names)))
         ax.set_xticklabels(self.mica_names, rotation=90)
         fig.tight_layout()
