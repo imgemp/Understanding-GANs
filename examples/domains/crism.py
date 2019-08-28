@@ -332,10 +332,13 @@ class CRISM(Data):
         # plot spectra and save plot with filename as mica match
         samples = samples.cpu().data.numpy()
         for endmember, sample_idxs in groups.items():
+            n = float(len(sample_idxs))
+            avg_sim = 0.
             for idx, sim in list(sample_idxs):
                 plt.plot(self.waves, samples[idx], 'r--', alpha=(sim+1.)/2.)
+                avg_sim += sim / n
             plt.plot(self.waves, self.mica_library[endmember].cpu().data.numpy(), 'k-')
-            plt.title('Generated Spectra: {:s}'.format(self.mica_names[endmember]), fontsize=fs)
+            plt.title('{:s}: avg_sim={:1.1f}'.format(self.mica_names[endmember], avg_sim), fontsize=fs_tick)
             plt.xlabel('Channels', fontsize=fs)
             plt.ylabel('Intensities', fontsize=fs)
             plt.tick_params(axis='both', which='major', labelsize=fs_tick)
@@ -355,7 +358,7 @@ class CRISM(Data):
         # generate samples and compute their features
         print('computing features for training set...')
         # n_batches = self.x_att.shape[0] // params['batch_size']
-        n_batches = 100
+        n_batches = 400
         samples = torch.cat([train.m.get_real(params['batch_size']) for i in range(n_batches)], dim=0)
         attributes = train.m.F_att(samples)
         latents = train.m.F_lat(samples)
