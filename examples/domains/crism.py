@@ -377,7 +377,13 @@ class CRISM(Data):
         ax.set_ylabel('counts')
         ax.set_title('training endmember histogram ({:1.0f}k samples, {:d}/{:d} classes)'.format(matches.shape[0]/1000, num_matches, len(self.mica_names)))
         ax.set_xticks(np.arange(0,len(self.mica_names)))
-        ax.set_xticklabels(self.mica_names, rotation=90)
+        labels = []
+        for i, name in enumerate(self.mica_names):
+            if i in matches:
+                labels += [name]
+            else:
+                labels += ['('+str(np.sum(matches==i))+') '+name+'$']
+        ax.set_xticklabels(labels, rotation=90)
         fig.tight_layout()
         plt.savefig(params['saveto']+'train_hists/train_hist_{}.png'.format(i))
         plt.close()
