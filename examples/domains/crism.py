@@ -379,10 +379,7 @@ class CRISM(Data):
         ax.set_xticks(np.arange(0,len(self.mica_names)))
         labels = []
         for i, name in enumerate(self.mica_names):
-            if i in matches:
-                labels += [name]
-            else:
-                labels += ['('+str(np.sum(matches==i))+') '+name+'$']
+            labels += ['('+str(np.sum(matches==i))+') '+name]
         ax.set_xticklabels(labels, rotation=90)
         fig.tight_layout()
         plt.savefig(params['saveto']+'train_hists/train_hist_{}.png'.format(i))
