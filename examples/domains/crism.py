@@ -121,14 +121,11 @@ class CRISM(Data):
         goodrows = []
         xs = []
         for dataset in datasets:
-            print(dataset)
             if 'h5' not in dataset:
-                print('got here')
                 img = envi.open(dataset+'.hdr', dataset+'.img')
                 img_np = np.asarray(img.asarray())
                 x = img_np.reshape((-1,img_np.shape[-1]))
             else:
-                print('got here!!!!')
                 with h5py.File(dataset, 'r') as f:
                     x = np.stack([s[1] for s in f['CRISM_MS']['table'].value]).astype('float32')
             channels += [x.shape[1]]
@@ -165,7 +162,7 @@ class CRISM(Data):
         ys = []
         names = []
         for labelset in labelsets:
-            if '5h' not in labelset:
+            if 'h5' not in labelset:
                 img = envi.open(labelset+'.hdr', labelset+'.img')
                 names = img.metadata['band names']
             else:
