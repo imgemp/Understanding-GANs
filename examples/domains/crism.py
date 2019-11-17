@@ -2,6 +2,7 @@ import os
 import zipfile
 import random
 
+import h5py
 import spectral.io.envi as envi
 
 import numpy as np
@@ -26,14 +27,17 @@ import matplotlib.pyplot as plt
 from matplotlib.pyplot import cm
 import seaborn as sns
 
-# originals FRT000097E2, HRL000040FF
-# ids = [('FRT000047A3','66'), ('FRT00005850','67'), ('FRT000097E2','66'), ('FRT0000CBE5','66')] #, ('FRT00013EBC','66'), ('FRT000161EF','67'), ('HRL000040FF','83'), ('HRL0000C0BA','83')]
-ids = [('FRT000097E2','66'), ('HRL000040FF','83')]
-prefixes = ['./examples/domains/data/CRISM_data_summPar_1/'+direc+'/'+direc+'_07_IF1'+num+'L_TRR3_atcr_sabcondv4_1_Lib11123_1_4_5_l1_gadmm_a_v2_ca_ice_b200_MS' for direc, num in ids]
-# postfix = '_CR'
-postfix = ''
-datasets = [p+postfix for p in prefixes]
-labelsets = [p+'_2014params' for p in prefixes]
+# # originals FRT000097E2, HRL000040FF
+# # ids = [('FRT000047A3','66'), ('FRT00005850','67'), ('FRT000097E2','66'), ('FRT0000CBE5','66')] #, ('FRT00013EBC','66'), ('FRT000161EF','67'), ('HRL000040FF','83'), ('HRL0000C0BA','83')]
+# ids = [('FRT000097E2','66'), ('HRL000040FF','83')]
+# prefixes = ['./examples/domains/data/CRISM_data_summPar_1/'+direc+'/'+direc+'_07_IF1'+num+'L_TRR3_atcr_sabcondv4_1_Lib11123_1_4_5_l1_gadmm_a_v2_ca_ice_b200_MS' for direc, num in ids]
+# # postfix = '_CR'
+# postfix = ''
+# datasets = [p+postfix for p in prefixes]
+# labelsets = [p+'_2014params' for p in prefixes]
+
+datasets = ['./examples/domains/data/store_Composite_summParam.h5']
+labelsets = datasets
 
 # srun -p m40-long --gres=gpu:1 examples/run.sh "examples/args/crism/con/00.txt"
 
@@ -117,9 +121,13 @@ class CRISM(Data):
         goodrows = []
         xs = []
         for dataset in datasets:
-            img = envi.open(dataset+'.hdr', dataset+'.img')
-            img_np = np.asarray(img.asarray())
-            x = img_np.reshape((-1,img_np.shape[-1]))
+            if 'h5' not in dataset:
+                img = envi.open(dataset+'.hdr', dataset+'.img')
+                img_np = np.asarray(img.asarray())
+                x = img_np.reshape((-1,img_np.shape[-1]))
+            else:
+                with h5py.File(dataset, 'r') as f:
+                    x = np.stack([s[1] for s in f['CRISM_MS']['table'].value]).astype('float32')
             channels += [x.shape[1]]
             nanrows = np.all(np.isnan(x), axis=1)
             print('Removing {:0.2f}% of {:d} rows (all NaN) from {:s}.'.format(nanrows.sum()/x.shape[0]*100,x.shape[0],dataset))
@@ -154,8 +162,12 @@ class CRISM(Data):
         ys = []
         names = []
         for labelset in labelsets:
-            img = envi.open(labelset+'.hdr', labelset+'.img')
-            names = img.metadata['band names']
+            if '5h' not in labelset:
+                img = envi.open(labelset+'.hdr', labelset+'.img')
+                names = img.metadata['band names']
+            else:
+                with h5py.File(dataset, 'r') as f:
+                    x = np.stack([s[1] for s in f['CRISM_summParam']['table'].value]).astype('float32')
             img_np = np.asarray(img.asarray())
             y = img_np.reshape((-1,img_np.shape[-1]))
             labels += [y.shape[1]]
