@@ -127,7 +127,7 @@ class CRISM(Data):
                 x = img_np.reshape((-1,img_np.shape[-1]))
             else:
                 with h5py.File(dataset, 'r') as f:
-                    x = np.stack([s[1] for s in f['CRISM_MS']['table'].value]).astype('float32')
+                    x = np.stack([s[1] for s in f['CRISM_MS']['table'].value]).astype('float32')[:500000,:]
             channels += [x.shape[1]]
             nanrows = np.all(np.isnan(x), axis=1)
             print('Removing {:0.2f}% of {:d} rows (all NaN) from {:s}.'.format(nanrows.sum()/x.shape[0]*100,x.shape[0],dataset))
@@ -169,7 +169,7 @@ class CRISM(Data):
                 names = img.metadata['band names']
             else:
                 with h5py.File(labelset, 'r') as f:
-                    y = np.stack([s[1] for s in f['CRISM_summParam']['table'].value]).astype('float32')
+                    y = np.stack([s[1] for s in f['CRISM_summParam']['table'].value]).astype('float32')[:500000,:]
                 names = [str(_) for _ in range(y.shape[1])]  # hack for now, where are the names?
             labels += [y.shape[1]]
             ys += [y]
