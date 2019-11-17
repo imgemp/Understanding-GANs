@@ -162,17 +162,15 @@ class CRISM(Data):
         ys = []
         names = []
         for labelset in labelsets:
-            print(labelset)
             if 'h5' not in labelset:
-                print('got here')
                 img = envi.open(labelset+'.hdr', labelset+'.img')
+                img_np = np.asarray(img.asarray())
+                y = img_np.reshape((-1,img_np.shape[-1]))
                 names = img.metadata['band names']
             else:
-                print('got here!!!')
                 with h5py.File(labelset, 'r') as f:
-                    x = np.stack([s[1] for s in f['CRISM_summParam']['table'].value]).astype('float32')
-            img_np = np.asarray(img.asarray())
-            y = img_np.reshape((-1,img_np.shape[-1]))
+                    y = np.stack([s[1] for s in f['CRISM_summParam']['table'].value]).astype('float32')
+                names = [str(_) for _ in range(y.shape[1])]  # hack for now, where are the names?
             labels += [y.shape[1]]
             ys += [y]
         if len(set(labels)) > 1:
