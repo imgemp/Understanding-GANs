@@ -62,8 +62,9 @@ class CRISM(Data):
         print('Number of batches: {}'.format(self.x_att.shape[0] // batch_size), flush=True)
 
     def reload(self):
-        self.dataloader = None
-        self.dataiterator = None
+        del self.dataloader
+        del self.dataiterator
+        torch.cuda.empty_cache()
         self.load_crism(self.num_labels)
         # Number of workers for dataloader
         workers = 2
