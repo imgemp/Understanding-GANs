@@ -49,7 +49,7 @@ class CRISM(Data):
         self.num_labels = num_labels
         self.slice_size = slice_size
         self.slice_idx = 0
-        self.load_once = False
+        self.loaded_once = False
         self.load_crism(num_labels)
         self.loaded_once = True
         # Number of workers for dataloader
