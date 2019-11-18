@@ -54,8 +54,7 @@ class CRISM(Data):
         workers = 2
         # Create the dataloader
         self.dataloader = torch.utils.data.DataLoader(torch.from_numpy(self.x_att), batch_size=batch_size,
-                                                      shuffle=True, num_workers=workers,
-                                                      drop_last=True)
+                                                      shuffle=True, drop_last=True)
         self.dataiterator = iter(self.dataloader)
         self.F_att_eval = None
         self.mica_library = None
@@ -70,8 +69,7 @@ class CRISM(Data):
         workers = 2
         # Create the dataloader
         self.dataloader = torch.utils.data.DataLoader(torch.from_numpy(self.x_att), batch_size=self.batch_size,
-                                                      shuffle=True, num_workers=workers,
-                                                      drop_last=True)
+                                                      shuffle=True, drop_last=True)
         self.dataiterator = iter(self.dataloader)
 
     def load_crism(self, num_labels, normalize=True):
