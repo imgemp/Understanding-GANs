@@ -151,6 +151,7 @@ class CRISM(Data):
                     table = f['CRISM_MS']['table'].value
                     if start >= len(table):
                         start = self.slice_idx = 0
+                        end = self.slice_idx + self.slice_size
                     end = min(end, len(table))
                     print('start, end', start, end)
                     x = np.stack([s[1] for s in table]).astype('float32')[start:end,:]
@@ -200,6 +201,7 @@ class CRISM(Data):
                     table = f['CRISM_summParam']['table'].value
                     if start >= len(table):
                         start = self.slice_idx = 0
+                        end = self.slice_idx + self.slice_size
                     end = min(end, len(table))
                     print('start, end', start, end)
                     y = np.stack([s[1] for s in table]).astype('float32')[start:end,:]
