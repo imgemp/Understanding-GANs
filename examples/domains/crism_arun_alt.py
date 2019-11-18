@@ -13,6 +13,15 @@ def weights_init(m):
             m.bias.data.fill_(1.)
 
 
+class Upsample(nn.Module):
+    def __init__(self,  scale_factor, mode='nearest'):
+        super(Upsample, self).__init__()
+        self.scale_factor = scale_factor
+        self.mode = mode
+    def forward(self, x):
+        return F.interpolate(x, scale_factor=self.scale_factor, mode=self.mode)
+
+
 class View(nn.Module):
     def __init__(self, *shape):
         super(View, self).__init__()
@@ -32,25 +41,25 @@ class Generator(Net):
             View((-1, 250, 15)),
             nn.Dropout(p=p),
             # state size. bs x 250 x 15
-            nn.Upsample(scale_factor=2, mode='nearest'),
+            Upsample(scale_factor=2, mode='nearest'),
             nn.Conv1d(250, 250//2, kernel_size=11, stride=1, padding=5, bias=True),
             nn.BatchNorm1d(250//2),
             nn.ReLU(True),
             nn.Dropout(p=p),
             # state size. bs x 125 x 30
-            nn.Upsample(scale_factor=2, mode='nearest'),
+            Upsample(scale_factor=2, mode='nearest'),
             nn.Conv1d(250//2, 250//4, kernel_size=11, stride=1, padding=5, bias=True),
             nn.BatchNorm1d(250//4),
             nn.ReLU(True),
             nn.Dropout(p=p),
             # state size. bs x 62 x 60
-            nn.Upsample(scale_factor=2, mode='nearest'),
+            Upsample(scale_factor=2, mode='nearest'),
             nn.Conv1d(250//4, 250//8, kernel_size=11, stride=1, padding=5, bias=True),
             nn.BatchNorm1d(250//8),
             nn.ReLU(True),
             nn.Dropout(p=p),
             # state size. bs x 31 x 120
-            nn.Upsample(scale_factor=2, mode='nearest'),
+            Upsample(scale_factor=2, mode='nearest'),
             nn.Conv1d(250//8, 250//16, kernel_size=11, stride=1, padding=5, bias=True),
             nn.BatchNorm1d(250//16),
             nn.ReLU(True),
