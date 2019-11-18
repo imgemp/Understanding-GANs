@@ -62,8 +62,8 @@ class CRISM(Data):
         print('Number of batches: {}'.format(self.x_att.shape[0] // batch_size), flush=True)
 
     def reload(self):
-        del self.dataloader
-        del self.dataiterator
+        self.dataloader = None
+        self.dataiterator = None
         self.load_crism(self.num_labels)
         # Number of workers for dataloader
         workers = 2
@@ -151,6 +151,7 @@ class CRISM(Data):
                     if start >= len(table):
                         start = self.slice_idx = 0
                     end = min(end, len(table))
+                    print('start, end', start, end)
                     x = np.stack([s[1] for s in table]).astype('float32')[start:end,:]
             channels += [x.shape[1]]
             nanrows = np.all(np.isnan(x), axis=1)
@@ -199,6 +200,7 @@ class CRISM(Data):
                     if start >= len(table):
                         start = self.slice_idx = 0
                     end = min(end, len(table))
+                    print('start, end', start, end)
                     y = np.stack([s[1] for s in table]).astype('float32')[start:end,:]
                 names = [str(_) for _ in range(y.shape[1])]  # hack for now, where are the names?
             labels += [y.shape[1]]
@@ -207,7 +209,9 @@ class CRISM(Data):
             label_str = ','.join([str(l) for l in labels])
             raise ValueError('# of labels do not align: [{:s}].'.format(label_str))
         y_joined = np.vstack(ys)
-        print('Removing {:0.2f}% of rows (any NaN) from joined label.'.format((1-goodrows.sum()/y_joined.shape[0])*100))
+        print('y_joined.shape', y_joined.shape)
+        print('goodrows.sum()', goodrows.sum())
+        print('Removing {:0.2f}% of rows (any NaN) from joined labelset.'.format((1-goodrows.sum()/y_joined.shape[0])*100))
         y_joined = y_joined[goodrows]
         return y_joined, names
 
