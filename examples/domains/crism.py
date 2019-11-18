@@ -49,7 +49,9 @@ class CRISM(Data):
         self.num_labels = num_labels
         self.slice_size = slice_size
         self.slice_idx = 0
+        self.load_once = False
         self.load_crism(num_labels)
+        self.loaded_once = True
         # Number of workers for dataloader
         workers = 2
         # Create the dataloader
@@ -94,7 +96,7 @@ class CRISM(Data):
         if x_dim != 240:
             x = x[:,:240]
             waves = waves[:240]
-            print('Temporary hack for even dims for conv, xdims: {:d}-->{:d}.'.format(x_dim, x.shape[1]))
+            if not self.loaded_once: print('Temporary hack for even dims for conv, xdims: {:d}-->{:d}.'.format(x_dim, x.shape[1]))
         self.x_dim = x.shape[1]
         self.att_dim = y.shape[1]
         self.x_att = np.hstack((x,y)).astype('float32')
@@ -151,17 +153,16 @@ class CRISM(Data):
                         start = self.slice_idx = 0
                         end = self.slice_idx + self.slice_size
                     end = min(end, len(table))
-                    print('start, end', start, end)
                     x = np.stack([s[1] for s in table]).astype('float32')[start:end,:]
             channels += [x.shape[1]]
             nanrows = np.all(np.isnan(x), axis=1)
-            print('Removing {:0.2f}% of {:d} rows (all NaN) from {:s}.'.format(nanrows.sum()/x.shape[0]*100,x.shape[0],dataset))
+            if not self.loaded_once: print('Removing {:0.2f}% of {:d} rows (all NaN) from {:s}.'.format(nanrows.sum()/x.shape[0]*100,x.shape[0],dataset))
             x = x[~nanrows]
             goodrows += [~nanrows]
             nancols = np.all(np.isnan(x), axis=0)
             start = np.argmin(nancols)
             end = len(nancols)-1-np.argmin(nancols[::-1])
-            print('Selecting good channels ({:d}-{:d}) from {:d} total of {:s}.'.format(start,end,x.shape[1],dataset))
+            if not self.loaded_once: print('Selecting good channels ({:d}-{:d}) from {:d} total of {:s}.'.format(start,end,x.shape[1],dataset))
             shared_range[0] = max(shared_range[0], start)
             shared_range[1] = min(shared_range[1], end)
             xs += [x]
@@ -174,7 +175,7 @@ class CRISM(Data):
         x_joined = np.vstack(xs)
         goodrows = np.hstack(goodrows)
         nanrows = np.any(np.isnan(x_joined), axis=1)
-        print('Removing {:0.2f}% of {:d} rows (any NaN) from joined dataset.'.format(nanrows.sum()/x_joined.shape[0]*100,x_joined.shape[0]))
+        if not self.loaded_once: print('Removing {:0.2f}% of {:d} rows (any NaN) from joined dataset.'.format(nanrows.sum()/x_joined.shape[0]*100,x_joined.shape[0]))
         x_joined = x_joined[~nanrows]
         goodrows[goodrows] = ~nanrows
         # call fnScaleMICAEM on x_joined here
@@ -201,7 +202,6 @@ class CRISM(Data):
                         start = self.slice_idx = 0
                         end = self.slice_idx + self.slice_size
                     end = min(end, len(table))
-                    print('start, end', start, end)
                     y = np.stack([s[1] for s in table]).astype('float32')[start:end,:]
                 names = [str(_) for _ in range(y.shape[1])]  # hack for now, where are the names?
             labels += [y.shape[1]]
@@ -210,9 +210,7 @@ class CRISM(Data):
             label_str = ','.join([str(l) for l in labels])
             raise ValueError('# of labels do not align: [{:s}].'.format(label_str))
         y_joined = np.vstack(ys)
-        print('y_joined.shape', y_joined.shape)
-        print('goodrows.sum()', goodrows.sum())
-        print('Removing {:0.2f}% of rows (any NaN) from joined labelset.'.format((1-goodrows.sum()/y_joined.shape[0])*100))
+        if not self.loaded_once: print('Removing {:0.2f}% of rows (any NaN) from joined labelset.'.format((1-goodrows.sum()/y_joined.shape[0])*100))
         y_joined = y_joined[goodrows]
         return y_joined, names
 
@@ -404,7 +402,7 @@ class CRISM(Data):
         mica_latents = train.m.F_lat(self.mica_library)
         self.mica_features = torch.cat([mica_latents, mica_attributes], dim=1).cpu().data.numpy()
         # generate samples and compute their features
-        print('computing features for training set...')
+        if not self.loaded_once: print('computing features for training set...')
         # n_batches = self.x_att.shape[0] // params['batch_size']
         n_batches = 400
         samples = torch.cat([train.m.get_real(params['batch_size']) for i in range(n_batches)], dim=0)
@@ -412,12 +410,12 @@ class CRISM(Data):
         latents = train.m.F_lat(samples)
         features = torch.cat([latents, attributes], dim=1).cpu().data.numpy()
         # compute cosine similarity
-        print('computing cosine similarity...')
+        if not self.loaded_once: print('computing cosine similarity...')
         similarity = cosine_similarity(features, self.mica_features)
         # matches = argmax cosine similarity
         matches = np.argmax(similarity, axis=1)
         num_matches = len(set(list(matches)))
-        print('done computing.')
+        if not self.loaded_once: print('done computing.')
 
         fig, ax = plt.subplots()
         bins = np.arange(0, len(self.mica_names)+1)
