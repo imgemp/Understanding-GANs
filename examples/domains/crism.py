@@ -43,9 +43,12 @@ labelsets = datasets
 
 
 class CRISM(Data):
-    def __init__(self, batch_size=128, num_labels=None, **kwargs):
+    def __init__(self, batch_size=128, num_labels=None, slice_size=int(506898), **kwargs):
         super(CRISM, self).__init__()
         self.batch_size = batch_size
+        self.num_labels = num_labels
+        self.slice_size = slice_size
+        self.slice_idx = 0
         self.load_crism(num_labels)
         # Number of workers for dataloader
         workers = 2
@@ -58,6 +61,18 @@ class CRISM(Data):
         self.mica_library = None
         print('Number of batches: {}'.format(self.x_att.shape[0] // batch_size), flush=True)
 
+    def reload(self):
+        self.dataloader = None
+        self.dataiterator = None
+        self.load_crism(self.num_labels)
+        # Number of workers for dataloader
+        workers = 2
+        # Create the dataloader
+        self.dataloader = torch.utils.data.DataLoader(torch.from_numpy(self.x_att), batch_size=self.batch_size,
+                                                      shuffle=True, num_workers=workers,
+                                                      drop_last=True)
+        self.dataiterator = iter(self.dataloader)
+
     def load_crism(self, num_labels, normalize=True):
         x, goodrows = self.get_np_image(datasets)
         x = self.zero_one_x_ind(x)
@@ -68,6 +83,9 @@ class CRISM(Data):
             y = scaler.fit_transform(y)
             # y = self.zero_one_y(y)
         self.y_real = np.array(y).astype('float32')
+
+        self.slice_idx += self.slice_size
+
         if not os.path.isfile('./examples/masks/crism_arun/att_means.npy'):
             np.save('./examples/masks/crism_arun/att_means.npy', self.y_real.mean(axis=0))
         if isinstance(num_labels, int):
@@ -120,6 +138,8 @@ class CRISM(Data):
         shared_range = [0,np.infty]
         goodrows = []
         xs = []
+        start = self.slice_idx
+        end = self.slice_idx + self.slice_size
         for dataset in datasets:
             if 'h5' not in dataset:
                 img = envi.open(dataset+'.hdr', dataset+'.img')
@@ -127,7 +147,11 @@ class CRISM(Data):
                 x = img_np.reshape((-1,img_np.shape[-1]))
             else:
                 with h5py.File(dataset, 'r') as f:
-                    x = np.stack([s[1] for s in f['CRISM_MS']['table'].value]).astype('float32')[:500000,:]
+                    table = f['CRISM_MS']['table'].value
+                    if start >= len(table):
+                        start = self.slice_idx = 0
+                    end = min(end, len(table))
+                    x = np.stack([s[1] for s in table]).astype('float32')[start:end,:]
             channels += [x.shape[1]]
             nanrows = np.all(np.isnan(x), axis=1)
             print('Removing {:0.2f}% of {:d} rows (all NaN) from {:s}.'.format(nanrows.sum()/x.shape[0]*100,x.shape[0],dataset))
@@ -161,6 +185,8 @@ class CRISM(Data):
         labels = []
         ys = []
         names = []
+        start = self.slice_idx
+        end = self.slice_idx + self.slice_size
         for labelset in labelsets:
             if 'h5' not in labelset:
                 img = envi.open(labelset+'.hdr', labelset+'.img')
@@ -169,7 +195,11 @@ class CRISM(Data):
                 names = img.metadata['band names']
             else:
                 with h5py.File(labelset, 'r') as f:
-                    y = np.stack([s[1] for s in f['CRISM_summParam']['table'].value]).astype('float32')[:500000,:]
+                    table = f['CRISM_summParam']['table'].value
+                    if start >= len(table):
+                        start = self.slice_idx = 0
+                    end = min(end, len(table))
+                    y = np.stack([s[1] for s in table]).astype('float32')[start:end,:]
                 names = [str(_) for _ in range(y.shape[1])]  # hack for now, where are the names?
             labels += [y.shape[1]]
             ys += [y]

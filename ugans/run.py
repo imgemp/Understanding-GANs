@@ -32,6 +32,8 @@ def parse_params():
     parser.add_argument('-dom_sub','--sub_domain', type=str, default='circles', help='sub domain to run', required=False)
     parser.add_argument('-desc','--description', type=str, default='', help='description for the experiment', required=False)
     parser.add_argument('-bs','--batch_size', type=int, default=512, help='batch_size for training', required=False)
+    parser.add_argument('-ds','--data_size', type=int, default=506898, help='# of data samples to load into memory for training', required=False)
+    parser.add_argument('-epoc_len','--epoch_length', type=int, default=100, help='# of batches to sample from data slice', required=False)
     parser.add_argument('-div','--divergence', type=str, default='JS', help='divergence measure, i.e. V, for training', required=False)
     
     parser.add_argument('-feat_mask','--feature_mask', type=str, default='', help='path to feature mask to be loaded (empty string means load nothing)', required=False)
@@ -187,7 +189,7 @@ def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discrim
 
     to_gpu = gpu_helper(params['gpu'])
 
-    data = Domain(batch_size=params['batch_size'], sub_domain=params['sub_domain'], num_labels=params['att_dim'])
+    data = Domain(batch_size=params['batch_size'], sub_domain=params['sub_domain'], num_labels=params['att_dim'], slice_size=params['data_size'])
     data.plot_real(params)
     G = Generator(input_dim=params['z_dim'],output_dim=params['x_dim'],n_hidden=params['gen_n_hidden'],
                   n_layer=params['gen_n_layer'],nonlin=params['gen_nonlinearity'])
@@ -239,6 +241,10 @@ def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discrim
         iterations = tqdm(iterations,desc=params['description'])
 
     for i in iterations:
+
+        if i > 0 and i % params['epoch_length'] == 0:
+            data.reload()
+            print('data slice index @ {:d}'.format(data.slice_idx))
         
         losses_i, norms_i = train.train_op(i)
         tqdm_outputs = dict(zip(loss_names+norm_names+['Mem'],losses_i+norms_i+[process.memory_info().rss]))
