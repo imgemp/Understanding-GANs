@@ -33,7 +33,7 @@ def parse_params():
     parser.add_argument('-desc','--description', type=str, default='', help='description for the experiment', required=False)
     parser.add_argument('-bs','--batch_size', type=int, default=512, help='batch_size for training', required=False)
     parser.add_argument('-ds','--data_size', type=int, default=506898, help='# of data samples to load into memory for training', required=False)
-    parser.add_argument('-epoc_len','--epoch_length', type=int, default=100, help='# of batches to sample from data slice', required=False)
+    parser.add_argument('-epoc_len','--epoch_length', type=int, default=10, help='# of batches to sample from data slice', required=False)
     parser.add_argument('-div','--divergence', type=str, default='JS', help='divergence measure, i.e. V, for training', required=False)
     
     parser.add_argument('-feat_mask','--feature_mask', type=str, default='', help='path to feature mask to be loaded (empty string means load nothing)', required=False)
@@ -311,6 +311,8 @@ def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discrim
         for viz_i in range(0,params['max_iter']+1,params['viz_every']):
             np_samples.append(np.load(params['saveto']+'samples/'+str(viz_i)+'.npy'))
         data.plot_series(np_samples, params)
+
+    data.dataloader.__del__()
 
     print('Complete. Saved to '+params['saveto'])
 
