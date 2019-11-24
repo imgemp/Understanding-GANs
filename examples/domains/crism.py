@@ -78,12 +78,12 @@ class CRISM(Data):
         x, goodrows = self.get_np_image(datasets)
         x = self.zero_one_x_ind(x)
         # x -= 0.5
-        y, names = self.get_np_labels(labelsets, goodrows)
+        y, y_real, names = self.get_np_labels(labelsets, goodrows)
         if normalize:
             scaler = StandardScaler()
             y = scaler.fit_transform(y)
             # y = self.zero_one_y(y)
-        self.y_real = np.array(y).astype('float32')
+        self.y_real = np.array(y_real).astype('float32')
 
         self.slice_idx += self.slice_size
 
@@ -149,11 +149,10 @@ class CRISM(Data):
             else:
                 with h5py.File(dataset, 'r') as f:
                     table = f['CRISM_MS']['table'].value
-                    if start >= len(table):
-                        start = self.slice_idx = 0
-                        end = self.slice_idx + self.slice_size
-                    end = min(end, len(table))
-                    x = np.stack([s[1] for s in table]).astype('float32')[start:end,:]
+                    x = np.stack([s[1] for s in table]).astype('float32')
+                    # HACK - ONLY WORKS FOR store_Composite_summParam.h5 dataset
+                    inds = np.load('./examples/domains/data/shuffled_inds.npy')
+                    x = x[inds]
             channels += [x.shape[1]]
             nanrows = np.all(np.isnan(x), axis=1)
             if not self.loaded_once: print('Removing {:0.2f}% of {:d} rows (all NaN) from {:s}.'.format(nanrows.sum()/x.shape[0]*100,x.shape[0],dataset))
@@ -181,6 +180,13 @@ class CRISM(Data):
         # call fnScaleMICAEM on x_joined here
         if scale_mica:
             x_joined = self.fnScaleMICAEM(x_joined)
+
+        if start >= x_joined.shape[0]:
+            start = self.slice_idx = 0
+            end = self.slice_idx + self.slice_size
+        end = min(end, x_joined.shape[0])
+        x_joined = x_joined[start:end,:]
+
         return x_joined, goodrows
 
     def get_np_labels(self, labelsets, goodrows):
@@ -198,11 +204,10 @@ class CRISM(Data):
             else:
                 with h5py.File(labelset, 'r') as f:
                     table = f['CRISM_summParam']['table'].value
-                    if start >= len(table):
-                        start = self.slice_idx = 0
-                        end = self.slice_idx + self.slice_size
-                    end = min(end, len(table))
-                    y = np.stack([s[1] for s in table]).astype('float32')[start:end,:]
+                    y = np.stack([s[1] for s in table]).astype('float32')
+                    # HACK - ONLY WORKS FOR store_Composite_summParam.h5 dataset
+                    inds = np.load('./examples/domains/data/shuffled_inds.npy')
+                    y = y[inds]
                 names = [str(_) for _ in range(y.shape[1])]  # hack for now, where are the names?
             labels += [y.shape[1]]
             ys += [y]
@@ -212,7 +217,15 @@ class CRISM(Data):
         y_joined = np.vstack(ys)
         if not self.loaded_once: print('Removing {:0.2f}% of rows (any NaN) from joined labelset.'.format((1-goodrows.sum()/y_joined.shape[0])*100))
         y_joined = y_joined[goodrows]
-        return y_joined, names
+        y_real = np.copy(y_joined)
+
+        if start >= y_joined.shape[0]:
+            start = self.slice_idx = 0
+            end = self.slice_idx + self.slice_size
+        end = min(end, y_joined.shape[0])
+        y_joined = y_joined[start:end,:]
+
+        return y_joined, y_real, names
 
     def plot_att_hists(self, params, i=0, y2=None):
         y = self.y_real
@@ -262,7 +275,7 @@ class CRISM(Data):
             plt.gca().set_ylim(ylim)
         plt.savefig(params['saveto']+'samples/samples_{}.png'.format(i))
         plt.close()
-        samples = train.m.get_fake(1000, params['z_dim'])
+        samples = train.m.get_fake(10000, params['z_dim'])
         if self.F_att_eval is None:
             atts = train.m.F_att(samples).cpu().data.numpy()
         else:
@@ -378,11 +391,14 @@ class CRISM(Data):
         # plot spectra and save plot with filename as mica match
         samples = samples.cpu().data.numpy()
         for endmember, sample_idxs in groups.items():
-            n = float(len(sample_idxs))
+            n = 0
             avg_sim = 0.
             for idx, sim in list(sample_idxs):
-                plt.plot(self.waves, samples[idx], 'r--', alpha=(sim+1.)/2.)
-                avg_sim += sim / n
+                if sim >= np.cos(np.pi/4.):
+                    plt.plot(self.waves, samples[idx], 'r--', alpha=(sim+1.)/2.)
+                    avg_sim += sim
+                    n += 1
+            avg_sim /= float(n)
             plt.plot(self.waves, self.mica_library[endmember].cpu().data.numpy(), 'k-')
             plt.title('{:s}: avg_sim={:1.1f}'.format(self.mica_names[endmember], avg_sim), fontsize=fs_tick)
             plt.xlabel('Channels', fontsize=fs)
@@ -647,3 +663,26 @@ class Disentangler(Net):
         for layer in self.layers:
             nn.init.orthogonal_(layer.weight.data, gain=0.8)
             layer.bias.data.zero_()
+
+def shuffle_inds(dataset):
+    f = h5py.File(dataset, 'r')
+    table = f['CRISM_chosenPix']['table'].value
+    keys = set()
+    for i, row in enumerate(table):
+        image = row[1][0].decode("utf-8")
+        keys.add(image)
+    images = dict(zip(keys, [[] for _ in range(len(keys))]))  # 25 images for store_Composite_summParam.h5
+    for i, row in enumerate(temp):
+        image = row[1][0].decode("utf-8")
+        images[image].append(i)
+    quarters = [[], [], [], []]
+    for k, v in images.items():
+        vcopy = list(v)
+        np.random.shuffle(vcopy)
+        splits = np.array_split(vcopy, 4)
+        for i in range(len(splits)):
+            quarters[i] = quarters[i] + list(splits[i])
+    shuffled_inds = []
+    for quarter in quarters:
+        shuffled_inds += quarter
+    return shuffled_inds
