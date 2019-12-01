@@ -246,6 +246,9 @@ class CRISM(Data):
         self.ymins = mins
         self.ymaxs = maxs
         self.ystds = stds
+        print(counts[0].shape)
+        print(bins[0].shape)
+        print(mins.shape)
 
     def plot_att_hists2(self, params, i=0, y2=None):
         if y2 is not None:
