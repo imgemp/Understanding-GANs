@@ -225,7 +225,7 @@ class CRISM(Data):
         end = min(end, y_joined.shape[0])
         y_joined = y_joined[start:end,:]
 
-        self.prep_hist(y_joined)
+        # self.prep_hist(y_joined)
 
         return y_joined, y_real, names
 
