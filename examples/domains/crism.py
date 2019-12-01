@@ -140,8 +140,8 @@ class CRISM(Data):
         shared_range = [0,np.infty]
         goodrows = []
         xs = []
-        start = self.slice_idx
-        end = self.slice_idx + self.slice_size
+        start_row = self.slice_idx
+        end_row = self.slice_idx + self.slice_size
         for dataset in datasets:
             if 'h5' not in dataset:
                 img = envi.open(dataset+'.hdr', dataset+'.img')
@@ -154,7 +154,7 @@ class CRISM(Data):
                     # HACK - ONLY WORKS FOR store_Composite_summParam.h5 dataset
                     inds = np.load('./examples/domains/data/shuffled_inds.npy')
                     x = x[inds]
-                    print('A:', x.shape, start, end)
+                    print('A:', x.shape, start_row, end_row)
             channels += [x.shape[1]]
             nanrows = np.all(np.isnan(x), axis=1)
             if not self.loaded_once: print('Removing {:0.2f}% of {:d} rows (all NaN) from {:s}.'.format(nanrows.sum()/x.shape[0]*100,x.shape[0],dataset))
@@ -182,21 +182,21 @@ class CRISM(Data):
         # call fnScaleMICAEM on x_joined here
         if scale_mica:
             x_joined = self.fnScaleMICAEM(x_joined)
-        print('B:', x.shape, start, end)
-        if start >= x_joined.shape[0]:
-            start = self.slice_idx = 0
-            end = self.slice_idx + self.slice_size
-        end = min(end, x_joined.shape[0])
-        x_joined = x_joined[start:end,:]
-        print('C:', x_joined.shape, start, end)
+        print('B:', x.shape, start_row, end_row)
+        if start_row >= x_joined.shape[0]:
+            start_row = self.slice_idx = 0
+            end_row = self.slice_idx + self.slice_size
+        end_row = min(end_row, x_joined.shape[0])
+        x_joined = x_joined[start_row:end_row,:]
+        print('C:', x_joined.shape, start_row, end_row)
         return x_joined, goodrows
 
     def get_np_labels(self, labelsets, goodrows):
         labels = []
         ys = []
         names = []
-        start = self.slice_idx
-        end = self.slice_idx + self.slice_size
+        start_row = self.slice_idx
+        end_row = self.slice_idx + self.slice_size
         for labelset in labelsets:
             if 'h5' not in labelset:
                 img = envi.open(labelset+'.hdr', labelset+'.img')
@@ -221,13 +221,13 @@ class CRISM(Data):
         y_joined = y_joined[goodrows]
         y_real = np.copy(y_joined)
 
-        if start >= y_joined.shape[0]:
-            start = self.slice_idx = 0
-            end = self.slice_idx + self.slice_size
-        end = min(end, y_joined.shape[0])
-        y_joined = y_joined[start:end,:]
+        if start_row >= y_joined.shape[0]:
+            start_row = self.slice_idx = 0
+            end_row = self.slice_idx + self.slice_size
+        end_row = min(end_row, y_joined.shape[0])
+        y_joined = y_joined[start_row:end_row,:]
 
-        # self.prep_hist(y_joined)
+        self.prep_hist(y_joined)
 
         return y_joined, y_real, names
 
