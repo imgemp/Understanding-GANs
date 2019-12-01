@@ -154,7 +154,6 @@ class CRISM(Data):
                     # HACK - ONLY WORKS FOR store_Composite_summParam.h5 dataset
                     inds = np.load('./examples/domains/data/shuffled_inds.npy')
                     x = x[inds]
-                    print('A:', x.shape, start_row, end_row)
             channels += [x.shape[1]]
             nanrows = np.all(np.isnan(x), axis=1)
             if not self.loaded_once: print('Removing {:0.2f}% of {:d} rows (all NaN) from {:s}.'.format(nanrows.sum()/x.shape[0]*100,x.shape[0],dataset))
@@ -182,13 +181,13 @@ class CRISM(Data):
         # call fnScaleMICAEM on x_joined here
         if scale_mica:
             x_joined = self.fnScaleMICAEM(x_joined)
-        print('B:', x.shape, start_row, end_row)
+
         if start_row >= x_joined.shape[0]:
             start_row = self.slice_idx = 0
             end_row = self.slice_idx + self.slice_size
         end_row = min(end_row, x_joined.shape[0])
         x_joined = x_joined[start_row:end_row,:]
-        print('C:', x_joined.shape, start_row, end_row)
+
         return x_joined, goodrows
 
     def get_np_labels(self, labelsets, goodrows):
@@ -243,11 +242,11 @@ class CRISM(Data):
                     c, b = np.histogram(y[:,r*4+c], bins=50, density=1)
                     counts += [c]
                     bins += [b]
-        self.counts = counts
-        self.bins = bins
-        self.mins = mins
-        self.maxs = maxs
-        self.stds = stds
+        self.ycounts = counts
+        self.ybins = bins
+        self.ymins = ymins
+        self.ymaxs = ymaxs
+        self.ystds = ystds
 
     def plot_att_hists2(self, params, i=0, y2=None):
         if y2 is not None:
@@ -258,11 +257,11 @@ class CRISM(Data):
         for r in range(7):
             for c in range(4):
                 if r*4+c < 26:
-                    n, bins, _ = ax[r,c].hist(self.bins[r*4+c][:-1], bins=self.bins[r*4+c], weights=self.counts[r*4+c], color='b', alpha=0.5)
+                    n, bins, _ = ax[r,c].hist(self.ybins[r*4+c][:-1], bins=self.ybins[r*4+c], weights=self.ycounts[r*4+c], color='b', alpha=0.5)
                     if y2 is not None:
                         ax[r,c].hist(y2[:,r*4+c], bins=bins, density=1, color='r', alpha=0.5)
                     ax[r,c].set_ylabel(str(r*4+c))
-                    ax[r,c].set_title(r'{:s}: {:.3f}$\sigma$'.format(self.att_names[r*4+c], self.stds[r*4+c]))
+                    ax[r,c].set_title(r'{:s}: {:.3f}$\sigma$'.format(self.att_names[r*4+c], self.ystds[r*4+c]))
                     ax[r,c].tick_params(left=False,bottom=True,right=False,top=False)
                     mn = min(self.ymins[r*4+c],y2[:,r*4+c].min())
                     mx = max(self.ymaxs[r*4+c],y2[:,r*4+c].max())
