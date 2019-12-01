@@ -225,7 +225,51 @@ class CRISM(Data):
         end = min(end, y_joined.shape[0])
         y_joined = y_joined[start:end,:]
 
+        self.prep_hist(y_joined)
+
         return y_joined, y_real, names
+
+    def prep_hist(self, y):
+        counts = []
+        bins = []
+        stds = np.std(y,axis=0)
+        mins = np.min(y,axis=0)
+        maxs = np.max(y,axis=0)
+        for r in range(7):
+            for c in range(4):
+                if r*4+c < 26:
+                    c, b = np.histogram(y[:,r*4+c], bins=50, density=1)
+                    counts += [c]
+                    bins += [b]
+        self.counts = counts
+        self.bins = bins
+        self.mins = mins
+        self.maxs = maxs
+        self.stds = stds
+
+    def plot_att_hists2(self, params, i=0, y2=None):
+        if y2 is not None:
+            stds2 = np.std(y2,axis=0)
+        # TODO(imgemp): create hist of real data at __init__ (plot memory < actual data)
+        plt.clf()
+        fig, ax = plt.subplots(7,4, figsize=(20,10))
+        for r in range(7):
+            for c in range(4):
+                if r*4+c < 26:
+                    n, bins, _ = ax[r,c].hist(self.bins[r*4+c][:-1], bins=self.bins[r*4+c], weights=self.counts[r*4+c], color='b', alpha=0.5)
+                    if y2 is not None:
+                        ax[r,c].hist(y2[:,r*4+c], bins=bins, density=1, color='r', alpha=0.5)
+                    ax[r,c].set_ylabel(str(r*4+c))
+                    ax[r,c].set_title(r'{:s}: {:.3f}$\sigma$'.format(self.att_names[r*4+c], self.stds[r*4+c]))
+                    ax[r,c].tick_params(left=False,bottom=True,right=False,top=False)
+                    mn = min(self.ymins[r*4+c],y2[:,r*4+c].min())
+                    mx = max(self.ymaxs[r*4+c],y2[:,r*4+c].max())
+                    ax[r,c].set_xticks([mn,mx])
+                    ax[r,c].set_xticklabels([mn,mx])
+                    ax[r,c].set_yticklabels([])
+        fig.tight_layout()
+        plt.savefig(params['saveto']+'hists/att_hist_{}.png'.format(i))
+        plt.close()
 
     def plot_att_hists(self, params, i=0, y2=None):
         y = self.y_real
@@ -236,6 +280,7 @@ class CRISM(Data):
                 print(y.shape)
                 return
             stds2 = np.std(y2,axis=0)
+        # TODO(imgemp): create hist of real data at __init__ (plot memory < actual data)
         plt.clf()
         fig, ax = plt.subplots(7,4, figsize=(20,10))
         for r in range(7):
@@ -280,7 +325,7 @@ class CRISM(Data):
             atts = train.m.F_att(samples).cpu().data.numpy()
         else:
             atts = self.F_att_eval(samples).cpu().data.numpy()
-        self.plot_att_hists(params, i=i, y2=atts)
+        self.plot_att_hists2(params, i=i, y2=atts)
         self.plot_grouped_by_mica(train, params, i=i)
         self.plot_training_hist(train, params, i=i)
 
