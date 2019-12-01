@@ -154,6 +154,7 @@ class CRISM(Data):
                     # HACK - ONLY WORKS FOR store_Composite_summParam.h5 dataset
                     inds = np.load('./examples/domains/data/shuffled_inds.npy')
                     x = x[inds]
+                    print('A:', x.shape)
             channels += [x.shape[1]]
             nanrows = np.all(np.isnan(x), axis=1)
             if not self.loaded_once: print('Removing {:0.2f}% of {:d} rows (all NaN) from {:s}.'.format(nanrows.sum()/x.shape[0]*100,x.shape[0],dataset))
@@ -181,13 +182,13 @@ class CRISM(Data):
         # call fnScaleMICAEM on x_joined here
         if scale_mica:
             x_joined = self.fnScaleMICAEM(x_joined)
-
+        print('B:', x.shape)
         if start >= x_joined.shape[0]:
             start = self.slice_idx = 0
             end = self.slice_idx + self.slice_size
         end = min(end, x_joined.shape[0])
         x_joined = x_joined[start:end,:]
-
+        print('C:', x_joined.shape)
         return x_joined, goodrows
 
     def get_np_labels(self, labelsets, goodrows):
