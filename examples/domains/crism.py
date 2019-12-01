@@ -99,7 +99,6 @@ class CRISM(Data):
             if not self.loaded_once: print('Temporary hack for even dims for conv, xdims: {:d}-->{:d}.'.format(x_dim, x.shape[1]))
         self.x_dim = x.shape[1]
         self.att_dim = y.shape[1]
-        print(x.shape, y.shape)
         self.x_att = np.hstack((x,y)).astype('float32')
         self.waves = waves
         self.att_names = names
@@ -244,9 +243,9 @@ class CRISM(Data):
                     bins += [b]
         self.ycounts = counts
         self.ybins = bins
-        self.ymins = ymins
-        self.ymaxs = ymaxs
-        self.ystds = ystds
+        self.ymins = mins
+        self.ymaxs = maxs
+        self.ystds = stds
 
     def plot_att_hists2(self, params, i=0, y2=None):
         if y2 is not None:
