@@ -328,7 +328,7 @@ class CRISM(Data):
             plt.gca().set_ylim(ylim)
         plt.savefig(params['saveto']+'samples/samples_{}.png'.format(i))
         plt.close()
-        samples = train.m.get_fake(10000, params['z_dim'])
+        samples = train.m.get_fake(100, params['z_dim'])
         if self.F_att_eval is None:
             atts = train.m.F_att(samples).cpu().data.numpy()
         else:
