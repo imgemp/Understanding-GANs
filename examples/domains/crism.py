@@ -229,25 +229,31 @@ class CRISM(Data):
         return y_joined, names
 
     def prep_hist(self, y, normalize=True):
-        if normalize:
-            scaler = StandardScaler()
-            y = scaler.fit_transform(y)
-        counts = []
-        bins = []
-        stds = np.std(y,axis=0)
-        mins = np.min(y,axis=0)
-        maxs = np.max(y,axis=0)
-        for r in range(7):
-            for c in range(4):
-                if r*4+c < 26:
-                    c, b = np.histogram(y[:,r*4+c], bins=50, density=1)
-                    counts += [c]
-                    bins += [b]
-        self.ycounts = counts
-        self.ybins = bins
-        self.ymins = mins
-        self.ymaxs = maxs
-        self.ystds = stds
+        # if normalize:
+        #     scaler = StandardScaler()
+        #     y = scaler.fit_transform(y)
+        # counts = []
+        # bins = []
+        # stds = np.std(y,axis=0)
+        # mins = np.min(y,axis=0)
+        # maxs = np.max(y,axis=0)
+        # for r in range(7):
+        #     for c in range(4):
+        #         if r*4+c < 26:
+        #             c, b = np.histogram(y[:,r*4+c], bins=50, density=1)
+        #             counts += [c]
+        #             bins += [b]
+        label_stats = np.load('./examples/domains/data/label_stats.npz')
+        # self.ycounts = counts
+        # self.ybins = bins
+        # self.ymins = mins
+        # self.ymaxs = maxs
+        # self.ystds = stds
+        self.ycounts = label_stats['counts']
+        self.ybins = label_stats['bins']
+        self.ymins = label_stats['mins']
+        self.ymaxs = label_stats['maxs']
+        self.ystds = label_stats['stds']
 
     def plot_att_hists2(self, params, i=0, y2=None):
         if y2 is not None:
