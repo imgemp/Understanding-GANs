@@ -78,12 +78,12 @@ class CRISM(Data):
         x, goodrows = self.get_np_image(datasets)
         x = self.zero_one_x_ind(x)
         # x -= 0.5
-        y, y_real, names = self.get_np_labels(labelsets, goodrows)
+        y, names = self.get_np_labels(labelsets, goodrows, normalize)
         if normalize:
             scaler = StandardScaler()
             y = scaler.fit_transform(y)
             # y = self.zero_one_y(y)
-        self.y_real = np.array(y_real).astype('float32')
+        self.y_real = np.array(y).astype('float32')
 
         self.slice_idx += self.slice_size
 
@@ -189,7 +189,7 @@ class CRISM(Data):
 
         return x_joined, goodrows
 
-    def get_np_labels(self, labelsets, goodrows):
+    def get_np_labels(self, labelsets, goodrows, normalize=True):
         labels = []
         ys = []
         names = []
@@ -217,7 +217,8 @@ class CRISM(Data):
         y_joined = np.vstack(ys)
         if not self.loaded_once: print('Removing {:0.2f}% of rows (any NaN) from joined labelset.'.format((1-goodrows.sum()/y_joined.shape[0])*100))
         y_joined = y_joined[goodrows]
-        y_real = np.copy(y_joined)
+
+        self.prep_hist(y_joined, normalize)
 
         if start_row >= y_joined.shape[0]:
             start_row = self.slice_idx = 0
@@ -225,11 +226,12 @@ class CRISM(Data):
         end_row = min(end_row, y_joined.shape[0])
         y_joined = y_joined[start_row:end_row,:]
 
-        self.prep_hist(y_joined)
+        return y_joined, names
 
-        return y_joined, y_real, names
-
-    def prep_hist(self, y):
+    def prep_hist(self, y, normalize=True):
+        if normalize:
+            scaler = StandardScaler()
+            y = scaler.fit_transform(y)
         counts = []
         bins = []
         stds = np.std(y,axis=0)
