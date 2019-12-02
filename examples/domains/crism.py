@@ -328,12 +328,12 @@ class CRISM(Data):
             plt.gca().set_ylim(ylim)
         plt.savefig(params['saveto']+'samples/samples_{}.png'.format(i))
         plt.close()
-        samples = train.m.get_fake(100, params['z_dim'])
+        samples = train.m.get_fake(10000, params['z_dim'])
         if self.F_att_eval is None:
             atts = train.m.F_att(samples).cpu().data.numpy()
         else:
             atts = self.F_att_eval(samples).cpu().data.numpy()
-        self.plot_att_hists2(params, i=i, y2=atts)
+        self.plot_att_hists(params, i=i, y2=atts)
         self.plot_grouped_by_mica(train, params, i=i)
         self.plot_training_hist(train, params, i=i)
 
