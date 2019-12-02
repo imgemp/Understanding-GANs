@@ -149,10 +149,15 @@ class CRISM(Data):
             else:
                 with h5py.File(dataset, 'r') as f:
                     table = f['CRISM_MS']['table'].value
-                    x = np.stack([s[1] for s in table]).astype('float32')
+                    # x = np.stack([s[1] for s in table]).astype('float32')
                     # HACK - ONLY WORKS FOR store_Composite_summParam.h5 dataset
                     inds = np.load('./examples/domains/data/shuffled_inds.npy')
-                    x = x[inds]
+                    if start_row >= inds.shape[0]:
+                        start_row = self.slice_idx = 0
+                        end_row = self.slice_idx + self.slice_size
+                    end_row = min(end_row, inds.shape[0])
+                    x = np.stack([table[inds[i]][1] for i in range(start_row, end_row)]).astype('float32')
+                    # x = x[inds]
             channels += [x.shape[1]]
             nanrows = np.all(np.isnan(x), axis=1)
             if not self.loaded_once: print('Removing {:0.2f}% of {:d} rows (all NaN) from {:s}.'.format(nanrows.sum()/x.shape[0]*100,x.shape[0],dataset))
@@ -181,11 +186,11 @@ class CRISM(Data):
         if scale_mica:
             x_joined = self.fnScaleMICAEM(x_joined)
 
-        if start_row >= x_joined.shape[0]:
-            start_row = self.slice_idx = 0
-            end_row = self.slice_idx + self.slice_size
-        end_row = min(end_row, x_joined.shape[0])
-        x_joined = x_joined[start_row:end_row,:]
+        # if start_row >= x_joined.shape[0]:
+        #     start_row = self.slice_idx = 0
+        #     end_row = self.slice_idx + self.slice_size
+        # end_row = min(end_row, x_joined.shape[0])
+        # x_joined = x_joined[start_row:end_row,:]
 
         return x_joined, goodrows
 
@@ -204,10 +209,15 @@ class CRISM(Data):
             else:
                 with h5py.File(labelset, 'r') as f:
                     table = f['CRISM_summParam']['table'].value
-                    y = np.stack([s[1] for s in table]).astype('float32')
+                    # y = np.stack([s[1] for s in table]).astype('float32')
                     # HACK - ONLY WORKS FOR store_Composite_summParam.h5 dataset
                     inds = np.load('./examples/domains/data/shuffled_inds.npy')
-                    y = y[inds]
+                    # y = y[inds]
+                    if start_row >= inds.shape[0]:
+                        start_row = self.slice_idx = 0
+                        end_row = self.slice_idx + self.slice_size
+                    end_row = min(end_row, inds.shape[0])
+                    y = np.stack([table[inds[i]][1] for i in range(start_row, end_row)]).astype('float32')
                 names = [str(_) for _ in range(y.shape[1])]  # hack for now, where are the names?
             labels += [y.shape[1]]
             ys += [y]
@@ -218,13 +228,13 @@ class CRISM(Data):
         if not self.loaded_once: print('Removing {:0.2f}% of rows (any NaN) from joined labelset.'.format((1-goodrows.sum()/y_joined.shape[0])*100))
         y_joined = y_joined[goodrows]
 
-        # self.prep_hist(y_joined, normalize)
+        self.prep_hist(y_joined, normalize)
 
-        if start_row >= y_joined.shape[0]:
-            start_row = self.slice_idx = 0
-            end_row = self.slice_idx + self.slice_size
-        end_row = min(end_row, y_joined.shape[0])
-        y_joined = y_joined[start_row:end_row,:]
+        # if start_row >= y_joined.shape[0]:
+        #     start_row = self.slice_idx = 0
+        #     end_row = self.slice_idx + self.slice_size
+        # end_row = min(end_row, y_joined.shape[0])
+        # y_joined = y_joined[start_row:end_row,:]
 
         return y_joined, names
 
@@ -333,7 +343,7 @@ class CRISM(Data):
             atts = train.m.F_att(samples).cpu().data.numpy()
         else:
             atts = self.F_att_eval(samples).cpu().data.numpy()
-        self.plot_att_hists(params, i=i, y2=atts)
+        self.plot_att_hists2(params, i=i, y2=atts)
         self.plot_grouped_by_mica(train, params, i=i)
         self.plot_training_hist(train, params, i=i)
 
