@@ -462,17 +462,18 @@ class CRISM(Data):
                     plt.plot(self.waves, samples[idx], 'r--', alpha=(sim+1.)/2.)
                     avg_sim += sim
                     n += 1
-            avg_sim /= float(n)
-            plt.plot(self.waves, self.mica_library[endmember].cpu().data.numpy(), 'k-')
-            plt.title('{:s}: avg_sim={:1.1f}'.format(self.mica_names[endmember], avg_sim), fontsize=fs_tick)
-            plt.xlabel('Channels', fontsize=fs)
-            plt.ylabel('Intensities', fontsize=fs)
-            plt.tick_params(axis='both', which='major', labelsize=fs_tick)
-            if force_ylim:
-                plt.gca().set_ylim(ylim)
-            filename = ''.join([c for c in self.mica_names[endmember] if c.isalpha() or c.isdigit()]).rstrip()
-            plt.savefig(params['saveto']+'mica/{}_{}.png'.format(i, filename))
-            plt.close()
+            if n >= 1:
+                avg_sim /= float(n)
+                plt.plot(self.waves, self.mica_library[endmember].cpu().data.numpy(), 'k-')
+                plt.title('{:s}: avg_sim={:1.1f}'.format(self.mica_names[endmember], avg_sim), fontsize=fs_tick)
+                plt.xlabel('Channels', fontsize=fs)
+                plt.ylabel('Intensities', fontsize=fs)
+                plt.tick_params(axis='both', which='major', labelsize=fs_tick)
+                if force_ylim:
+                    plt.gca().set_ylim(ylim)
+                filename = ''.join([c for c in self.mica_names[endmember] if c.isalpha() or c.isdigit()]).rstrip()
+                plt.savefig(params['saveto']+'mica/{}_{}.png'.format(i, filename))
+                plt.close()
 
     def plot_training_hist(self, train, params, i, ylim=[0,1], force_ylim=True, fs=24, fs_tick=18):
         # if mica_library is not loaded, load it
