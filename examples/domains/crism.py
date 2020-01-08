@@ -463,7 +463,7 @@ class CRISM(Data):
             for idx, sim in list(sample_idxs):
                 if sim >= np.cos(np.pi/4.):
                     alpha = np.clip(0.5 * (sim + 1.), 0., 1.)
-                    plt.plot(self.waves, samples[idx], 'r--', alpha=alpha)
+                    plt.plot(self.waves, samples[idx], '--', color=cm.jet(alpha))
                     avg_sim += sim
                     n += 1
             if n >= 1:
