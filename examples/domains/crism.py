@@ -221,7 +221,8 @@ class CRISM(Data):
                         end_row = self.slice_idx + self.slice_size
                     end_row = min(end_row, inds.shape[0])
                     y = np.stack([table[inds[i]][1] for i in range(start_row, end_row)]).astype('float32')
-                names = [str(_) for _ in range(y.shape[1])]  # hack for now, where are the names?
+                # names = [str(_) for _ in range(y.shape[1])]  # hack for now, where are the names?
+                names = np.load('./examples/domains/data/att_names_first_26.npy')  # what are the last 20?
             labels += [y.shape[1]]
             ys += [y]
         if len(set(labels)) > 1:
