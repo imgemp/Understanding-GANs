@@ -299,7 +299,7 @@ def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discrim
     for name_raw, name, norm in zip(norm_names_raw, norm_names, norms):
         fig = plt.figure()
         ax = plt.subplot(111)
-        plt.plot(range(len(norm)),np.array(norm))
+        plt.semilogy(range(len(norm)),np.array(norm))
         ax.set_ylabel(name)
         ax.set_xlabel('Iteration')
         plt.title('final '+name+'='+str(norm[-1]))
