@@ -359,6 +359,8 @@ class CRISM(Data):
             atts = train.m.F_att(samples).cpu().data.numpy()
         else:
             atts = self.F_att_eval(samples).cpu().data.numpy()
+        print('got here', flush=True)
+        print(atts.shape, flush=True)
         self.plot_att_hists2(params, i=i, y2=atts)
         self.plot_grouped_by_mica(train, params, i=i)
         self.plot_training_hist(train, params, i=i)
