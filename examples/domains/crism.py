@@ -286,6 +286,7 @@ class CRISM(Data):
         # TODO(imgemp): create hist of real data at __init__ (plot memory < actual data)
         plt.clf()
         fig, ax = plt.subplots(10,4, figsize=(22,10))
+        print(len(self.ybins), flush=True)
         for r in range(10):
             for c in range(4):
                 if r*4+c < len(self.ybins):
