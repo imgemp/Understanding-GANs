@@ -262,8 +262,8 @@ class CRISM(Data):
         stds = np.std(y,axis=0)
         mins = np.min(y,axis=0)
         maxs = np.max(y,axis=0)
-        for ycol in y:
-            co, bi = np.histogram(ycol, bins=50, density=1)
+        for col in range(y.shape[1]):
+            co, bi = np.histogram(y[:,col], bins=50, density=1)
             counts += [co]
             bins += [bi]
         # label_stats = np.load('./examples/domains/data/label_stats.npz')
@@ -286,7 +286,6 @@ class CRISM(Data):
         # TODO(imgemp): create hist of real data at __init__ (plot memory < actual data)
         plt.clf()
         fig, ax = plt.subplots(10,4, figsize=(22,10))
-        print(len(self.ybins), flush=True)
         for r in range(10):
             for c in range(4):
                 if r*4+c < len(self.ybins):
@@ -359,8 +358,6 @@ class CRISM(Data):
             atts = train.m.F_att(samples).cpu().data.numpy()
         else:
             atts = self.F_att_eval(samples).cpu().data.numpy()
-        print('got here', flush=True)
-        print(atts.shape, flush=True)
         self.plot_att_hists2(params, i=i, y2=atts)
         self.plot_grouped_by_mica(train, params, i=i)
         self.plot_training_hist(train, params, i=i)
