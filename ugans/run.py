@@ -193,8 +193,6 @@ def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discrim
     data.plot_real(params)
     G = Generator(input_dim=params['z_dim'],output_dim=params['x_dim'],n_hidden=params['gen_n_hidden'],
                   n_layer=params['gen_n_layer'],nonlin=params['gen_nonlinearity'])
-    print('now we are here', flush=True)
-    print(params['att_dim'], flush=True)
     F_att = AttExtractor(input_dim=params['x_dim'],output_dim=params['att_dim'],n_hidden=params['att_n_hidden'],
                          n_layer=params['att_n_layer'],nonlin=params['att_nonlinearity'])
     F_lat = LatExtractor(input_dim=params['x_dim'],output_dim=params['lat_dim'],n_hidden=params['lat_n_hidden'],

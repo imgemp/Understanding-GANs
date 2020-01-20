@@ -436,7 +436,7 @@ class CRISM(Data):
             sliHdr = envi.read_envi_header(sliHdrName)
             endMem_Name = sliHdr['spectra names']
             not_hematite = np.array([(name != 'HEMATITE') for name in endMem_Name])
-            self.mica_names = endMem_Name[not_hematite]
+            self.mica_names = list(np.array(endMem_Name)[not_hematite])
             subset = (0,240)
             micaSLI = envi.open(sliHdrName, sliName)
             mica_dataRed = micaSLI.spectra[not_hematite, :]
@@ -577,7 +577,7 @@ class Generator(Net):
 class AttExtractor(Net):
     def __init__(self, input_dim, output_dim, n_hidden=128, n_layer=2, nonlin='leaky_relu'):
         super(AttExtractor, self).__init__()
-        print(output_dim, flush=True)
+
         hidden_fcs = []
         in_dim = input_dim
         for l in range(n_layer):
