@@ -242,7 +242,7 @@ class CRISM(Data):
         if not self.loaded_once: print('Removing {:0.2f}% of rows (any NaN) from joined labelset.'.format((1-goodrows.sum()/y_joined.shape[0])*100))
         y_joined = y_joined[goodrows]
         y_joined = np.clip(y_joined, 0., np.inf)
-        print(y_joined.shape)
+
         self.prep_hist(y_joined, normalize)
 
         # if start_row >= y_joined.shape[0]:

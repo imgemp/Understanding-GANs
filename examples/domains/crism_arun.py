@@ -115,6 +115,7 @@ class AttExtractor(Net):
         if self.first_forward: print('\nLatExtractor output shape:', flush=True)
         output = self.main(x)
         if self.first_forward: print(output.shape, flush=True)
+        if self.first_forward: print(self.output_dim, flush=True)
         self.first_forward = False
         return output
 
