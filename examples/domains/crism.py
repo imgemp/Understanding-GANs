@@ -262,12 +262,10 @@ class CRISM(Data):
         stds = np.std(y,axis=0)
         mins = np.min(y,axis=0)
         maxs = np.max(y,axis=0)
-        for r in range(7):
-            for c in range(4):
-                if r*4+c < 26:
-                    co, bi = np.histogram(y[:,r*4+c], bins=50, density=1)
-                    counts += [co]
-                    bins += [bi]
+        for ycol in y:
+            co, bi = np.histogram(ycol, bins=50, density=1)
+            counts += [co]
+            bins += [bi]
         # label_stats = np.load('./examples/domains/data/label_stats.npz')
         np.savez_compressed('./examples/domains/data/label_stats_thresholded.npz',
             counts=counts, bins=bins, mins=mins, maxs=maxs, stds=stds)
@@ -287,10 +285,10 @@ class CRISM(Data):
             stds2 = np.std(y2,axis=0)
         # TODO(imgemp): create hist of real data at __init__ (plot memory < actual data)
         plt.clf()
-        fig, ax = plt.subplots(7,4, figsize=(20,10))
-        for r in range(7):
+        fig, ax = plt.subplots(10,4, figsize=(22,10))
+        for r in range(10):
             for c in range(4):
-                if r*4+c < 26:
+                if r*4+c < self.ybins.shape[0]:
                     n, bins, _ = ax[r,c].hist(self.ybins[r*4+c][:-1], bins=self.ybins[r*4+c], weights=self.ycounts[r*4+c], color='b', alpha=0.5)
                     if y2 is not None:
                         ax[r,c].hist(y2[:,r*4+c], bins=bins, density=1, color='r', alpha=0.5)
@@ -317,10 +315,10 @@ class CRISM(Data):
             stds2 = np.std(y2,axis=0)
         # TODO(imgemp): create hist of real data at __init__ (plot memory < actual data)
         plt.clf()
-        fig, ax = plt.subplots(7,4, figsize=(20,10))
-        for r in range(7):
+        fig, ax = plt.subplots(10,4, figsize=(22,10))
+        for r in range(10):
             for c in range(4):
-                if r*4+c < 26:
+                if r*4+c < y.shape[1]:
                     n, bins, _ = ax[r,c].hist(y[:,r*4+c], bins=50, density=1, color='b', alpha=0.5)
                     if y2 is not None:
                         ax[r,c].hist(y2[:,r*4+c], bins=bins, density=1, color='r', alpha=0.5)
