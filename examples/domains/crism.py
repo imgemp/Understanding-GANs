@@ -288,7 +288,7 @@ class CRISM(Data):
         fig, ax = plt.subplots(10,4, figsize=(22,10))
         for r in range(10):
             for c in range(4):
-                if r*4+c < self.ybins.shape[0]:
+                if r*4+c < len(self.ybins):
                     n, bins, _ = ax[r,c].hist(self.ybins[r*4+c][:-1], bins=self.ybins[r*4+c], weights=self.ycounts[r*4+c], color='b', alpha=0.5)
                     if y2 is not None:
                         ax[r,c].hist(y2[:,r*4+c], bins=bins, density=1, color='r', alpha=0.5)
