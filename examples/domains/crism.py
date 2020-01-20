@@ -232,7 +232,7 @@ class CRISM(Data):
                          "MIN2250", "BD2265", "BD2290", "D2300", "BD2355", "SINDEX2", "ICER2_2", "MIN2295_2480",
                          "MIN2345_2537", "BD2500_2", "BD3000", "BD3100", "BD3200", "BD3400_2", "CINDEX2", "BD2600",
                          "IRR2", "IRR3", "R1080", "R1506", "R2529", "R3920"]
-                names = names[~bad_atts]
+                names = list(np.array(names)[~bad_atts])
             labels += [y.shape[1]]
             ys += [y]
         if len(set(labels)) > 1:
