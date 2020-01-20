@@ -221,8 +221,18 @@ class CRISM(Data):
                         end_row = self.slice_idx + self.slice_size
                     end_row = min(end_row, inds.shape[0])
                     y = np.stack([table[inds[i]][1] for i in range(start_row, end_row)]).astype('float32')
+                    bad_atts = np.any(y==65535, axis=0)
+                    if not self.loaded_once: print('Removing {:d} columns (65535) from joined labelset.'.format(np.sum(bad_atts)))
+                    y = y[:, ~bad_atts]
                 # names = [str(_) for _ in range(y.shape[1])]  # hack for now, where are the names?
-                names = np.load('./examples/domains/data/att_names_first_26.npy')  # what are the last 20?
+                # names = np.load('./examples/domains/data/att_names_first_26.npy')  # what are the last 20?
+                names = ["BDI1000IR", "OLINDEX3", "R1330", "BD1300", "LCPINDEX2", "HCPINDEX2", "VAR", "ISLOPE1",
+                         "BD1400", "BD1435", "BD1500_2", "ICER1_2", "BD1750_2", "BD1900_2", "BD1900R2", "BDI2000",
+                         "BD2100_2", "BD2165", "BD2190", "MIN2200", "BD2210_2", "D2200", "BD2230", "BD2250",
+                         "MIN2250", "BD2265", "BD2290", "D2300", "BD2355", "SINDEX2", "ICER2_2", "MIN2295_2480",
+                         "MIN2345_2537", "BD2500_2", "BD3000", "BD3100", "BD3200", "BD3400_2", "CINDEX2", "BD2600",
+                         "IRR2", "IRR3", "R1080", "R1506", "R2529", "R3920"]
+                names = names[~bad_atts]
             labels += [y.shape[1]]
             ys += [y]
         if len(set(labels)) > 1:
@@ -423,16 +433,17 @@ class CRISM(Data):
             # subset = (4,244)
             sliName = './examples/domains/data/CRISM_data_summPar_1/yukiMicaNum.sli'
             sliHdrName = './examples/domains/data/CRISM_data_summPar_1/yukiMicaNum.hdr'
+            sliHdr = envi.read_envi_header(sliHdrName)
+            endMem_Name = sliHdr['spectra names']
+            not_hematite = np.array([name= != 'HEMATITE' for name in endMem_Name])
+            self.mica_names = endMem_Name[not_hematite]
             subset = (0,240)
             micaSLI = envi.open(sliHdrName, sliName)
-            mica_dataRed = micaSLI.spectra
+            mica_dataRed = micaSLI.spectra[not_hematite, :]
             mica_dataRed = self.fnScaleMICAEM(mica_dataRed[:, subset[0]:subset[1]]).astype('float32')
             mica_dataRed = self.zero_one_x_ind(mica_dataRed)
             # mica_dataRed -= 0.5
             self.mica_library = train.m.to_gpu(torch.from_numpy(mica_dataRed))
-            sliHdr = envi.read_envi_header(sliHdrName)
-            endMem_Name = sliHdr['spectra names']
-            self.mica_names = endMem_Name
 
     def plot_grouped_by_mica(self, train, params, i, ylim=[0,1], force_ylim=True, fs=24, fs_tick=18):
         # if mica_library is not loaded, load it
@@ -465,7 +476,9 @@ class CRISM(Data):
             avg_sim = 0.
             for idx, sim in list(sample_idxs):
                 if sim >= np.cos(np.pi/4.):
-                    alpha = np.clip(0.5 * (sim + 1.), 0., 1.)
+                    # alpha = np.clip(0.5 * (sim + 1.), 0., 1.)
+                    sim_norm = (sim - np.cos(np.pi/4.)) / (1. - np.cos(np.pi/4.))
+                    alpha = np.clip(sim_norm, 0., 1.)
                     plt.plot(self.waves, samples[idx], '--', color=cm.jet(alpha))
                     avg_sim += sim
                     n += 1

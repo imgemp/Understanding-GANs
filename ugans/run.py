@@ -302,6 +302,7 @@ def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discrim
         plt.semilogy(range(len(norm)),np.array(norm))
         ax.set_ylabel(name)
         ax.set_xlabel('Iteration')
+        ax.set_ylim([np.array(norm).min()*.9, np.array(norm).max()*1.1])
         plt.title('final '+name+'='+str(norm[-1]))
         fig.savefig(params['saveto']+name_raw+'_norm.pdf')
 
