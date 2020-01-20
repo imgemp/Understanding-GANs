@@ -435,7 +435,7 @@ class CRISM(Data):
             sliHdrName = './examples/domains/data/CRISM_data_summPar_1/yukiMicaNum.hdr'
             sliHdr = envi.read_envi_header(sliHdrName)
             endMem_Name = sliHdr['spectra names']
-            not_hematite = np.array([name= != 'HEMATITE' for name in endMem_Name])
+            not_hematite = np.array([(name != 'HEMATITE') for name in endMem_Name])
             self.mica_names = endMem_Name[not_hematite]
             subset = (0,240)
             micaSLI = envi.open(sliHdrName, sliName)
