@@ -49,7 +49,7 @@ def simple_plot(data_1d, xlabel, ylabel, title, filepath, logy=False, clip_min=1
     fig = plt.figure()
     ax = plt.subplot(111)
     if logy:
-        plt.semilogy(range(len(data_1d)),np.clip(np.array(data_1d), clip_min))
+        plt.semilogy(range(len(data_1d)), np.clip(np.array(data_1d), clip_min, np.inf))
     else:
         plt.plot(range(len(data_1d)),np.array(data_1d))
     ax.set_xlabel(xlabel)
