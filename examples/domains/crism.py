@@ -487,7 +487,7 @@ class CRISM(Data):
             if n >= 1:
                 avg_sim /= float(n)
                 plt.plot(self.waves, self.mica_library[endmember].cpu().data.numpy(), 'k-')
-                plt.title('{:s}: avg_sim={:1.4f} global_min/max={:1.4f}/{:1.4f}'.format(self.mica_names[endmember], avg_sim, sim_min, sim_max), fontsize=fs_tick)
+                plt.title('{:s}: avg_sim={:1.4f} global_min/max={:1.4f}/{:1.4f}'.format(self.mica_names[endmember], avg_sim, sim_min, sim_max), fontsize=fs_tick-6)
                 plt.xlabel('Channels', fontsize=fs)
                 plt.ylabel('Intensities', fontsize=fs)
                 plt.tick_params(axis='both', which='major', labelsize=fs_tick)
