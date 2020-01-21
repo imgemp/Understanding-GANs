@@ -300,7 +300,7 @@ class CRISM(Data):
                     ax[r,c].set_xticks([mn,mx])
                     ax[r,c].set_xticklabels([mn,mx])
                     ax[r,c].set_yticklabels([])
-        plt.title('Blue is Real')
+        plt.title('Blue is Real, Hists are Log scale')
         fig.tight_layout()
         plt.savefig(params['saveto']+'hists/att_hist_{}.png'.format(i))
         plt.close()
@@ -472,13 +472,14 @@ class CRISM(Data):
         samples = samples.cpu().data.numpy()
         # sim_min = np.cos(np.pi/4.)
         sim_min = max(np.cos(np.pi/4.), np.min(np.max(similarity, axis=1)))
+        sim_max = np.max(similarity)
         for endmember, sample_idxs in groups.items():
             n = 0
             avg_sim = 0.
             for idx, sim in list(sample_idxs):
                 if sim >= sim_min:
                     # alpha = np.clip(0.5 * (sim + 1.), 0., 1.)
-                    sim_norm = (sim - sim_min) / (1. - sim_min)
+                    sim_norm = (sim - sim_min) / (sim_max - sim_min)
                     alpha = np.clip(sim_norm, 0., 1.)
                     plt.plot(self.waves, samples[idx], '--', color=cm.jet(alpha))
                     avg_sim += sim
@@ -486,7 +487,7 @@ class CRISM(Data):
             if n >= 1:
                 avg_sim /= float(n)
                 plt.plot(self.waves, self.mica_library[endmember].cpu().data.numpy(), 'k-')
-                plt.title('{:s}: avg_sim={:1.4f} global_min={:1.4f}'.format(self.mica_names[endmember], avg_sim, sim_min), fontsize=fs_tick)
+                plt.title('{:s}: avg_sim={:1.4f} global_min/max={:1.4f}/{:1.4f}'.format(self.mica_names[endmember], avg_sim, sim_min, sim_max), fontsize=fs_tick)
                 plt.xlabel('Channels', fontsize=fs)
                 plt.ylabel('Intensities', fontsize=fs)
                 plt.tick_params(axis='both', which='major', labelsize=fs_tick)
