@@ -272,7 +272,7 @@ def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discrim
             for name, loss in zip(loss_names, losses):
                 simple_plot(data_1d=loss, xlabel='Iteration', ylabel=name, title='final '+name+'='+str(loss[-1]), filepath=params['saveto']+name+'.pdf')
             for name_raw, name, norm in zip(norm_names_raw, norm_names, norms):
-                simple_plot(data_1d=norm, xlabel='Iteration', ylabel=name, title='final '+name+'='+str(norm[-1]), filepath=params['saveto']+name_raw+'_norm.pdf')
+                simple_plot(data_1d=norm, xlabel='Iteration', ylabel=name, title='final '+name+'='+str(norm[-1]), filepath=params['saveto']+name_raw+'_norm.pdf', logy=True)
 
         if params['weights_every'] > 0 and i % params['weights_every'] == 0:
             for mod, name in zip(m.mods, m.mod_names):

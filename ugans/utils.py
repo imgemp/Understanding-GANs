@@ -45,10 +45,13 @@ def detach_all(a):
             detached += [ai.detach()]
     return detached
 
-def simple_plot(data_1d, xlabel, ylabel, title, filepath):
+def simple_plot(data_1d, xlabel, ylabel, title, filepath, logy=False, clip_min=1e-40):
     fig = plt.figure()
     ax = plt.subplot(111)
-    plt.plot(range(len(data_1d)),np.array(data_1d))
+    if logy:
+        plt.semilogy(range(len(data_1d)),np.clip(np.array(data_1d), clip_min))
+    else:
+        plt.plot(range(len(data_1d)),np.array(data_1d))
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
     plt.title(title)

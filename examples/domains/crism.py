@@ -289,9 +289,9 @@ class CRISM(Data):
         for r in range(10):
             for c in range(4):
                 if r*4+c < len(self.ybins):
-                    n, bins, _ = ax[r,c].hist(self.ybins[r*4+c][:-1], bins=self.ybins[r*4+c], weights=self.ycounts[r*4+c], color='b', alpha=0.5)
+                    n, bins, _ = ax[r,c].hist(self.ybins[r*4+c][:-1], bins=self.ybins[r*4+c], weights=self.ycounts[r*4+c], log=True, color='b', alpha=0.5)
                     if y2 is not None:
-                        ax[r,c].hist(y2[:,r*4+c], bins=bins, density=1, color='r', alpha=0.5)
+                        ax[r,c].hist(y2[:,r*4+c], bins=bins, density=1, log=True, color='r', alpha=0.5)
                     ax[r,c].set_ylabel(str(r*4+c))
                     ax[r,c].set_title(r'{:s}: {:.3f}$\sigma$'.format(self.att_names[r*4+c], self.ystds[r*4+c]))
                     ax[r,c].tick_params(left=False,bottom=True,right=False,top=False)
@@ -300,6 +300,7 @@ class CRISM(Data):
                     ax[r,c].set_xticks([mn,mx])
                     ax[r,c].set_xticklabels([mn,mx])
                     ax[r,c].set_yticklabels([])
+        plt.title('Blue is Real')
         fig.tight_layout()
         plt.savefig(params['saveto']+'hists/att_hist_{}.png'.format(i))
         plt.close()
@@ -469,13 +470,15 @@ class CRISM(Data):
         # for each class in generated spectra:
         # plot spectra and save plot with filename as mica match
         samples = samples.cpu().data.numpy()
+        # sim_min = np.cos(np.pi/4.)
+        sim_min = max(np.cos(np.pi/4.), np.min(np.max(similarity, axis=1)))
         for endmember, sample_idxs in groups.items():
             n = 0
             avg_sim = 0.
             for idx, sim in list(sample_idxs):
-                if sim >= np.cos(np.pi/4.):
+                if sim >= sim_min:
                     # alpha = np.clip(0.5 * (sim + 1.), 0., 1.)
-                    sim_norm = (sim - np.cos(np.pi/4.)) / (1. - np.cos(np.pi/4.))
+                    sim_norm = (sim - sim_min) / (1. - sim_min)
                     alpha = np.clip(sim_norm, 0., 1.)
                     plt.plot(self.waves, samples[idx], '--', color=cm.jet(alpha))
                     avg_sim += sim
@@ -483,7 +486,7 @@ class CRISM(Data):
             if n >= 1:
                 avg_sim /= float(n)
                 plt.plot(self.waves, self.mica_library[endmember].cpu().data.numpy(), 'k-')
-                plt.title('{:s}: avg_sim={:1.1f}'.format(self.mica_names[endmember], avg_sim), fontsize=fs_tick)
+                plt.title('{:s}: avg_sim={:1.4f} global_min={:1.4f}'.format(self.mica_names[endmember], avg_sim, sim_min), fontsize=fs_tick)
                 plt.xlabel('Channels', fontsize=fs)
                 plt.ylabel('Intensities', fontsize=fs)
                 plt.tick_params(axis='both', which='major', labelsize=fs_tick)
