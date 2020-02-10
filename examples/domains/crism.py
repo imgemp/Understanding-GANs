@@ -269,9 +269,12 @@ class CRISM(Data):
             bins += [bi]
             # fit power law
             X = np.stack([bi[:-1], np.ones(len(bi)-1)], axis=1)
+            positive = (co > 0)
+            X = X[positive]
+            co = co[positive]
             w = np.dot(np.linalg.pinv(np.dot(X.T, X) + 1e-8*np.eye(2)), np.dot(X.T, np.log(co)))
             print(w, np.dot(X.T, X), np.linalg.pinv(np.dot(X.T, X) + 1e-8*np.eye(2)))
-            w = np.linalg.lstsq(X, np.log(co))
+            w = np.linalg.lstsq(X, np.log(co))[0]
             powerfits += [w]
         print(len(powerfits))
         # label_stats = np.load('./examples/domains/data/label_stats.npz')
