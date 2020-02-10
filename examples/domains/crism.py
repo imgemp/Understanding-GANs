@@ -296,7 +296,7 @@ class CRISM(Data):
             for c in range(4):
                 if r*4+c < len(self.ybins):
                     n, bins, _ = ax[r,c].hist(self.ybins[r*4+c][:-1], bins=self.ybins[r*4+c], weights=self.ycounts[r*4+c], log=True, color='b', alpha=0.5)
-                    ax[r,c].plot(self.ybins[r*4+c][:-1], np.exp(self.powerfit[r*4+c][0]*self.ybins[r*4+c][:-1]+self.powerfit[r*4+c][1]), color='b', lw=4)
+                    ax[r,c].plot(self.ybins[r*4+c][:-1], np.exp(self.powerfits[r*4+c][0]*self.ybins[r*4+c][:-1]+self.powerfits[r*4+c][1]), color='b', lw=4)
                     if y2 is not None:
                         ax[r,c].hist(y2[:,r*4+c], bins=bins, density=1, log=True, color='r', alpha=0.5)
                     ax[r,c].set_ylabel(str(r*4+c))
