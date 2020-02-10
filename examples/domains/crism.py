@@ -259,6 +259,7 @@ class CRISM(Data):
             y = scaler.fit_transform(y)
         counts = []
         bins = []
+        powerfits = []
         stds = np.std(y,axis=0)
         mins = np.min(y,axis=0)
         maxs = np.max(y,axis=0)
@@ -266,14 +267,19 @@ class CRISM(Data):
             co, bi = np.histogram(y[:,col], bins=50, density=1)
             counts += [co]
             bins += [bi]
+            # fit power law
+            X = np.stack([bi[:-1], np.ones(len(bi)-1)], axis=1)
+            w = np.dot(np.linalg.pinv(np.dot(X.T, X)), np.dot(X.T, np.log(co)))
+            powerfits += [w]
         # label_stats = np.load('./examples/domains/data/label_stats.npz')
         np.savez_compressed('./examples/domains/data/label_stats_thresholded.npz',
-            counts=counts, bins=bins, mins=mins, maxs=maxs, stds=stds)
+            counts=counts, bins=bins, mins=mins, maxs=maxs, stds=stds, powerfits=powerfits)
         self.ycounts = counts
         self.ybins = bins
         self.ymins = mins
         self.ymaxs = maxs
         self.ystds = stds
+        self.powerfits = powerfits
         # self.ycounts = label_stats['counts']
         # self.ybins = label_stats['bins']
         # self.ymins = label_stats['mins']
@@ -290,6 +296,7 @@ class CRISM(Data):
             for c in range(4):
                 if r*4+c < len(self.ybins):
                     n, bins, _ = ax[r,c].hist(self.ybins[r*4+c][:-1], bins=self.ybins[r*4+c], weights=self.ycounts[r*4+c], log=True, color='b', alpha=0.5)
+                    ax[r,c].plot(self.ybins[r*4+c][:-1], np.exp(self.powerfit[r*4+c][0]*self.ybins[r*4+c][:-1]+self.powerfit[r*4+c][1]), color='b', lw=4)
                     if y2 is not None:
                         ax[r,c].hist(y2[:,r*4+c], bins=bins, density=1, log=True, color='r', alpha=0.5)
                     ax[r,c].set_ylabel(str(r*4+c))
