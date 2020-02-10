@@ -272,8 +272,8 @@ class CRISM(Data):
             positive = (co > 0)
             X = X[positive]
             co = co[positive]
-            w = np.dot(np.linalg.pinv(np.dot(X.T, X) + 1e-8*np.eye(2)), np.dot(X.T, np.log(co)))
-            print(w, np.dot(X.T, X), np.linalg.pinv(np.dot(X.T, X) + 1e-8*np.eye(2)))
+            # w = np.dot(np.linalg.pinv(np.dot(X.T, X) + 1e-8*np.eye(2)), np.dot(X.T, np.log(co)))
+            # print(w, np.dot(X.T, X), np.linalg.pinv(np.dot(X.T, X) + 1e-8*np.eye(2)))
             w = np.linalg.lstsq(X, np.log(co))[0]
             powerfits += [w]
         print(len(powerfits))
@@ -285,7 +285,7 @@ class CRISM(Data):
         self.ymins = mins
         self.ymaxs = maxs
         self.ystds = stds
-        self.powerfits = powerfits
+        self.powerfits = np.stack(powerfits, axis=0)
         # self.ycounts = label_stats['counts']
         # self.ybins = label_stats['bins']
         # self.ymins = label_stats['mins']
