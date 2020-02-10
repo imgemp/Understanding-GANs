@@ -105,8 +105,8 @@ class Manager(object):
         if params['att_type'] == 0:
             self.att_loss = lambda pred, true: torch.mean(-(true*torch.log(pred+1e-10) + (1-true)*torch.log(1-pred+1e-10)))
         elif params['att_type'] == 1:
-            m = torch.from_numpy(data.powerfits[:,0]).float()
-            b = torch.from_numpy(data.powerfits[:,1]).float()
+            m = self.to_gpu(Variable(torch.from_numpy(data.powerfits[:,0]).float()))
+            b = self.to_gpu(Variable(torch.from_numpy(data.powerfits[:,1]).float()))
             self.att_loss = lambda pred, true: torch.mean(torch.exp(-m*true-b) * (pred-true)**2.)
         elif params['att_type'] == 2:
             m = self.to_gpu(Variable(torch.from_numpy(data.powerfits[:,0]).float()))
