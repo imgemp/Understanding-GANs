@@ -308,7 +308,6 @@ class CRISM(Data):
                     ax[r,c].set_ylabel(str(r*4+c))
                     ax[r,c].set_title(r'{:s}: {:.3f}$\sigma$'.format(self.att_names[r*4+c], self.ystds[r*4+c]))
                     ax[r,c].tick_params(left=False,bottom=True,right=False,top=False)
-                    ax[r,c].locator_params(axis='y', nbins=2)
                     mn = min(self.ymins[r*4+c],y2[:,r*4+c].min())
                     mx = max(self.ymaxs[r*4+c],y2[:,r*4+c].max())
                     ax[r,c].set_xticks([mn,mx])
