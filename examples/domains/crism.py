@@ -270,7 +270,9 @@ class CRISM(Data):
             # fit power law
             X = np.stack([bi[:-1], np.ones(len(bi)-1)], axis=1)
             w = np.dot(np.linalg.pinv(np.dot(X.T, X)), np.dot(X.T, np.log(co)))
+            print(w)
             powerfits += [w]
+        print(len(powerfits))
         # label_stats = np.load('./examples/domains/data/label_stats.npz')
         np.savez_compressed('./examples/domains/data/label_stats_thresholded.npz',
             counts=counts, bins=bins, mins=mins, maxs=maxs, stds=stds, powerfits=powerfits)
