@@ -314,7 +314,7 @@ class CRISM(Data):
                     ax[r,c].set_xticklabels([mn,mx])
                     ymax = np.max(self.ycounts[r*4+c])
                     ax[r,c].set_yticks([ymax])
-                    ax[r,c].set_yticklabels([ymax])
+                    ax[r,c].set_yticklabels([np.around(ymax, decimals=1)])
                     # ax[r,c].set_yticklabels([])
         plt.title('Blue is Real, Hists are Log scale')
         fig.tight_layout()
