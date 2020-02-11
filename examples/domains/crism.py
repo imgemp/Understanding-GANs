@@ -276,6 +276,7 @@ class CRISM(Data):
             # print(w, np.dot(X.T, X), np.linalg.pinv(np.dot(X.T, X) + 1e-8*np.eye(2)))
             w = np.linalg.lstsq(X, np.log(co))[0]
             powerfits += [w]
+            print(co.min(), 1./co.min())
         print(len(powerfits))
         # label_stats = np.load('./examples/domains/data/label_stats.npz')
         np.savez_compressed('./examples/domains/data/label_stats_thresholded.npz',

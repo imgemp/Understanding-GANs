@@ -107,11 +107,11 @@ class Manager(object):
         elif params['att_type'] == 1:
             m = self.to_gpu(Variable(torch.from_numpy(data.powerfits[:,0]).float()))
             b = self.to_gpu(Variable(torch.from_numpy(data.powerfits[:,1]).float()))
-            self.att_loss = lambda pred, true: torch.mean(torch.exp(-m*true-b) * (pred-true)**2.)
+            self.att_loss = lambda pred, true: torch.mean(torch.clamp(1e-3 * torch.exp(-m*true-b), 0., 100.) * (pred-true)**2.)
         elif params['att_type'] == 2:
             m = self.to_gpu(Variable(torch.from_numpy(data.powerfits[:,0]).float()))
             b = self.to_gpu(Variable(torch.from_numpy(data.powerfits[:,1]).float()))
-            self.att_loss = lambda pred, true: torch.mean(torch.exp(-m*true-b) * torch.abs(pred-true))
+            self.att_loss = lambda pred, true: torch.mean(torch.clamp(1e-3 * torch.exp(-m*true-b), 0., 100.) * torch.abs(pred-true))
         else:
             self.att_loss = lambda pred, true: 0*torch.mean(pred)
         self.logger = logger
