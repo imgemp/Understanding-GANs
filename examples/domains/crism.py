@@ -260,6 +260,9 @@ class CRISM(Data):
         counts = []
         bins = []
         powerfits = []
+        print('number no significant atts', np.sum(np.all(y<0, axis=1)))
+        print('percentage no significant atts', np.mean(np.all(y<0, axis=1)))
+        print('total', y.shape[0])
         stds = np.std(y,axis=0)
         mins = np.min(y,axis=0)
         maxs = np.max(y,axis=0)
