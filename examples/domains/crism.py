@@ -260,7 +260,7 @@ class CRISM(Data):
         counts = []
         bins = []
         powerfits = []
-        perc = 90
+        perc = 50
         print('percentile', flush=True)
         print(np.percentile(y, perc, axis=0)[None], flush=True)
         print('precentile.shape', flush=True)
