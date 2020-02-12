@@ -260,9 +260,12 @@ class CRISM(Data):
         counts = []
         bins = []
         powerfits = []
-        print('number no significant atts', np.sum(np.all(y<0, axis=1)))
-        print('percentage no significant atts', np.mean(np.all(y<0, axis=1)))
-        print('total', y.shape[0])
+        print('number no significant atts', flush=True)
+        print(np.sum(np.all(y<0, axis=1)), flush=True)
+        print('percentage no significant atts', flush=True)
+        print(np.mean(np.all(y<0, axis=1)), flush=True)
+        print('total', flush=True)
+        print(y.shape[0], flush=True)
         stds = np.std(y,axis=0)
         mins = np.min(y,axis=0)
         maxs = np.max(y,axis=0)
@@ -279,8 +282,8 @@ class CRISM(Data):
             # print(w, np.dot(X.T, X), np.linalg.pinv(np.dot(X.T, X) + 1e-8*np.eye(2)))
             w = np.linalg.lstsq(X, np.log(co))[0]
             powerfits += [w]
-            print(co.min(), 1./co.min())
-        print(len(powerfits))
+            print(1./co.min(), flush=True)
+        # print(len(powerfits))
         # label_stats = np.load('./examples/domains/data/label_stats.npz')
         np.savez_compressed('./examples/domains/data/label_stats_thresholded.npz',
             counts=counts, bins=bins, mins=mins, maxs=maxs, stds=stds, powerfits=powerfits)
