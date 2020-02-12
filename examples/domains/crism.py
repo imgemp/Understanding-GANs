@@ -260,7 +260,13 @@ class CRISM(Data):
         counts = []
         bins = []
         powerfits = []
-        insig = np.all(y < np.percentile(y, 90, axis=0)[None], axis=1)
+        perc = 90
+        print('percentile', flush=True)
+        print(np.percentile(y, perc, axis=0)[None], flush=True)
+        print('precentile.shape', flush=True)
+        p = np.percentile(y, perc, axis=0)[None]
+        print(p.shape, flush=True)
+        insig = np.all(y < np.percentile(y, perc, axis=0)[None], axis=1)
         print('insig.shape', flush=True)
         print(insig.shape, flush=True)
         print('insig', flush=True)
