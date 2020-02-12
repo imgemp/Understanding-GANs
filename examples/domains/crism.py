@@ -245,6 +245,7 @@ class CRISM(Data):
         y_joined = np.clip(y_joined, 0., np.inf)
 
         new_goodrows = self.prep_hist(y_joined, normalize)
+        y_joined = y_joined[new_goodrows]
 
         # if start_row >= y_joined.shape[0]:
         #     start_row = self.slice_idx = 0
