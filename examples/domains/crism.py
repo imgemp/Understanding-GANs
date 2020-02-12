@@ -260,10 +260,11 @@ class CRISM(Data):
         counts = []
         bins = []
         powerfits = []
+        insig = np.all(y < np.percentile(y, 90, axis=1)[:,None], axis=1)
         print('number no significant atts', flush=True)
-        print(np.sum(np.all(y<0, axis=1)), flush=True)
+        print(np.sum(insig), flush=True)
         print('percentage no significant atts', flush=True)
-        print(np.mean(np.all(y<0, axis=1)), flush=True)
+        print(100. * np.mean(insig), flush=True)
         print('total', flush=True)
         print(y.shape[0], flush=True)
         stds = np.std(y,axis=0)
