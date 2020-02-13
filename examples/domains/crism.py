@@ -256,7 +256,7 @@ class CRISM(Data):
         return y_joined, names, new_goodrows
 
     def prep_hist(self, y, normalize=True):
-        perc = 95
+        perc = 0  # 95
         print('percentile', flush=True)
         print(np.percentile(y, perc, axis=0)[None], flush=True)
         print('precentile.shape', flush=True)
