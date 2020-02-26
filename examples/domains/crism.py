@@ -84,7 +84,7 @@ class CRISM(Data):
         # x -= 0.5
         y, names, new_goodrows = self.get_np_labels(labelsets, goodrows, normalize)
         x = x[new_goodrows]
-        if not self.binarize and normalize:
+        if not self.binarize_y and normalize:
             scaler = StandardScaler()
             y = scaler.fit_transform(y)
             # y = self.zero_one_y(y)
