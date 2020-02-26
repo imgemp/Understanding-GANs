@@ -334,6 +334,7 @@ class CRISM(Data):
         maxs = np.max(y,axis=0)
         for col in range(y.shape[1]):
             co, bi = np.histogram(y[:,col], bins=2, density=1)
+            print(bi)
             counts += [co]
             bins += [bi]
         # label_stats = np.load('./examples/domains/data/label_stats.npz')
@@ -368,8 +369,12 @@ class CRISM(Data):
                     ax[r,c].set_ylabel(str(r*4+c))
                     ax[r,c].set_title(r'{:s}: {:.3f}$\sigma$'.format(self.att_names[r*4+c], self.ystds[r*4+c]))
                     ax[r,c].tick_params(left=False,bottom=True,right=False,top=False)
-                    mn = min(self.ymins[r*4+c],y2[:,r*4+c].min())
-                    mx = max(self.ymaxs[r*4+c],y2[:,r*4+c].max())
+                    if self.binarize_y:
+                        mn = 0.
+                        mx = 1.
+                    else:
+                        mn = min(self.ymins[r*4+c],y2[:,r*4+c].min())
+                        mx = max(self.ymaxs[r*4+c],y2[:,r*4+c].max())
                     ax[r,c].set_xticks([mn,mx])
                     ax[r,c].set_xticklabels([mn,mx])
                     ymax = np.max(self.ycounts[r*4+c])
