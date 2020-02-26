@@ -372,7 +372,7 @@ class CRISM(Data):
                     if y2 is not None:
                         if self.binarize_y:
                             p_pos = y2[:,r*4+c].mean()
-                            ax[r,c].bar(x=[0.25, 0.75], height=[1.-p_pos, p_pos], width=0.5)
+                            ax[r,c].bar(x=[0.25, 0.75], height=[1.-p_pos, p_pos], width=0.5, color='r', alpha=0.5)
                         else:
                             ax[r,c].hist(y2[:,r*4+c], bins=bins, density=1, log=log, color='r', alpha=0.5)
                     ax[r,c].set_ylabel(str(r*4+c))
