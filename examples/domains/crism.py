@@ -702,7 +702,7 @@ class AttExtractor(Net):
 
 class AttExtractorBin(Net):
     def __init__(self, input_dim, output_dim, n_hidden=128, n_layer=2, nonlin='leaky_relu'):
-        super(AttExtractor, self).__init__()
+        super(AttExtractorBin, self).__init__()
 
         hidden_fcs = []
         in_dim = input_dim
