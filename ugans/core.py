@@ -103,7 +103,13 @@ class Manager(object):
         elif params['divergence'] == 'Wasserstein':
             self.criterion = lambda dec, label: torch.mean(dec*(2.*label-1.))  #loss(dec, label) #torch.sum(dec)  #torch.sum(dec*(2.*label-1.))
         if params['att_type'] == 0:
-            self.att_loss = lambda pred, true: torch.mean(-(true*torch.log(pred+1e-10) + (1-true)*torch.log(1-pred+1e-10)))
+            ycounts = np.stack(data.ycounts, axis=0)
+            wrel = self.to_gpu(Variable(torch.from_numpy(ycounts[:,0]/ycounts[:,1]).float()))
+            # wneg = self.to_gpu(Variable(torch.from_numpy(1./ycounts[:,0]).float()))
+            # wpos = self.to_gpu(Variable(torch.from_numpy(1./ycounts[:,1]).float()))
+            # self.att_loss = lambda pred, true: torch.mean(-(true*torch.log(pred+1e-10) + (1-true)*torch.log(1-pred+1e-10)))
+            # self.att_loss = lambda pred, true: torch.mean(-(wpos*true*torch.log(pred+1e-10) + wneg*(1-true)*torch.log(1-pred+1e-10)))
+            self.att_loss = lambda pred, true: torch.mean(-(wrel*true*torch.log(pred+1e-10) + (1-true)*torch.log(1-pred+1e-10)))
         elif params['att_type'] == 1:
             m = self.to_gpu(Variable(torch.from_numpy(data.powerfits[:,0]).float()))
             b = self.to_gpu(Variable(torch.from_numpy(data.powerfits[:,1]).float()))

@@ -97,6 +97,7 @@ def parse_params():
     parser.add_argument('-images','--images', type=lambda x: (str(x).lower() == 'true'), default=True, help='whether data consists of images', required=False)
     parser.add_argument('-latdim','--lat_dim', type=int, default=2, help='dimensionality of latent feature extractor', required=False)
     parser.add_argument('-attdim','--att_dim', type=int, default=2, help='dimensionality of attribute feature extractor', required=False)
+    parser.add_argument('-biny','--binarize_y', type=lambda x: (str(x).lower() == 'true'), default=False, help='whether to binarize y data', required=False)
     parser.add_argument('-atttyp','--att_type', type=int, default=2, help='range of attributes (0={0,1},1=[0,1],2=[-inf,inf])', required=False)
     
     parser.add_argument('-pz','--pz', type=lambda x: (str(x).lower() == 'true'), default=True, help='p(z) distribution (True=Uniform(0,1), False=Normal(0,1))', required=False)
@@ -189,7 +190,7 @@ def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discrim
 
     to_gpu = gpu_helper(params['gpu'])
 
-    data = Domain(batch_size=params['batch_size'], sub_domain=params['sub_domain'], num_labels=params['att_dim'], slice_size=params['data_size'])
+    data = Domain(batch_size=params['batch_size'], sub_domain=params['sub_domain'], num_labels=params['att_dim'], slice_size=params['data_size'], binarize_y=params['binarize_y'])
     data.plot_real(params)
     G = Generator(input_dim=params['z_dim'],output_dim=params['x_dim'],n_hidden=params['gen_n_hidden'],
                   n_layer=params['gen_n_layer'],nonlin=params['gen_nonlinearity'])

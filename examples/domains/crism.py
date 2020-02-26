@@ -43,12 +43,13 @@ labelsets = datasets
 
 
 class CRISM(Data):
-    def __init__(self, batch_size=128, num_labels=None, slice_size=int(506898), **kwargs):
+    def __init__(self, batch_size=128, num_labels=None, slice_size=int(506898), binarize_y=True, **kwargs):
         super(CRISM, self).__init__()
         self.batch_size = batch_size
         self.num_labels = num_labels
         self.slice_size = slice_size
         self.slice_idx = 0
+        self.binarize_y = binarize_y
         self.loaded_once = False
         self.load_crism(num_labels)
         self.loaded_once = True
@@ -244,8 +245,14 @@ class CRISM(Data):
         y_joined = y_joined[goodrows]
         y_joined = np.clip(y_joined, 0., np.inf)
 
-        new_goodrows = self.prep_hist(y_joined, normalize)
-        y_joined = y_joined[new_goodrows]
+        if self.binarize_y:
+            perc = 95.
+            y_joined = (y > np.percentile(y, perc, axis=0)[None]).astype(float)
+            self.prep_hist_binary(y_joined, normalize)
+            new_goodrows = goodrows
+        else:
+            new_goodrows = self.prep_hist(y_joined, normalize)
+            y_joined = y_joined[new_goodrows]
 
         # if start_row >= y_joined.shape[0]:
         #     start_row = self.slice_idx = 0
@@ -317,6 +324,35 @@ class CRISM(Data):
         # self.ymaxs = label_stats['maxs']
         # self.ystds = label_stats['stds']
         return ~insig
+
+    def prep_hist_binary(self, y, normalize=True):
+        if normalize:
+            scaler = StandardScaler()
+            y = scaler.fit_transform(y)
+        counts = []
+        bins = []
+        powerfits = []
+        stds = np.std(y,axis=0)
+        mins = np.min(y,axis=0)
+        maxs = np.max(y,axis=0)
+        for col in range(y.shape[1]):
+            co, bi = np.histogram(y[:,col], bins=2, density=1)
+            counts += [co]
+            bins += [bi]
+        # label_stats = np.load('./examples/domains/data/label_stats.npz')
+        np.savez_compressed('./examples/domains/data/label_stats_thresholded_binary.npz',
+            counts=counts, bins=bins, mins=mins, maxs=maxs, stds=stds)
+        self.ycounts = counts
+        self.ybins = bins
+        self.ymins = mins
+        self.ymaxs = maxs
+        self.ystds = stds
+        # self.ycounts = label_stats['counts']
+        # self.ybins = label_stats['bins']
+        # self.ymins = label_stats['mins']
+        # self.ymaxs = label_stats['maxs']
+        # self.ystds = label_stats['stds']
+        return None
 
     def plot_att_hists2(self, params, i=0, y2=None):
         if y2 is not None:
