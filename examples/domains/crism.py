@@ -296,6 +296,7 @@ class CRISM(Data):
         maxs = np.max(y,axis=0)
         for col in range(y.shape[1]):
             co, bi = np.histogram(y[:,col], bins=50, density=1)
+            # note sum of co = bins
             counts += [co]
             bins += [bi]
             # fit power law
@@ -334,8 +335,8 @@ class CRISM(Data):
         maxs = np.max(y,axis=0)
         for col in range(y.shape[1]):
             co, bi = np.histogram(y[:,col], bins=2, density=1)
-            print(co)
-            counts += [co]
+            # note sum of co = bins
+            counts += [co/2.]
             bins += [bi]
         # label_stats = np.load('./examples/domains/data/label_stats.npz')
         np.savez_compressed('./examples/domains/data/label_stats_thresholded_binary.npz',
@@ -358,14 +359,18 @@ class CRISM(Data):
         # TODO(imgemp): create hist of real data at __init__ (plot memory < actual data)
         plt.clf()
         fig, ax = plt.subplots(10,4, figsize=(22,10))
+        if self.binarize_y:
+            log = False
+        else:
+            log = True
         for r in range(10):
             for c in range(4):
                 if r*4+c < len(self.ybins):
-                    n, bins, _ = ax[r,c].hist(self.ybins[r*4+c][:-1], bins=self.ybins[r*4+c], weights=self.ycounts[r*4+c], log=True, color='b', alpha=0.5)
+                    n, bins, _ = ax[r,c].hist(self.ybins[r*4+c][:-1], bins=self.ybins[r*4+c], weights=self.ycounts[r*4+c], log=log, color='b', alpha=0.5)
                     if not self.binarize_y:
                         ax[r,c].plot(self.ybins[r*4+c][:-1], np.exp(self.powerfits[r*4+c][0]*self.ybins[r*4+c][:-1]+self.powerfits[r*4+c][1]), color='b', lw=4)
                     if y2 is not None:
-                        ax[r,c].hist(y2[:,r*4+c], bins=bins, density=1, log=True, color='r', alpha=0.5)
+                        ax[r,c].hist(y2[:,r*4+c], bins=bins, density=1, log=log, color='r', alpha=0.5)
                     ax[r,c].set_ylabel(str(r*4+c))
                     title = r'{:s}: {:.3f}$\sigma$'.format(self.att_names[r*4+c], self.ystds[r*4+c])
                     if self.binarize_y and y2 is not None:
