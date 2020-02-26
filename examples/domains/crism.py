@@ -700,6 +700,47 @@ class AttExtractor(Net):
         return output
 
 
+class AttExtractorBin(Net):
+    def __init__(self, input_dim, output_dim, n_hidden=128, n_layer=2, nonlin='leaky_relu'):
+        super(AttExtractor, self).__init__()
+
+        hidden_fcs = []
+        in_dim = input_dim
+        for l in range(n_layer):
+            hidden_fcs += [nn.Linear(in_dim, n_hidden)]
+            in_dim = n_hidden
+        self.hidden_fcs = nn.ModuleList(hidden_fcs)
+        self.final_fc = nn.Linear(in_dim, output_dim)
+        self.layers = hidden_fcs + [self.final_fc]
+        if nonlin == 'leaky_relu':
+            self.nonlin = F.leaky_relu
+        elif nonlin == 'relu':
+            self.nonlin = F.relu
+        elif nonlin == 'tanh':
+            self.nonlin = F.tanh
+        elif nonlin == 'sigmoid':
+            self.nonlin = torch.sigmoid
+        else:
+            self.nonlin = lambda x: x
+
+        self.input_dim = input_dim
+        self.output_dim = output_dim
+        self.n_hidden = n_hidden
+
+        self.first_forward = True
+
+    def forward(self, x):
+        h = x
+        if self.first_forward: print('\nAttExtractor output shapes:', flush=True)
+        for hfc in self.hidden_fcs:
+            h = self.nonlin(hfc(h))
+            if self.first_forward: print(h.shape, flush=True)
+        output = torch.sigmoid(self.final_fc(h))
+        if self.first_forward: print(output.shape, flush=True)
+        self.first_forward = False
+        return output
+
+
 class LatExtractor(Net):
     def __init__(self, input_dim, output_dim, n_hidden=128, n_layer=2, nonlin='leaky_relu'):
         super(LatExtractor, self).__init__()
