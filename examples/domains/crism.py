@@ -370,7 +370,10 @@ class CRISM(Data):
                     if not self.binarize_y:
                         ax[r,c].plot(self.ybins[r*4+c][:-1], np.exp(self.powerfits[r*4+c][0]*self.ybins[r*4+c][:-1]+self.powerfits[r*4+c][1]), color='b', lw=4)
                     if y2 is not None:
-                        ax[r,c].hist(y2[:,r*4+c], bins=bins, density=1, log=log, color='r', alpha=0.5)
+                        if self.binarize_y:
+                            ax[r,c].bar(x=[0.25, 0.75], height=y2[:,r*4+c], width=0.5)
+                        else:
+                            ax[r,c].hist(y2[:,r*4+c], bins=bins, density=1, log=log, color='r', alpha=0.5)
                     ax[r,c].set_ylabel(str(r*4+c))
                     title = r'{:s}: {:.3f}$\sigma$'.format(self.att_names[r*4+c], self.ystds[r*4+c])
                     if self.binarize_y and y2 is not None:
