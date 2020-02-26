@@ -84,7 +84,7 @@ class CRISM(Data):
         # x -= 0.5
         y, names, new_goodrows = self.get_np_labels(labelsets, goodrows, normalize)
         x = x[new_goodrows]
-        if normalize:
+        if not self.binarize and normalize:
             scaler = StandardScaler()
             y = scaler.fit_transform(y)
             # y = self.zero_one_y(y)
@@ -248,7 +248,7 @@ class CRISM(Data):
         if self.binarize_y:
             perc = 95.
             y_joined = (y > np.percentile(y, perc, axis=0)[None]).astype(float)
-            self.prep_hist_binary(y_joined, normalize)
+            self.prep_hist_binary(y_joined)
             new_goodrows = goodrows
         else:
             new_goodrows = self.prep_hist(y_joined, normalize)
@@ -325,10 +325,7 @@ class CRISM(Data):
         # self.ystds = label_stats['stds']
         return ~insig
 
-    def prep_hist_binary(self, y, normalize=True):
-        if normalize:
-            scaler = StandardScaler()
-            y = scaler.fit_transform(y)
+    def prep_hist_binary(self, y):
         counts = []
         bins = []
         powerfits = []
