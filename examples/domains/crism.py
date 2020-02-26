@@ -334,6 +334,7 @@ class CRISM(Data):
         maxs = np.max(y,axis=0)
         for col in range(y.shape[1]):
             co, bi = np.histogram(y[:,col], bins=2, density=1)
+            print(co)
             counts += [co]
             bins += [bi]
         # label_stats = np.load('./examples/domains/data/label_stats.npz')
