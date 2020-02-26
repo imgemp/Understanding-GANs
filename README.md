@@ -1,6 +1,7 @@
 # Understanding-GANs
 
 ## Example Usage
+source activate ugan (ugans is old)
 python ugans/run.py $(cat examples/args/circles/con/00.txt)
 or on gypsum
 srun -p m40-long --gres=gpu:1 examples/run.sh "examples/args/celebA/con/00.txt" "-latdim 1 -lat_dis_reg 0.0"
