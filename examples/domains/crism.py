@@ -366,7 +366,10 @@ class CRISM(Data):
                     if y2 is not None:
                         ax[r,c].hist(y2[:,r*4+c], bins=bins, density=1, log=True, color='r', alpha=0.5)
                     ax[r,c].set_ylabel(str(r*4+c))
-                    ax[r,c].set_title(r'{:s}: {:.3f}$\sigma$'.format(self.att_names[r*4+c], self.ystds[r*4+c]))
+                    title = r'{:s}: {:.3f}$\sigma$'.format(self.att_names[r*4+c], self.ystds[r*4+c])
+                    if self.binarize_y and y2 is not None:
+                        title += ' ptrue={:.2f},p={:.2f}'.format(self.ycounts[r*4+c][1], y2[:,r*4+c].mean())
+                    ax[r,c].set_title(title)
                     ax[r,c].tick_params(left=False,bottom=True,right=False,top=False)
                     if self.binarize_y:
                         mn = 0.
