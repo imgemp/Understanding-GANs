@@ -34,6 +34,8 @@ class SimGD(Map):
         dis_error = self.m.att_loss(real_outputs[2], real_outputs[1]) + self.m.att_loss(fake_outputs[2], fake_outputs[1])
 
         # 4. Record attribute extractor losses
+        print('preds')
+        print(self.m.F_att(data_att).cpu().data.numpy())
         att_error = self.m.att_loss(self.m.F_att(data_att), atts)
 
         # 5. Compute gradients
