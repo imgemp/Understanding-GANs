@@ -43,13 +43,14 @@ labelsets = datasets
 
 
 class CRISM(Data):
-    def __init__(self, batch_size=128, num_labels=None, slice_size=int(506898), binarize_y=True, **kwargs):
+    def __init__(self, batch_size=128, num_labels=None, slice_size=int(506898), binarize_y=True, perc=95., **kwargs):
         super(CRISM, self).__init__()
         self.batch_size = batch_size
         self.num_labels = num_labels
         self.slice_size = slice_size
         self.slice_idx = 0
         self.binarize_y = binarize_y
+        self.perc = perc
         self.loaded_once = False
         self.load_crism(num_labels)
         self.loaded_once = True
@@ -246,8 +247,7 @@ class CRISM(Data):
         y_joined = np.clip(y_joined, 0., np.inf)
 
         if self.binarize_y:
-            perc = 95.
-            y_joined = (y > np.percentile(y, perc, axis=0)[None]).astype(float)
+            y_joined = (y > np.percentile(y, self.perc, axis=0)[None]).astype(float)
             self.prep_hist_binary(y_joined)
             new_goodrows = goodrows
         else:
