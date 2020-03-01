@@ -443,6 +443,7 @@ class CRISM(Data):
         plt.xlabel('Channels', fontsize=fs)
         plt.ylabel('Intensities', fontsize=fs)
         plt.tick_params(axis='both', which='major', labelsize=fs_tick)
+        plt.grid(True, axis='x')
         if force_ylim:
             plt.gca().set_ylim(ylim)
         plt.savefig(params['saveto']+'samples/samples_{}.png'.format(i))
@@ -470,6 +471,7 @@ class CRISM(Data):
                 plt.plot(self.waves, samp)
                 if force_ylim:
                     plt.gca().set_ylim(ylim)
+                plt.grid(True, axis='x')
                 plt.xticks([]); plt.yticks([])
         plt.gcf().tight_layout()
         fig.savefig(params['saveto']+filename+'.pdf')
@@ -496,6 +498,7 @@ class CRISM(Data):
         plt.xlabel('Channels', fontsize=fs)
         plt.ylabel('Intensities', fontsize=fs)
         plt.tick_params(axis='both', which='major', labelsize=fs_tick)
+        plt.grid(True, axis='x')
         if force_ylim:
             plt.gca().set_ylim(ylim)
         plt.savefig(params['saveto']+'samples_real.png')
@@ -584,6 +587,7 @@ class CRISM(Data):
                 plt.xlabel('Channels', fontsize=fs)
                 plt.ylabel('Intensities', fontsize=fs)
                 plt.tick_params(axis='both', which='major', labelsize=fs_tick)
+                plt.grid(True, axis='x')
                 if force_ylim:
                     plt.gca().set_ylim(ylim)
                 filename = ''.join([c for c in self.mica_names[endmember] if c.isalpha() or c.isdigit()]).rstrip()
