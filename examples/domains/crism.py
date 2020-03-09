@@ -81,7 +81,7 @@ class CRISM(Data):
 
     def load_crism(self, num_labels, normalize=True):
         x, goodrows = self.get_np_image(datasets)
-        x = self.max_one_x_ind(x)
+        x = self.max_one_x_ind(x)  # if switch by to zero_one_x_ind, remember to add sigmoid back to generator
         # x -= 0.5
         y, names, new_goodrows = self.get_np_labels(labelsets, goodrows, normalize)
         x = x[new_goodrows]
@@ -123,13 +123,6 @@ class CRISM(Data):
 
     def max_one_x_ind(self,x):
         '''expecting normalization along columns'''
-        # print(np.max(x, axis=1, keepdims=True))
-        print(x.min(), x.max())
-        print(np.min(np.max(x, axis=1, keepdims=True)))
-        print(np.max(np.max(x, axis=1, keepdims=True)))
-        z = x / np.max(x, axis=1, keepdims=True)
-        print(z.shape)
-        print(z.min(), z.max())
         return x / np.max(x, axis=1, keepdims=True)
 
     def zero_one_y(self,y):
@@ -465,7 +458,7 @@ class CRISM(Data):
         else:
             atts = self.F_att_eval(samples).cpu().data.numpy()
         self.plot_att_hists2(params, i=i, y2=atts)
-        self.plot_grouped_by_mica(train, params, i=i)
+        self.plot_grouped_by_mica(train, params, i=i, force_ylim=force_ylim)
         self.plot_training_hist(train, params, i=i)
 
     def plot_series(self, np_samples, params, ylim=[0,1], force_ylim=True, fs=24, fs_tick=18, filename='series'):
@@ -514,7 +507,7 @@ class CRISM(Data):
             plt.gca().set_ylim(ylim)
         plt.savefig(params['saveto']+'samples_real.png')
         plt.close()
-        self.plot_series(np.split(samples, 8), {'n_viz':8, 'viz_every':1, 'saveto':params['saveto']}, filename='grid_real')
+        self.plot_series(np.split(samples, 8), {'n_viz':8, 'viz_every':1, 'saveto':params['saveto']}, filename='grid_real', force_ylim=force_ylim)
 
     def sample(self, batch_size, dim=64):
         try:

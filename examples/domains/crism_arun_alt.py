@@ -66,7 +66,7 @@ class Generator(Net):
             nn.Dropout(p=p),
             # # state size. bs x 15 x 240
             nn.Conv1d(250//16, 1, kernel_size=11, stride=1, padding=5, bias=True),
-            nn.Sigmoid(),
+            # nn.Sigmoid(),
             View((-1, output_dim))
         )
         

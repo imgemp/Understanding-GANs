@@ -90,6 +90,7 @@ def parse_params():
     parser.add_argument('-plot_every','--plot_every', type=int, default=100, help='skip plot_every iterations between plotting losses and norms', required=False)
     parser.add_argument('-w_every','--weights_every', type=int, default=5000, help='skip weights_every iterations between saving weights', required=False)
     parser.add_argument('-n_viz','--n_viz', type=int, default=8, help='number of samples for series plot', required=False)
+    parser.add_argument('-force_ylim','--force_ylim', type=lambda x: (str(x).lower() == 'true'), default=True, help='whether to force y limit to [0,1] in plots', required=False)
     
     parser.add_argument('-zdim','--z_dim', type=int, default=256, help='dimensionality of p(z) - unit normal', required=False)
     parser.add_argument('-xdim','--x_dim', type=int, default=2, help='dimensionality of p(x) - data distribution', required=False)
@@ -196,7 +197,7 @@ def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discrim
     to_gpu = gpu_helper(params['gpu'])
 
     data = Domain(batch_size=params['batch_size'], sub_domain=params['sub_domain'], num_labels=params['att_dim'], slice_size=params['data_size'], binarize_y=params['binarize_y'], perc=params['perc'])
-    data.plot_real(params, force_ylim=False)
+    data.plot_real(params, force_ylim=params['force_ylim'])
     G = Generator(input_dim=params['z_dim'],output_dim=params['x_dim'],n_hidden=params['gen_n_hidden'],
                   n_layer=params['gen_n_layer'],nonlin=params['gen_nonlinearity'])
     F_att = AttExtractor(input_dim=params['x_dim'],output_dim=params['att_dim'],n_hidden=params['att_n_hidden'],
@@ -272,7 +273,7 @@ def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discrim
                 if params['images']:
                     logger_images = samples.reshape(-1, params['c_dim'], params['x_dim'], params['x_dim']).transpose((0,2,3,1)).squeeze()
                     logger.image_summary('images', logger_images, i)
-            data.plot_current(train, params, i)
+            data.plot_current(train, params, i, force_ylim=params['force_ylim'])
 
         if params['plot_every'] > 0 and i % params['plot_every'] == 0:
             for name, loss in zip(loss_names, losses):
@@ -317,7 +318,7 @@ def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discrim
         np_samples = []
         for viz_i in range(0,params['max_iter']+1,params['viz_every']):
             np_samples.append(np.load(params['saveto']+'samples/'+str(viz_i)+'.npy'))
-        data.plot_series(np_samples, params)
+        data.plot_series(np_samples, params, force_ylim=params['force_ylim'])
 
     print('Complete. Saved to '+params['saveto'])
 
