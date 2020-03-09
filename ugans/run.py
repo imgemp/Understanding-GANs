@@ -196,7 +196,7 @@ def run_experiment(Train, Domain, Generator, AttExtractor, LatExtractor, Discrim
     to_gpu = gpu_helper(params['gpu'])
 
     data = Domain(batch_size=params['batch_size'], sub_domain=params['sub_domain'], num_labels=params['att_dim'], slice_size=params['data_size'], binarize_y=params['binarize_y'], perc=params['perc'])
-    data.plot_real(params)
+    data.plot_real(params, force_ylim=False)
     G = Generator(input_dim=params['z_dim'],output_dim=params['x_dim'],n_hidden=params['gen_n_hidden'],
                   n_layer=params['gen_n_layer'],nonlin=params['gen_nonlinearity'])
     F_att = AttExtractor(input_dim=params['x_dim'],output_dim=params['att_dim'],n_hidden=params['att_n_hidden'],

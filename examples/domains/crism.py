@@ -124,6 +124,7 @@ class CRISM(Data):
     def max_one_x_ind(self,x):
         '''expecting normalization along columns'''
         # print(np.max(x, axis=1, keepdims=True))
+        print(x.min(), x.max())
         print(np.min(np.max(x, axis=1, keepdims=True)))
         print(np.max(np.max(x, axis=1, keepdims=True)))
         z = x / np.max(x, axis=1, keepdims=True)
