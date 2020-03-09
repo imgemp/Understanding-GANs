@@ -81,7 +81,7 @@ class CRISM(Data):
 
     def load_crism(self, num_labels, normalize=True):
         x, goodrows = self.get_np_image(datasets)
-        x = self.zero_one_x_ind(x)
+        x = self.max_one_x_ind(x)
         # x -= 0.5
         y, names, new_goodrows = self.get_np_labels(labelsets, goodrows, normalize)
         x = x[new_goodrows]
@@ -120,6 +120,10 @@ class CRISM(Data):
         '''expecting normalization along columns'''
         x -= np.min(x,axis=1)[:,None]
         return (x.T/np.ptp(x,axis=1)).T
+
+    def max_one_x_ind(self,x):
+        '''expecting normalization along columns'''
+        return x / np.max(x, axis=1, keepdims=True)
 
     def zero_one_y(self,y):
         y -= np.min(y,axis=0)[None]
@@ -536,7 +540,7 @@ class CRISM(Data):
             micaSLI = envi.open(sliHdrName, sliName)
             mica_dataRed = micaSLI.spectra[not_hematite, :]
             mica_dataRed = self.fnScaleMICAEM(mica_dataRed[:, subset[0]:subset[1]]).astype('float32')
-            mica_dataRed = self.zero_one_x_ind(mica_dataRed)
+            mica_dataRed = self.max_one_x_ind(mica_dataRed)
             # mica_dataRed -= 0.5
             self.mica_library = train.m.to_gpu(torch.from_numpy(mica_dataRed))
 
