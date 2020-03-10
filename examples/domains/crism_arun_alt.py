@@ -66,7 +66,7 @@ class Generator(Net):
             nn.Dropout(p=p),
             # # state size. bs x 15 x 240
             nn.Conv1d(250//16, 1, kernel_size=11, stride=1, padding=5, bias=True),
-            # nn.Sigmoid(),
+            nn.Sigmoid(),
             View((-1, output_dim))
         )
         
@@ -79,6 +79,7 @@ class Generator(Net):
     def forward(self, x):
         if self.first_forward: print('\nGenerator output shape:', flush=True)
         output = self.main(x)
+        output = (1. - 0.998) * output + 0.998
         if self.first_forward: print(output.shape, flush=True)
         self.first_forward = False
         return output
