@@ -81,7 +81,7 @@ class CRISM(Data):
 
     def load_crism(self, num_labels, normalize=True):
         x, goodrows = self.get_np_image(datasets)
-        x = self.max_one_x_ind(x)  # if switch by to zero_one_x_ind, remember to add sigmoid back to generator
+        x = self.max_one_x_ind(x)  # if switch back to zero_one_x_ind, remember to add sigmoid back to generator
         # x -= 0.5
         y, names, new_goodrows = self.get_np_labels(labelsets, goodrows, normalize)
         x = x[new_goodrows]
@@ -123,7 +123,7 @@ class CRISM(Data):
 
     def max_one_x_ind(self,x):
         '''expecting normalization along columns'''
-        return x / np.max(x, axis=1, keepdims=True)
+        return 1e3 * x / np.max(x, axis=1, keepdims=True)
 
     def zero_one_y(self,y):
         y -= np.min(y,axis=0)[None]

@@ -79,7 +79,7 @@ class Generator(Net):
     def forward(self, x):
         if self.first_forward: print('\nGenerator output shape:', flush=True)
         output = self.main(x)
-        output = (1. - 0.998) * output + 0.998
+        output = 1e3 * ((1. - 0.998) * output + 0.998)
         if self.first_forward: print(output.shape, flush=True)
         self.first_forward = False
         return output
