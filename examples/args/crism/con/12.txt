@@ -39,7 +39,7 @@
 -plot_every 10000
 -w_every 10000
 -n_viz 8
--force_ylim False
+-force_ylim True
 -zdim 50
 -xdim 240
 -images False
