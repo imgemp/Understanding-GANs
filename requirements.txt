@@ -9,7 +9,7 @@ torchvision
 tqdm>=4.19.8
 seaborn>=0.8.1
 scikit-image>=0.14.0
-pillow==5.0.0
+pillow==8.1.1
 spectral==0.19
 psutil
 requests
